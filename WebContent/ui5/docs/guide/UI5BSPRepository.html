@@ -1,0 +1,392 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/Tools/UI5BSPRepository – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="SynchronizingwiththeSAPUI5Repository">Synchronizing with the SAPUI5 Repository</h1>
+<h2 id="Purpose">Purpose</h2>
+<p>
+This tutorial describes how to use the SAPUI5 Repository and how to deploy the SAPUI5 application project on the ABAP Server. For this application type, the ABAP Server is used as a file share to serve browser requests. The SAPUI5 Repository is technically based on the BSP Repository of the ABAP Server.
+</p>
+<h2 id="Availability">Availability</h2>
+<p>
+The SAPUI5 Repository is available in SAP Business Suite systems with version 7.00 or higher containing the NetWeaver UI Add-On in the software component <tt>UI_INFRA</tt>. The Team Repository Provider functionality, which is available in the Eclipse IDE, is available in SAP Business Suite systems with version <strong>7.31</strong> containing the NetWeaver UI Add-On in the software components <tt>UI_INFRA</tt> and <tt>UI5_731</tt>. 
+</p>
+<p>
+The used SAPUI5 Libraries are available in SAP Business Suite systems with version 7.00 or higher containing the NetWeaver UI Add-On in the software component <tt>UISAPUI5</tt>.
+</p>
+<p>
+From 7.40 SP1 on all required SAPUI5 parts are already part of software component <tt>SAP_UI</tt>.
+</p>
+<p>
+As an alternative for SAP Business Suite system of version <strong>7.00</strong> and higher - especially until 7.31 - you may use the interactive <strong>ABAP report /UI5/UI5_REPOSITORY_LOAD or /UI5/UI5_REPOSITORY_LOAD_HTTP</strong> offering similiar functionality. Compared to the Team Repository Provider it does not offer a built-in code merge. Here an separate source code repository like git, Suberversion (SVN) etc. may be used. The report /UI5/UI5_REPOSITORY_LOAD is shipped via SAP note 1793771 "Up/Download SAPUI5 Application into/from UI5 Repository" and within SP03 of the NetWeaver UI Add-On. Find the corresponding documentation in the note and attached to the report.
+</p>
+<h2 id="Setup">Setup</h2>
+<ul><li>Make sure you install the <i>SAPUI5 Application Development</i> feature as well as the <i>SAPUI5 ABAP Repository Team Provider</i> feature in you Eclipse installation.
+</li><li>For 7.31:
+<ul><li>Make sure that the software component SAP UI5 TEAM PROVIDER ON 731 (UI5_731) is installed on the 7.31 ABAP backend
+</li><li>Make sure that SAP Note 1684342 is applied in the 7.31 ABAP backend. 
+</li></ul></li></ul><h3 id="VirusScanProfile">Enabling Virus Scan during Upload</h3>
+<p>
+<p>
+When uploading files to the SAPUI5 Repository, you can perform a virus scan. 
+</p>
+<p>
+As of SAP NetWeaver 7.00 <br />
+with UI AddOn, SAP delivers the following virus scan profile for ABAP within the UI AddOn (from 7.40 SP1 on the virus scan profile is already part of the software component <tt>SAP_UI</tt>):
+</p>
+<ul><li>/UI5/UI5_INFRA_APP/REP_DT_PUT
+</li></ul><p>
+This profile is used by the SAPUI5 Repository API to store files in the SAPUI5 Repository based on BSP Repository.<br />
+For example: Upload of a local file using SAPUI5 Repository API /UI5/CL_UI5_REP_DT, method /UI5/IF_UI5_REP_DT~PUT_FILE from 7.00 on, or the SAPUI5 Team Repository Provider in 7.31 or 7.40.
+</p>
+<p>
+The profile is deactivated when delivered. To activate it, first create at least one basis profile and save it as the default profile. You can then activate one of the delivered profiles. By default, it links to a reference profile, which is the default profile.
+For more information, see SAP Help Portal: 
+</p>
+<ul><li><a class="ext-link" href="http://help.sap.com/saphelp_nw70/helpdata/en/b8/e6e540c1848131e10000000a1550b0/frameset.htm"><span class="icon"> </span>ABAP-Specific Configuration of the Virus Scan Interface (7.00)</a> 
+</li><li><a class="ext-link" href="http://help.sap.com/saphelp_nw73/helpdata/en/4d/f581e1472d41c4e10000000a42189c/frameset.htm"><span class="icon"> </span>ABAP-Specific Configuration of the Virus Scan Interface (7.31)</a>
+</li></ul>
+</p>
+<h2 id="RemarksandRestrictions">Remarks</h2>
+<ul><li>Only CR+LF is supported as a new text file line delimiter.
+<ul><li>To set the new text file line delimiter in Eclipse, go to <i>Window &rarr; Preferences</i>, under <i>General &rarr; Workspace</i> change <i>New text file line delimiter &rarr; Other:</i> to <i>Windows</i>.
+</li><li>To change the new text file line delimiter in Eclipse for an existing project, go to project <i>Properties</i>, under <i>Resource</i> change <i>New text file line delimiter &rarr; Other:</i> to <i>Windows</i>.
+</li><li>To change the new text file line delimiter in Eclipse for an existing file, open the file and choose <i>File &rarr; Convert Line Delimiters to &rarr; Windows</i>.
+</li></ul></li><li>Not all code pages (text file encoding) are supported.
+<ul><li>To set the text file encoding for new files in Eclipse, choose <i>Window &rarr; Preferences</i>, under <i>General &rarr; Workspace</i> change <i>Text file encoding &rarr; Other: </i> to <i>UTF-8</i>.
+</li><li>To change the text file encoding in Eclipse for an existing project, go to project <i>Properties</i>, under <i>Resource</i> change <i>Text file encoding &rarr; Other:</i> to <i>UTF-8</i>.
+</li><li>To change the text file encoding in Eclipse for an existing file, go to file <i>Properties</i>, under <i>Resource</i> change <i>Text file encoding &rarr; Other:</i> to <i>UTF-8</i>.
+</li></ul></li><li>If you view the BSP pages on the ABAP server, the might look different to the version in Eclipse or at runtime:
+<ul><li>Trailing spaces in text lines are escaped with "&amp;nbsp;" in the respective BSP pages.
+</li><li>Lines longer than 254 are broken into several lines and have a <i>+</i> on position 255.
+</li></ul></li></ul><h2 id="TaskShare">Sharing the SAPUI5 Application Project with the SAPUI5 Repository</h2>
+<p>
+<h3 id="Purpose">Purpose</h3>
+<p>
+You want to upload a new SAPUI5 Application into a new BSP Application on the ABAP server.
+</p>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li>You have created a <i>SAPUI5 Application</i> using the <i>SAPUI5 Application Tool</i>, see <a class="wiki" href="CreateApp.html">Creating a SAPUI5 Application Project</a>.
+</li><li>Optionally you have tested the <i>SAPUI5 Application</i> locally in Eclipse, see <a class="wiki" href="TestingInEclipse.html">Testing the SAPUI5 Application in Eclipse</a>.
+</li><li>The ABAP system you are using needs to be available in your SAP GUI Logon group. It is recommended to enable Single-Sign-On.
+</li></ul><h3 id="CreationofBSPApplication">Creation of BSP Application</h3>
+<p>
+It is possible to create the BSP application with all required ICF nodes on the ABAP server remotely from Eclipse. However there might be cases in which this is not possible automatically:
+</p>
+<ul><li>if the ABAP system is an SAP system (not a customer system) and the name of the BSP application and ICF node is in the customer namespace (for example, ZMYAPP)
+</li><li>if the BSP application contains a SAP customer / SAP "development" namespace and that namespace has already been created in another system (for example, /ABC/MYAPP).
+</li></ul><p>
+In these cases the BSP Application has to be created <strong>manually</strong> with the following steps before sharing:
+</p>
+<ol><li>In the ABAP system, call transaction <i>SE80</i>. Go to the <i>Repository Browser</i>, and select <i>BSP Application</i> from the dropdown menu.
+</li><li>Create a BSP application and enter <tt>/UI5/CL_UI5_BSP_APPLICATION</tt> as the name of the application class.
+</li><li>Save and activate the application.
+</li><li>Next, call transaction <i>SICF</i>, where you create a SAPUI5 application-specific ICF node. 
+<ol class="loweralpha"><li>In the <i>Service Path</i> field, select <tt>/sap/bc/ui5_ui5/sap</tt> as the path (or alternatively the respective namespace <i>/sap/bc/ui5_ui5/&lt;namespace&gt;</i>), and choose <i>Execute</i>. 
+</li><li>In the context menu for the <i>sap</i> (or the respective namespace) node, choose <i>New Sub-Element</i>.
+</li><li>In the <i>Create a Service Element</i> dialog, use the same name as for the BSP application you created as the <i>Name of Service Element to Be Created</i> and choose <i>Enter</i>. 
+</li><li>Provide a description text for the ICF node and choose <i>Save</i>. 
+</li><li>Return to the tree and position the cursor on the new service node.
+</li><li>Right-click the new service node to call the context menu, and choose <i>Activate Service</i>, then <i>Yes</i>.
+</li></ol></li></ol><h3 id="Procedure">Procedure</h3>
+<p>
+The SAPUI5 application project can be shared with the SAPUI5 Repository as follows:
+</p>
+<ol><li>In Eclipse, go to the <i>Project Explorer view</i> and select the required <i>SAPUI5 Application Project</i>.
+</li><li>In the context menu of the selected <i>SAPUI5 Application Project</i>, choose <i>Team &rarr; Share Project&hellip;</i>.
+</li></ol><p>
+<img src="share_context.png" />
+</p>
+<ol start="3"><li>Select <i>SAPUI5 ABAP Repository</i> as the repository type.
+</li></ol><p>
+<img src="share_proj.png" height="400px" />
+</p>
+<ol start="4"><li>Choose <i>Next</i>. Configure the connection to the ABAP system by using the <i>Browse&hellip;</i> button. You can only select system connections that are configured in the SAP GUI Launchpad.
+</li></ol><p>
+<img src="connection.png.1" height="400px" />
+</p>
+<ol start="5"><li>Choose <i>Next</i>. Provide the required information for client, user, password, and language.<br />
+Note that choosing the correct logon language is important. When creating a new repository this will become the original language of the repository. For submitting files to the repository you have to be logged on in the original language, otherwise an error will occur.
+</li></ol><p>
+<img src="logon.png.1" height="400px" />
+</p>
+<ol start="6"><li>Choose <i>Next</i>. The SAPUI5 application project can either be shared with an existing or with a newly created BSP application.<br />
+6a. Select <i>Create a New BSP Application</i> and enter name, description, and package (manually or via the <i>Browse&hellip;</i> button).<br />
+</li></ol><p>
+<img src="BSPrepositoryCreate.png" height="300px" /> <br /><br />
+<img src="BSPrepositoryPackage.png" height="400px" /><br />
+<br />Choose <i>Next</i>. Note: If the new BSP application belongs to a transportable ABAP package, choose/create a transport request before finishing the wizard. Since transport requests are not automatically released, explicitly release them later using transaction <i>SE09</i>.<br /><br />
+<img src="BSPrepositoryTransport.png" height="400px" />
+</p>
+<blockquote>
+<p>
+6b. Alternatively, if the BSP Application has been created manually or you want to download an existing one, choose <i>Select a BSP Application</i> and select an existing BSP application artifact for SAPUI5 from the list.
+</p>
+</blockquote>
+<p>
+<img src="BSPrepository.png" height="400px" /><br />
+</p>
+<ol start="7"><li>Choose <i>Finish</i>.
+</li></ol><h3 id="Result">Result</h3>
+<p>
+The selected SAPUI5 application project is now connected to the SAPUI5 BSP application artifact of the SAPUI5 Repository. <br />
+A description containing the ABAP system, client, user, language, and SAPUI5 BSP application name is displayed next to the project name.<br />
+If you have shared a SAPUI5 Application project, the SAPUI5 runtime library version of the server will be compared against the ones which have been installed into Eclipse and a warning might be shown. You can find more details about this check <a class="wiki" href="ServerVersionCheck.html">here</a>.
+</p>
+
+</p>
+<h2 id="TaskSubmit">Submitting the SAPUI5 Application Project to the SAPUI5 Repository</h2>
+<p>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li><i>SAPUI5 Application</i> has been created with the <i>SAPUI5 Application Tool</i>, see <a class="wiki" href="CreateApp.html">Creating a SAPUI5 Application Project</a>.
+</li><li><i>SAPUI5 Application Project</i> has been shared with Team Provider, see <a class="wiki" href="UI5BSPRepository.html#TaskShare">Sharing SAPUI5 Application with SAPUI5 Repository</a>.
+</li></ul><h3 id="Procedure">Procedure</h3>
+<ol><li>In Eclipse, choose <i>Team &rarr; Submit</i> in the context menu of the selected <i>SAPUI5 Application Project</i>. If a logon is required, enter your password in the logon popup and choose <i>OK</i>.
+</li></ol><p>
+<img src="submit.png" /><br /><br />
+If you are submitting changes of a SAPUI5 Application project, the SAPUI5 runtime library version of the server will be compared against the ones which have been installed into Eclipse and a warning might be shown. You can find more details about this check <a class="wiki" href="ServerVersionCheck.html">here</a>.
+</p>
+<ol start="2"><li>Select all files. You will get a list of files that have been modified (added, updated, or deleted) in the client. The dialog shows the files for which submit conflicts exist, for example, if another user has submitted a newer file version in the meantime. Submit conflicts must be resolved before submission. If a file is already locked in a transport request, the corresponding request is shown in the dialog. If the SAPUI5 BSP application belongs to a transportable ABAP package, you have to choose a transport request. Note that transport requests are not automatically released when the files are submitted; you still have to release them using transaction SE09 in the underlying ABAP system.
+</li></ol><p>
+<img src="SubmitChangesPopup.PNG" height="400px" />
+</p>
+<ol start="3"><li>Choose <i>Finish</i>.
+</li></ol><h3 id="Result">Result</h3>
+<p>
+All files have been submitted to the SAPUI5 Repository and are available under the corresponding SAPUI5 BSP application. <br />The SAPUI5 application project can now be run from a Web browser calling the underlying ABAP system. You have the convenient option in the context menu for an HTML page of starting a browser with the correct URL from the BSP application displayed in the ABAP Workbench (SE80).
+</p>
+<h3 id="Remark">Remark</h3>
+<p>
+When using the team provider the file type is determined based on the Eclipse preferences. 
+If you submit binary files and submit fails due to "End of line marker not supported" error, the binary file type is probably not registered as binary. To change that in Eclipse go to <i>Window &rarr; Preferences</i> and then to <i>Team &rarr; File Content</i> and register the binary file type as type binary.
+</p>
+
+</p>
+<h2 id="TaskRetrieve">Retrieving the SAPUI5 Application Project from the SAPUI5 Repository</h2>
+<p>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li>You or someone else has created a <i>SAPUI5 Application</i> using the <i>SAPUI5 Application Tool</i>, see <a class="wiki" href="CreateApp.html">Creating a SAPUI5 Application Project</a>.
+</li><li>You or someone else has shared and submitted the <i>SAPUI5 Application</i> via the SAPUI5 Team Provider to the ABAP system, see <a class="wiki" href="UI5BSPRepository.html#TaskSubmit">Submitting SAPUI5 Application to SAPUI5 Repository</a>.
+</li><li>The ABAP system you are using needs to be available in your SAP GUI Logon group.
+</li></ul><h3 id="Procedure">Procedure</h3>
+<ol><li>Create a generic project in Eclipse: Choose <i>New &rarr; Project &rarr; General &rarr; Project</i>. Enter the same name that is used for the SAPUI5 BSP application artifact in the ABAP system. Choose <i>Finish</i>.
+</li><li>Share the <i>SAPUI5 Application Project</i> with Team Provider by choosing the existing BSP application, see <a class="wiki" href="UI5BSPRepository.html#TaskShare">Sharing SAPUI5 Application with SAPUI5 Repository</a>.
+</li><li>Synchronize the SAPUI5 application project as follows: In the context menu of the selected project, choose <i>Team &rarr; Retrieve</i>. Next, choose <i>Select All</i> to select the conflicting files as well.
+</li></ol><p>
+<img src="retrieve.png.1" />
+</p>
+<ol start="4"><li>Choose <i>Finish</i>.
+</li></ol><h3 id="Result">Result</h3>
+<p>
+Application-project-related files have been retrieved from the SAPUI5 Repository. <br />The SAPUI5 application project can now be run locally in Eclipse, see <a class="wiki" href="TestingInEclipse.html">Testing the SAPUI5 Application in Eclipse</a>.
+</p>
+
+</p>
+<h2 id="TaskConflictHandling">Handling Conflicts</h2>
+<p>
+<h3 id="SubmitRetrieveDialogs">Submit / Retrieve Dialogs</h3>
+<p>
+When you are submitting or retrieving a change, the <i>Conflict</i> column on the <i>Submit Changes</i> or <i>Retrieve Changes</i> screen indicates whether there is a conflict for a file. The dialog shows the files for which submit/retrieve conflicts exist, that is, another user has submitted a newer file version in the meantime. <br /> Submit conflicts must be resolved before submission. <br /> If retrieve conflicts cannot be solved, the local files will be overwritten. 
+</p>
+<p>
+To set the conflict files as resolved, select the file (or multiple files) and choose <i>Set Resolved</i>. The same functionality is also available in the context menu of the selected file or files.
+</p>
+<p>
+<img width="650px" src="SubmitRetrieveConfict.png" />
+</p>
+<p>
+To display the conflicts with the <i>Compare Editor</i>, choose <i>Edit Conflict</i>.<br />
+<img src="alert.png" style="vertical-align: bottom" alt="/!\" /> The <i>Edit Conflict</i> function is not supported for multiple file selection.
+ 
+</p>
+<p>
+<img width="650px" src="SubmitRetrieveConfictEdit.png" />                   <img width="650px" src="SubmitChangesConflictEditor.PNG" /> 
+</p>
+<p>
+Once you have analyzed and edited the changes, you can choose <i>Save and Set as Resolved</i> for the conflict file. 
+</p>
+<h3 id="SynchronizeView">Synchronize View</h3>
+<p>
+In the <i>Synchronize</i> view, you can compare the local and remote state.
+</p>
+<ol><li>Mark the SAPUI5 application project in the <i>Project Explorer</i> in Eclipse.
+</li><li>To open the <i>Synchronize</i> view, still in Eclipse, choose <i>Window &rarr; Show View &rarr; Others &hellip;</i>, then choose <i>Team &rarr; Synchronize</i>.
+<ol class="loweralpha"><li>To connect to a synchronization type, choose the <i>Synchronize &hellip;</i> icon, select <i>Synchronize with SAPUI5 Repository</i> as the synchronization type, and choose <i>Finish</i>.
+</li><li>To update the <i>Synchronize</i> view, press <i>F5</i> in the <i>Synchronize</i> view.
+</li></ol></li><li>The <i>Synchronize</i> view now shows differences between the local and remote state for all shared projects, by indicating whether the project is in sync with the repository or, if not, indicating the differences.
+</li></ol><p>
+The synchronize view also allows you to schedule a periodic refresh of the state of the files in the backend.<br />
+<img src="synchronize.png" /> <img src="schedule.png" />
+</p>
+<h3 id="CompareEditor">Compare Editor</h3>
+<p>
+ 
+</p>
+<ol><li>From the <i>Synchronize</i> view, you open the <i>Compare Editor</i> by right-clicking the conflicting file and choosing <i>Open in Compare Editor</i> (or double-clicking the  file) .
+</li><li>You can now display and resolve the conflicts in the <i>Compare Editor</i>.
+</li><li>Once the conflict is resolved, you can set the status of the file to "Resolved" by right-clicking the file and choosing <i>Set Resolved</i>. The file is now ready to be submitted.
+</li></ol><p>
+<img src="CompareEditor.png" />
+</p>
+<h3 id="FurtherInformation">Further Information</h3>
+<p>
+The Eclipse Help provides information about:<br />
+</p>
+<ul><li>Synchronizing with the repository - information site in Eclipse: <a class="ext-link" href="http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Ftasks%2Ftasks-115.htm"><span class="icon"> </span>http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Ftasks%2Ftasks-115.htm</a>
+</li><li>Workspace synchronization - information site in Eclipse: <a class="ext-link" href="http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Freference%2Fref-33.htm"><span class="icon"> </span>http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Freference%2Fref-33.htm</a>
+</li><li>Compare editor - information site in Eclipse: <a class="ext-link" href="http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Freference%2Fref-25.htm"><span class="icon"> </span>http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Freference%2Fref-25.htm</a>
+<ul><li>Although the description is based on the CVS repository, it offers some insights into the principles of synchronization and three-way comparison.
+</li></ul></li></ul>
+</p>
+<h2 id="TaskTest">Testing the SAPUI5 Application Project on the ABAP Server</h2>
+<p>
+<h3 id="Purpose">Purpose</h3>
+<p>
+To test a <i>SAPUI5 Application</i> that you have uploaded to an ABAP system, you can directly launch its public URL in a browser window.
+</p>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li>You have shared a <i>SAPUI5 Application</i> via the SAPUI5 Team Provider with the ABAP system
+</li><li>You have synchronized the application with the ABAP system
+</li></ul><h3 id="Procedure">Procedure</h3>
+<p>
+You have the following options to launch a synchronized file (e.g. the index.html) on the ABAP server:
+</p>
+<ul><li>Right click the file in the Project Explorer and choose <i>Run As &rarr; Run On ABAP Server</i>
+</li><li>Open the file in an editor and from the Eclipse <i>Run As</i> menu choose <i>Run On ABAP Server</i>
+</li></ul><p>
+The launch option is only available if the file is accessible via URL e.g. if it is in the WebContent folder.
+</p>
+<h3 id="Result">Result</h3>
+<p>
+The URL of the selected file is opened in a browser window. The URL has the following pattern:<br />
+<tt>&lt;protocol&gt;://&lt;host name&gt;:&lt;port number&gt;/sap/bc/ui5_ui5/&lt;namespace&gt;/&lt;application name&gt;/index.html?sap-client=&lt;client&gt;&amp;sap-ui-language=&lt;language&gt;&amp;sap-ui-appcache=false</tt>
+</p>
+<p>
+<strong>Please note that this URL contains test parameters which should not be set for productive usage! </strong>
+</p>
+
+</p>
+<p>
+You can also start the SAPUI5 application as follows:<br />
+Select the SAPUI5 application-specific Internet Communication Framework (ICF) node in transaction SICF under sap/bc/ui5_ui5/&lt;namespace&gt;/&lt;application name&gt;, and choose the context menu option <i>Test Service</i>. This will then automatically start your <i>index.html</i> page.
+</p>
+<h3 id="CacheBehaviourApplicationResource">Cache Behavior for Application Resources</h3>
+<p>
+The sap/bc/ui5_ui5/&lt;namespace&gt;/&lt;application name&gt;/index.html page is never cached.
+</p>
+<p>
+By default, the application files are stored in the browser cache for one year to speed up the performance in a productive environment. To get the latest changes you need to force your UI5 start page to refresh (e.g. by pressing <tt>CTRL + F5</tt> on Windows systems). If forcing to refresh does not help you need to clear your browser cache. 
+</p>
+<p>
+The following is an <strong>experimental feature</strong> which might change in future versions of SAPUI5: If you are in development mode and like to immediately get the latest changes without refreshing your UI5 start page, you can add the experimental url parameter <tt>sap-ui-xx-devmode</tt> to the UI5 start page in order to force the browser to check if necessary whether there is a newer version of the application files available. When switching between development and productive mode, you need to force your UI5 start page to refresh. If this does not help you need to clear your browser cache.
+</p>
+<h4 id="UsingtheApplicationCacheBuster">Using the Application Cache Buster</h4>
+<p>
+If you activate the Application Cache Buster in the start page of the application in which the ui5 bootstrap is located by setting <tt>data-sap-ui-appCacheBuster="./"</tt>, see <a class="wiki" href="CacheBuster.html#ApplicationCacheBuster">Application Cache Buster</a>, the UI5 application runtime handler on ABAP side supports the Application Cache Buster. In that case the ICM server cache on ABAP side as well as the browser cache is used and the Application Cache Buster mechanism ensures that all those resources which are supported by the Application Cache Buster mechanism are up to date.
+</p>
+<h5 id="SomeTechnicalRemarks">Some Technical Remarks &hellip;</h5>
+<ul><li>Under typical conditions - e.g. when using UI5 applications or when doing development with the SAPUI5 ABAP Repository Team Provider or the UI5 repository load report - the application cache buster works fully automatically.
+</li><li>After system- and language imports for a UI5 application into the SAP NetWeaver Web AS however it may be necessary (since the UI-AddOn 1.0 SP03) to reset its internal cache buster information. You may explicitly use or schedule the ABAP report /UI5/RESET_CACHEBUSTER to do so on all servers. As an alternative you can trigger the reset for a specific UI5 application from the browser using the URL "&lt;application base path&gt;/resetcachebuster". 
+</li><li>Also take note that the internal cache buster information for a UI5 application becomes outdated every two hours and is calculated anew then automatically. As a consequence the underlying server side cookies (with name 'cachebuster_info') get recalculated without the need of manual acitivity.
+</li></ul><p>
+<br /> <br />
+</p>
+<h2 id="TaskCreateAlias">Creating Alias for ICF Node with SAP Corbu Logon Screen</h2>
+<p>
+<p>
+To create an alias for the <tt>ui5_ui5</tt> ICF node with an SAP Corbu logon screen (available with version 7.31 and higher), do the following:
+</p>
+<ol><li>In the ABAP Suite system, call transaction <tt>SICF</tt> and choose <i>Execute (F8)</i>.
+</li><li>Choose <i>&rarr; External Aliases (Shift+F6)</i>
+</li><li>Select the host, for example <tt>default_host</tt>, and choose <i>Create New External Alias (F5)</i>.
+</li><li>Enter a name in the <i>External Alias</i> field. The name must start with a slash, for example <tt>/ui5</tt>.
+</li><li>On the <i>Trg Element</i> tab, select the target handler <i><tt>/default_host/sap/bc/ui5_ui5</tt></i> in the tree, and double-click it.
+</li><li>On the <i>Error Page</i> tab, select the <i>Logon Errors</i> tab, select <i>System Logon</i>, and choose <i>Configuration</i>.
+</li><li>In the <i>System Logon Configuration</i> dialog, choose <i>Define Service-Specific Settings</i>.
+</li><li>Under <i>Select Display</i>, select the fields that are to be displayed on the logon screen; these are generally System ID, Client, and Language.
+</li><li>Under <i>Logon Layout and Procedure</i> and <i>SAP Implementation</i>, select <i>Signature Design</i> for Screen and <i>SAP Corbu</i> for Theme.
+</li><li>If you choose <i>Adjust Links and Images</i>, you have the option under <i>Adjustment of the Logon Page</i> to <i>Specify the URLs for the images you want to use instead of the standard images</i>.
+</li><li>Choose <i>Input (Enter)</i> to confirm the selection.
+</li><li>Choose <i>Save (Ctrl+S)</i> to save the new alias.
+</li></ol><p>
+For information on the ICF, see:
+</p>
+<ul><li><a class="ext-link" href="http://help.sap.com/saphelp_nw70ehp3/helpdata/en/48/3a0638902131c3e10000000a42189d/frameset.htm"><span class="icon"> </span>System Logon</a>
+</li><li><a class="ext-link" href="http://help.sap.com/saphelp_nw70ehp3/helpdata/en/10/361b3f7f9e3642e10000000a114084/frameset.htm"><span class="icon"> </span>Administration of Server Functions</a>
+</li></ul>
+</p>
+<h2 id="TaskCommunicationLog">Troubleshooting with Communication Log</h2>
+<p>
+<h3 id="ABAPCommunicationLog">ABAP Communication Log</h3>
+<p>
+For troubleshooting purposes, you can use the <i>ABAP Communication Log</i> to log all REST requests from and to the ABAP system.
+</p>
+<ol><li>To open the <i>ABAP Communication Log</i> view, go to Eclipse and choose <i>Window &rarr; Show View &rarr; Others &hellip;</i>, then <i>ABAP &rarr; ABAP Communication Log</i>.
+</li><li>To start the logging, choose <i>Start logging</i> (and to stop it later, choose <i>Stop logging</i>).
+</li><li>The ABAP Communication Log displays all requests between Eclipse and the connected ABAP system, giving you information about the HTTP method (GET, PUT, POST, DELETE), the query parameters of the request, and the HTTP status code.
+</li></ol><p>
+<img src="CommunicationLogList.png" height="400px" />
+</p>
+<ol><li>If you click a request in the list, the details of this request are displayed (such as Request, Response, Stack Trace), giving you information about the HTTP header fields and the content of the request and the response.
+</li></ol><p>
+<img src="CommunicationLogEntry.png" height="400px" />
+</p>
+
+</p>
+<h2 id="TaskTranslation">Next Steps</h2>
+<p>
+<a class="wiki" href="UI5BSPRepositoryTaskTranslation.html">Translating Text Elements of SAPUI5 Applications in ABAP </a> 
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

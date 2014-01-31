@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/Events – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="MobileEvents">Mobile Events</h1>
+<h2 id="ComparisontoDesktopEvents">Comparison to Desktop Events</h2>
+<p>
+What is equal:
+</p>
+<ol><li>When running on mobile/touch devices, the application has still the possibility to access to all native browser events, including the touch-related ones. 
+</li><li>Handling of control events fired by UI5 is also the same as on desktop PCs.
+</li><li>When implementing UI5 controls, some browser events can be handled very easily by implementing a method named <tt>on&lt;eventName&gt;</tt>, so all the bind/unbind effort is avoided. This is equally possible on mobile.
+</li></ol><p>
+So basically the whole concept around events is identical.
+</p>
+<p>
+<br />
+</p>
+<h2 id="WhatisdifferentonMobile">What is different on Mobile?</h2>
+<p>
+However, the difference is that on mobile devices <strong>additional</strong> events are available within control implementations (see item 3. above).
+</p>
+<h3 id="AdditionalMobileBrowserEvents">Additional Mobile Browser Events</h3>
+<p>
+On touch-enabled platforms the following events are also provided within UI5 controls to be handled in "<tt>on&lt;eventName&gt;</tt>" methods:
+</p>
+<ul><li>touchstart
+</li><li>touchend
+</li><li>touchmove
+</li><li>touchcancel
+</li></ul><h3 id="AdditionalMobilePseudoEvents">Additional Mobile Pseudo Events</h3>
+<p>
+jQuery mobile event handling is used within UI5 when running on touch-enabled devices. From the basic browser events it creates semantically richer events. Some of them are also provided automatically within UI5 controls:
+</p>
+<ul><li>swipe
+</li><li>tap
+</li><li>swipeleft
+</li><li>swiperight
+</li><li>scrollstart
+</li><li>scrollstop
+</li></ul><p>
+Please refer to the <a class="ext-link" href="http://jquerymobile.com/test/docs/api/events.html"><span class="icon"> </span>jQuery mobile documentation</a> regarding details of these events.
+</p>
+<h3 id="Simulationoftoucheventsonnon-touchplatforms">Simulation of touch events on non-touch platforms</h3>
+<p>
+For testing or demonstration purposes, the events listed above can also be simulated on non-touch devices. When this simulation is enabled, the touch events will also be triggered by mouse interaction.<br />
+<strong>Important:</strong> due to technical constraints the simulation cannot be perfect, so it may not be used in productive code.
+</p>
+<p>
+To enable the simulation mode, set the UI5 configuration parameter"xx-test-mobile" to "true", e.g. by appending the url parameter "<tt>sap-ui-xx-test-mobile=true</tt>".
+</p>
+<p>
+<br />
+</p>
+<h2 id="EventsalsoavailableinDesktopapps">Events also available in Desktop apps</h2>
+<p>
+This section reiterates the list of events that are available within control implementations in <strong>all</strong> UI5 applications (even on non-touch platforms).
+</p>
+<h3 id="BrowserEvents">Browser Events</h3>
+<ul><li>click
+</li><li>dblclick
+</li><li>focusin
+</li><li>focusout
+</li><li>keydown
+</li><li>keypress
+</li><li>keyup
+</li><li>mousedown
+</li><li>mouseout
+</li><li>mouseover
+</li><li>mouseup
+</li><li>select
+</li><li>selectstart
+</li><li>dragstart
+</li><li>dragenter
+</li><li>dragover
+</li><li>dragleave
+</li><li>dragend
+</li><li>drop
+</li><li>paste
+</li></ul><h3 id="PseudoEvents">Pseudo Events</h3>
+<p>
+The "pseudo events" can be used in <tt>on&lt;eventName&gt;</tt> methods inside controls like browser events, but are created by UI5 and typically have enriched semantics:
+</p>
+<p>
+For the detailed meaning of each event please refer to the <a class="ext-link" href="../api/symbols/jQuery.sap.PseudoEvents.html" title="symbols/jQuery.sap.PseudoEvents.html in Merged JSDoc"><span class="icon"> </span>API documentation</a> of jQuery.sap.PseudoEvents.
+</p>
+<ul><li>sapdown
+</li><li>sapdownmodifiers
+</li><li>sapshow
+</li><li>sapup
+</li><li>sapupmodifiers
+</li><li>saphide
+</li><li>sapleft
+</li><li>sapleftmodifiers
+</li><li>sapright
+</li><li>saprightmodifiers
+</li><li>saphome
+</li><li>saphomemodifiers
+</li><li>saptop
+</li><li>sapend
+</li><li>sapendmodifiers
+</li><li>sapbottom
+</li><li>sappageup
+</li><li>sappageupmodifiers
+</li><li>sappagedown
+</li><li>sappagedownmodifiers
+</li><li>sapselect
+</li><li>sapselectmodifiers
+</li><li>sapspace
+</li><li>sapspacemodifiers
+</li><li>sapenter
+</li><li>sapentermodifiers
+</li><li>sapexpand
+</li><li>sapbackspace
+</li><li>sapbackspacemodifiers
+</li><li>sapdelete
+</li><li>sapdeletemodifiers
+</li><li>sapexpandmodifiers
+</li><li>sapcollapse
+</li><li>sapcollapsemodifiers
+</li><li>sapcollapseall
+</li><li>sapescape
+</li><li>saptabnext
+</li><li>saptabprevious
+</li><li>sapskipforward
+</li><li>sapskipback
+</li><li>sapprevious
+</li><li>sappreviousmodifiers
+</li><li>sapnext
+</li><li>sapnextmodifiers
+</li><li>sapdecrease
+</li><li>sapdecreasemodifiers
+</li><li>sapincrease
+</li><li>sapincreasemodifiers
+</li><li>sapdelayeddoubleclick
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

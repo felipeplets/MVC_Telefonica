@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/Tools/CreateApp – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="CreatingaSAPUI5ApplicationProject">Creating a SAPUI5 Application Project</h1>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li>You have installed the <i>SAPUI5 Application Development</i> feature in your Eclipse installation.
+</li></ul><h2 id="Step1:StartApplicationWizard">Step 1: Start Application Wizard</h2>
+<p>
+You can start the "New SAPUI5 Application Project" wizard in the Eclipse IDE via <i>New &rarr; Other&hellip; &rarr; SAPUI5 Application Development &rarr; Application Project</i>:
+</p>
+<p>
+<img src="SAPUI5&#32;Application&#32;Development&#32;-&#32;Start&#32;Application&#32;Wizard.png" height="300px" />
+</p>
+<h2 id="Step2:Fillprojectrelateddata">Step 2: Fill project related data</h2>
+<ul><li>provide a project name
+</li><li>optionally chose a location (prefilled from current workspace)
+</li><li>choose the target device 'Desktop' (default) or 'Mobile', for Mobile see also <a class="wiki" href="Mobile.html">SAPUI5 Mobile Library</a>
+</li><li>decide whether an initial view should be created (a view can also be created later on with the "SAPUI5 Application View" Wizard)
+</li></ul><p>
+<img src="SAPUI5&#32;Application&#32;Development&#32;-&#32;Create&#32;Application&#32;Project.png" height="400px" />
+</p>
+<h2 id="Step3ifinitialviewshouldbecreated:Fillviewrelateddata">Step 3 (if initial view should be created): Fill view related data</h2>
+<ul><li>enter a folder in which the view should be created
+</li><li>provide a view name
+</li><li>choose the development paradigm (either <a class="wiki" href="MVC.html#ViewTypes">JavaScript or XML or JSON or HTML view</a>)
+</li></ul><p>
+See also <a class="wiki" href="CreateView.html">Creating a SAPUI5 Application View</a>.
+</p>
+<p>
+<img src="CreateApplicationProjectCreateView.png" height="400px" />
+</p>
+<h2 id="Step4optionalandonlyifinitialviewshouldbecreated:Confirmationpage">Step 4 (optional and only if initial view should be created): Confirmation page</h2>
+<p>
+Before finishing the wizard the summary information about selected data in previous pages is displayed. With 'Back'-Navigation the entered date could be corrected and displayed/controlled again before application project is created.
+</p>
+<p>
+<img src="CreateApplicationConfirmationPage.png" height="400px" />
+</p>
+<h2 id="Result">Result</h2>
+<p>
+After finishing the wizard
+</p>
+<ul><li>a new dynamic web project is created. All relevant files are created under the <i>WebContent</i> folder.
+</li><li>prefilled index.html is created which contains sap.ui.commons lib and sap_goldreflection theme in the boostrap in case of desktop target device and sap.m lib and sap_mvi theme in case of mobile target device 
+</li><li>web.xml is created which contains settings for <a class="wiki" href="ResourceHandling.html">ResourceServlet</a> and <a class="wiki" href="TestingInEclipse.html#SimpleProxyConfiguration">SimpleProxyServlet</a> (usage of SimpleProxyServlet is restricted to localhost and only intended for testing purposes and not for productive use)
+</li><li>installed SAPUI5 UI lib plugins are automatically added to the Java Build Path and added to the deployment assembly
+</li><li>SAPUI5 Class Path Container (if available) is automatically added to the JavaScript Include Path
+</li><li>page index.html is opened in standard editor
+</li><li>inside the JavaScript block of the index.html there is <strong><a class="wiki" href="CodeCompletion.html">JavaScript code completion for SAPUI5 controls</a></strong>
+</li><li>an automatic switch to the J2EE perspective is performed
+</li><li>if "Create an Initial View" was flagged on the first page of the "SAPUI5 Application Project" wizard, also a view and view controller are created, see <a class="wiki" href="CreateView.html">View Wizard</a> and the coding to call the view is added to the index.html, if mobile target device was selected, special coding instantiating <a class="ext-link" href="../api/symbols/sap.m.App.html" title="symbols/sap.m.App.html in Merged JSDoc"><span class="icon"> </span>sap.m.App</a> and <a class="ext-link" href="../api/symbols/sap.m.Page.html" title="symbols/sap.m.Page.html in Merged JSDoc"><span class="icon"> </span>sap.m.Page</a> is generated
+</li></ul><p>
+Then the user can edit the index.html e.g. by adding the snippet between script tags inside the body tags:
+</p>
+<div class="code"><pre>  <span class="o">&lt;</span>script<span class="o">&gt;</span>
+    <span class="c1">// create a button 
+</span>    var oButton <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">();</span> 
+    oButton<span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="s">"demo"</span><span class="o">);</span>
+       
+    <span class="c1">// connect the button with the previously created &lt;div&gt;
+</span>    oButton<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="s">"content"</span><span class="o">);</span>
+  <span class="o">&lt;/</span>script<span class="o">&gt;</span>
+<span class="o">...</span>
+  <span class="o">&lt;</span>div id<span class="o">=</span><span class="s">"content"</span><span class="o">&gt;&lt;/</span>div<span class="o">&gt;</span>
+</pre></div><p>
+For a MVC example see <a class="wiki" href="CreateView.html">Creating a SAPUI5 Application View</a>.
+</p>
+<p>
+As a dynamic web project is created, the user can export the project as war file via right click, press <i>Export&hellip;</i> and chose <i>Web &rarr; WAR file</i>. When importing the generated war the external referenced SAPUI5 libs get copied into the /WEB-INF/lib folder (or can be copied in the workspace as web projects) but the JavaScript Include Path is not available in the imported project.
+</p>
+<h2 id="NextSteps">Next Steps</h2>
+<ul><li>Try out <a class="wiki" href="ShowDemoKit.html">Display in Demo Kit</a>, <a class="wiki" href="CodeCompletion.html">Code Completion</a>, <a class="wiki" href="Templates.html">Templates</a> and <a class="wiki" href="Snippets.html">Snippets</a>
+</li><li><a class="wiki" href="TestingInEclipse.html">Testing the SAPUI5 Application</a>
+</li><li><a class="wiki" href="CacheBuster.html">Enabling Cache Buster for productive use</a>
+</li></ul>
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

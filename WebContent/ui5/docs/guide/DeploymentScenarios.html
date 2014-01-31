@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/DeploymentScenarios – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h2 id="DeploymentScenarios">Deployment Scenarios</h2>
+<p>
+A Web application developed using the SAPUI5 framework with runtime and tools can run on various platforms:
+</p>
+<ul><li>SAP NW ABAP Server, 
+</li><li>SAP NW Java Server, 
+</li><li>SAP NW Cloud, 
+</li><li>Open Source Java Application Server, and 
+</li><li>static Open Source Web server.
+</li></ul><p>
+Depending on the chosen development platforms provided by SAP, you find the required deployment steps in the corresponding platform documentation for SAP ABAP Server or SAP NW Cloud.
+</p>
+<h3 id="UsingaSAPServer">Using a SAP Server</h3>
+<h4 id="SAPNWABAPServer">SAP NW ABAP Server</h4>
+<p>
+For the deployment on the ABAP Site you can use the SAPUI5 ABAP Repository Team Provider feature to store your application artifacts in the <a class="wiki" href="UI5BSPRepository.html">SAPUI5 repository based on BSP repository</a>. After that you can run your application from the ABAP system. <br />
+With the deployment on the sophisticated ABAP development infrastructure you benefit from the ABAP transport infrastructure as well as from the integrated <a class="wiki" href="UI5BSPRepositoryTaskTranslation.html">translation infrastructure</a> for the language-dependent application .properties files.  
+</p>
+<h4 id="SAPNWJavaServer">SAP NW Java Server</h4>
+<p>
+Beginning with SAP NW Java 730 the SCA <i>UISAPUI5JAVA</i> is available which can be used to install the SAPUI5 Java and JavaScript runtime components. This will install the SAPUI5 components as application <i>sapui5</i>. Other applications can refer to SAPUI5 with a server absolute URL - e.g.: <tt>/sapui5/resources/sap-ui-core.js</tt>. 
+</p>
+<h4 id="SAPNWCloud">SAP NW Cloud</h4>
+<p>
+For applications which shall run in the cloud and which are using the SAPUI5 user interface technology, see topic Deploying Using SAP NW Cloud Console Client in the NW documentation. Or go to Deploying an Application on SAP NW Cloud (same NW documentation platform). For the open source platforms, the SAPUI5 Framework supports the standard deployment procedures as they are available.
+</p>
+<h3 id="UsingOpenSourceServers">Using Open Source Servers</h3>
+<h4 id="JavaApplicationServer">Java Application Server</h4>
+<p>
+To deploy an application on a Java Web Container, our recommendation is the Apache Tomcat Server where version 6.x is supported. You find information on the procedure on Apache's homepage <a class="ext-link" href="http://tomcat.apache.org/tomcat-6.0-doc/deployer-howto.html"><span class="icon"> </span>http://tomcat.apache.org/tomcat-6.0-doc/deployer-howto.html</a>. Generally, you would proceed an application .war file which you can manually create at any time.
+ 
+</p>
+<h4 id="StaticWebServer">Static Web Server</h4>
+<p>
+As Web servers, you can use the Apache HTTPD server (download it from the Apache.org homepage); or Microsoft's Internet Information Services (IIS), for this go via Windows Program Manager. In Apache HTTPD, the static archives can easily be unzipped to the /htdocs folder of the HTTPD server. In the Microsoft IIS web server, you would extract a static archive into the /wwwroot folder.
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Configuration – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="ConfigurationoftheUI5Runtime">Configuration of the UI5 Runtime</h1>
+<p>
+When the SAPUI5 bootstrap script is included in a page, the UI5 runtime will automatically be initialized as soon as the script is loaded and executed by the browser. For simple use cases and for a default UI5 installation, this should already be sufficient to build and run UIs. The only additional information that usually is specified, is the set of used UI5 libraries as well as the used theme.
+</p>
+<p>
+So a typical bootstrap script tag might look like this:
+</p>
+<div class="code"><pre>    <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span> 
+        <span class="na">type=</span><span class="s">"text/javascript"</span>
+        <span class="na">src=</span><span class="s">"resources/sap-ui-core.js"</span>
+        <span class="na">data-sap-ui-theme=</span><span class="s">"sap_goldreflection"</span>
+        <span class="na">data-sap-ui-libs=</span><span class="s">"sap.ui.commons"</span>  
+        <span class="nt">&gt;</span>
+    <span class="nt">&lt;/script&gt;</span>   
+</pre></div><p>
+The attributes <tt>data-sap-ui-theme="sap_goldreflection"</tt> and <tt>data-sap-ui-libs="sap.ui.commons"</tt> already provide examples for how the UI5 runtime can be configured to the needs of an application. 
+This page summarizes the different configuration options as well as the different ways to configure the runtime.
+</p>
+<h2 id="WaystoProvideConfiguration">Ways to Provide Configuration</h2>
+<p>
+Before discussing the different configuration options in detail, the different ways <i>how</i> to provide these options to the runtime, need to be explained:
+</p>
+<h3 id="RuntimeDefaults">Runtime Defaults</h3>
+<p>
+The easiest way to specify a configuration value is <i>not to specify it</i>. UI5 runtime defines a default value for each configuration option. When you don't need to change it, you don't need to specify it. See the <a class="wiki" href="Configuration.html#ListofConfigurationOptions">list of configuration options</a> for the default values.
+</p>
+<h3 id="IndividualScriptTagAttributes">Individual Script Tag Attributes</h3>
+<p>
+As mentioned in the introduction above, you most likely have already used the next way of specifying UI5 configuration options: one or more attributes of the bootstrap script tag. For each configuration option, UI5 accepts a correspondingly named attribute in the bootstrap script tag. 
+</p>
+<p>
+<strong>Name of the Attribute</strong>
+</p>
+<p>
+The name of the attribute is derived from the name of the configuration option by prefixing it with <tt>data-sap-ui-</tt>. The first part (<tt>data-</tt>) is necessary to comply with the W3C recommendations for custom attributes in HTML. The second part (<tt>-sap-ui-</tt>) helps to separate UI5 attributes from custom attributes defined by any other framework.
+</p>
+<p>
+As attribute names in HTML are case-insensitive, the configuration attribute names are case insensitive as well. As you can see in the <a class="wiki" href="Configuration.html#ListofConfigurationOptions">list of configuration options</a>, UI5 defines some camel case names for configuration options. To use them in attributes, you don't have to convert their names to lowercase. UI5 does this internally when accessing the configuration. 
+</p>
+<p>
+<strong>Value</strong>
+</p>
+<p>
+Element attributes in HTML by definition have a <i>string</i> value. For configuration options that are of type string, the attribute value is just the value of the option (Note: when the value contains special HTML characters like &lt; or &gt; or when it contains the same quote character that is used to wrap the attribute value, then the usual HTML escaping mechanisms must be used. Either use entities (e.g. &lt; instead of &lt;) or in the case of quotes, just switch the type of quotes (from single to double or vice versa)). 
+</p>
+<p>
+For configuration options that are <strong>not</strong> of type string, the format of the allowed values needs to be defined: 
+</p>
+<table class="wiki">
+<tr><td><strong>Type</strong></td><td><strong>Notation / Values</strong>
+</td></tr><tr><td>string</td><td>just a string, but escaped according to the HTML conventions
+</td></tr><tr><td>boolean</td><td><strong>true</strong> and <strong>x</strong> are both accepted as true value (case insensitive), all others are false. Nevertheless <strong>false</strong> is prefered for false values
+</td></tr><tr><td>int</td><td>any integer value
+</td></tr><tr><td>Array of string</td><td>comma separated list of values, comma is not supported in the values (no escaping)
+</td></tr><tr><td>Map from String to String</td><td>a JavaScript object literal (preferably JSON syntax)
+</td></tr></table>
+<p>
+The <a class="wiki" href="Configuration.html#ListofConfigurationOptions">list of configuration options</a> also lists the type for each configuration option.
+</p>
+<h3 id="SingleComplexConfigurationAttribute">Single, Complex Configuration Attribute</h3>
+<p>
+Instead of attaching individual options with individual configuration attributes to the script tag, one can use a single attribute with a more complex structure. The name of the attribute for the complex configuration is <tt>data-sap-ui-config</tt>. It's content is similar to the global configuration object, but without the enclosing parenthesis. In other words: it is a comma separated list of key/value pairs.
+</p>
+<p>
+Note: again, the usual HTML escaping mechanisms must be used when the value contains characters special to HTML (&lt;,&gt;,&amp;) or the quote character that is used to enclose the attribute value. 
+</p>
+<div class="code"><pre>    <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span> 
+        <span class="na">type=</span><span class="s">"text/javascript"</span>
+        <span class="na">src=</span><span class="s">"resources/sap-ui-core.js"</span>
+        <span class="na">data-sap-ui-config=</span><span class="s">"theme:'sap_platinum',libs:'sap.ui.commons'"</span>
+        <span class="nt">&gt;</span>
+    <span class="nt">&lt;/script&gt;</span>   
+</pre></div><h3 id="GlobalConfigurationObject">Global Configuration Object</h3>
+<p>
+Another way of specifying the configuration is to create a property in the global <tt>window</tt> object with property name <tt>sap-ui-config</tt>. The property must be a simple object, where each property represents the configuration option of the corresponding name.
+</p>
+<p>
+Note: the name of the window property intentionally is not a valid JavaScript identifier. This helps to avoid conflicts with typical JavaScript coding and the structured nature of the name should avoid conflicts with SAP objects. To define the object, quotes must be used.
+</p>
+<p>
+Note: when a configuration option has a name that is not a valid JavaScript identifier or that is a reserved token in JavaScript, then the property name in the configuration object must be quoted. Currently, there is no such configuration option.
+</p>
+<p>
+Note: As configuration is evalued during the bootstrap of UI5, the configuration object must be created <strong>before</strong> UI5 is booted. Otherwise the contained configuration could not be evaluated. As a consequenece, using the global configuration object requires just another script tag in front of the bootstrap tag. It is up to the application whether it uses an inline script tag or whether it uses a separate JavaScript file for that purpose which is loaded via a script tag. Using a dedicated file initially requires a bit more work, but has at least two advanteges: 
+ 
+</p>
+<ol><li>the file can be shared by multiple pages that then by design use the same configuration
+</li><li>using a file also works with the new Content Security Policy (CSP) mechanism as introduced e.g. by FireFox 4.0 and others.
+</li></ol><p>
+An example usage with an inline script could look like this:
+</p>
+<div class="code"><pre>    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+        <span class="nb">window</span><span class="p">[</span><span class="s2">"sap-ui-config"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">theme</span> <span class="o">:</span> <span class="s2">"sap_platinum"</span><span class="p">,</span>
+            <span class="nx">libs</span> <span class="o">:</span> <span class="s2">"sap.ui.commons"</span><span class="p">,</span>
+        <span class="p">};</span>
+    <span class="nt">&lt;/script&gt;</span>   
+    <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span> 
+        <span class="na">type=</span><span class="s">"text/javascript"</span>
+        <span class="na">src=</span><span class="s">"resources/sap-ui-core.js"</span>
+        <span class="nt">&gt;</span>
+    <span class="nt">&lt;/script&gt;</span>   
+</pre></div><p>
+One might wonder why one would use this approach at all. The overhead of an additional script/script tag makes this option less appealing. But as already mentioned, it opens the possibility to share configuration between pages, it can be used in environments where the script tag can not be influenced (e.g. because it is created out of some configuration, like in some meshup frameworks) and it allows to provide configuration before the core boots.
+</p>
+<h3 id="URLParameters">URL Parameters</h3>
+<p>
+Another way of specifying configuration options is to add theme as parameters to the start URL of an application. The name of the URL parameters is again derived from the name of the configuration option by prefixing it with <tt>sap-ui-</tt> (Note: the W3C proposed <tt>data-</tt> prefix is not needed and even not allowed here as all URL parameters are kind of custom parameters).
+</p>
+<p>
+Values of URL parameters are strings as well, so the same type mapping applies as for the HTML attributes. But please be aware of the fact, that URLs require a different encoding than HTML does (use % encoding instead of entity encoding).
+</p>
+<p>
+For security reasons, only some configuration options can be set via URL parameters. And by setting the <tt>ignoreUrlParameters</tt> option to true, applications can even disable URL configuration parameters completely. 
+</p>
+<h3 id="RuntimeConfigurationObject">Runtime Configuration Object</h3>
+<p>
+All ways explained so far have one thing in common: they are evaluated while the UI5 runtime is booting up. After that, changes to these parameters are ignored. The final configuration result can be read via the <a class="ext-link" href="../api/symbols/sap.ui.core.Core.html#getConfiguration" title="symbols/sap.ui.core.Core.html#getConfiguration in Merged JSDoc"><span class="icon"> </span>sap.ui.getCore().getConfiguration()</a> method.
+</p>
+<p>
+The same object also provides set methods for a very limited set of configuration options. Such options can be modified at runtime and the runtime and / or the controls can react on the configuration changes. The most prominent (and so far only) example for such a configuration option is the theme. 
+</p>
+<h3 id="OrderofSignificance">Order of Significance</h3>
+<p>
+Attributes of the DOM reference override the system defaults, URL parameters
+override the DOM attributes (where empty URL parameters set the parameter back to its
+system default). 
+</p>
+<p>
+Calling setters at runtime will override any previous settings calculated during object creation.
+</p>
+<h2 id="ListofConfigurationOptions">List of Configuration Options</h2>
+<p>
+The following list is a snapshot of the configuration options as they were available at the time when this page has been created. For an always up-to-date list, please check the API documentation for <a class="ext-link" href="../api/symbols/sap.ui.core.Configuration.html" title="symbols/sap.ui.core.Configuration.html in Merged JSDoc"><span class="icon"> </span>sap.ui.core.Configuration</a>.
+</p>
+<table class="wiki">
+<tr><td><strong>Option</strong></td><td><strong>Type</strong></td><td><strong>Default Value</strong></td><td><strong>URL</strong></td><td><strong>Modifiable at Runtime</strong></td><td><strong>Description</strong>
+</td></tr><tr><td>theme</td><td>string</td><td><i> 'base' </i></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td>The theme to be used for the current page. Can be changed at runtime by calling <a class="ext-link" href="../api/symbols/sap.ui.core.Core.html#applyTheme" title="symbols/sap.ui.core.Core.html#applyTheme in Merged JSDoc"><span class="icon"> </span>sap.ui.getCore().applyTheme()</a>. <br /> <strong>Theme Root:</strong> When the theme string contains an at-sign ('@'), anything before the '@' is assumed to denote the id of the theme while anything after the '@' is assumed to represent the URL location of the theme. To defend against XSS attacks, only URLs that point into the SAP Theming Repository on the same server as the application are accepted. If the URL is not valid, the theme id is also ignored.
+</td></tr><tr><td>language</td><td>string</td><td><i>user language</i></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>the language to be used for localized texts, formattings etc. The default value is not static but determined from the browser or user language (<tt>navigator.language, navigator.userLanguage, navigator.browserLanguage</tt> - in that order).
+</td></tr><tr><td>formatLocale</td><td>string</td><td><tt>undefined</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>locale to use for formatting purposes, defaults to the locale derived from the language
+</td></tr><tr><td>accessibility</td><td>boolean</td><td><tt>true</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>Whether the UI5 controls are rendered in accessibility mode. This only affects the addition of ARIA information to the HTML, it does not indicate whether the current user needs accessibility mode or not.
+</td></tr><tr><td>animation</td><td>boolean</td><td><tt>true</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>whether animations are generally allowed in UI5 controls
+</td></tr><tr><td>rtl</td><td>boolean</td><td><tt>false</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>whether all controls should be rendered in Right-to-Left (RTL) mode. Not yet determined automatically
+</td></tr><tr><td>debug</td><td>boolean</td><td><tt>false</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>when set to true, debug sources (unoptimized sources) are loaded. If the bootstrap code is loaded from an optimized source, the bootstrap will be aborted and start anew from a debug source
+</td></tr><tr><td>inspect</td><td>boolean</td><td><tt>false</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>when set to true, the <tt>sap-ui-debug.js</tt> module is included and provides some supportability features
+</td></tr><tr><td>originInfo</td><td>boolean</td><td><tt>false</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>when set to true, additional information for text resources is maintained that should allow to trace where a translated text in the UI came from
+</td></tr><tr><td>noConflict</td><td>boolean</td><td><tt>false</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>whether the UI5 core should already force jQuery into noConflict mode
+</td></tr><tr><td>noDuplicateIds</td><td>boolean</td><td><tt>true</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td>enforces a check in the UI5 runtime that doesn't allows mutliple controls to have the same ID. Highly recommended, as duplicate IDs might cause unforseeable issues and side effects!
+</td></tr><tr><td>trace</td><td>boolean</td><td><tt>false</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>Activates an overlay div that contains a trace
+</td></tr><tr><td>logLevel</td><td>0|1|2|3|4|5|6| NONE|FATAL|ERROR| WARNING|INFO|DEBUG|ALL</td><td><tt>ERROR</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td>Sets the log level to the given value. For minified (productive) sources, the default level is ERROR, for debug sources it is DEBUG. At runtime, the log level can be modified with <a class="ext-link" href="../api/symbols/jQuery.sap.log.html#setLevel" title="symbols/jQuery.sap.log.html#setLevel in Merged JSDoc"><span class="icon"> </span>jQuery.sap.log.setLevel</a> 
+</td></tr><tr><td>modules</td><td>string[]</td><td>[]</td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>List of JavaScript modules to load after the core has been initialized
+</td></tr><tr><td>areas</td><td>string[]</td><td><tt>null</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td>UIAreas to create in advance. At runtime, new UIAreas can be created with <a class="ext-link" href="../api/symbols/sap.ui.core.Core.html#createUIArea" title="symbols/sap.ui.core.Core.html#createUIArea in Merged JSDoc"><span class="icon"> </span>sap.ui.getCore().createUIArea</a>, existing ones can be deleted by sap.ui.getCore().<a class="ext-link" href="../api/symbols/sap.ui.core.Core.html#getUIArea" title="symbols/sap.ui.core.Core.html#getUIArea in Merged JSDoc"><span class="icon"> </span>getUIArea(id)</a>.destroy()
+</td></tr><tr><td>libs</td><td>string[]</td><td><tt>[]</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td>List of libraries to be loaded initially. Further libs can be loaded via the <a class="ext-link" href="../api/symbols/sap.ui.Core.html#loadLibrary" title="symbols/sap.ui.Core.html#loadLibrary in Merged JSDoc"><span class="icon"> </span>loadLibary()</a> method of the UI5 runtime.
+</td></tr><tr><td>resourceRoots</td><td>object</td><td><tt>undefined</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>jQuery.sap.registerModulePath(), sap.ui.localResources()</td><td>Locations of resources (Javascript modules, &hellip;). The value can be a map of URL locations keyed by a resource name prefix. All resources whose name starts with such a prefix will be loaded from the corresponding location. The empty string can be used to define a location for all resources. <br />See API documentation for <a class="ext-link" href="../api/symbols/jquery.sap.html#.registerModulePath" title="symbols/jquery.sap.html#.registerModulePath in Merged JSDoc"><span class="icon"> </span>jQuery.sap.registerModulePath</a> for details about the underyling mechanism.
+</td></tr><tr><td>themeRoots</td><td>object</td><td><tt>undefined</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>sap.ui.getCore().setThemeRoot()</td><td>Locations of themes, for details see the <a class="wiki" href="ThemingFAQ.html">Theming FAQ</a>
+</td></tr><tr><td>onInit</td><td>code</td><td><tt>undefined</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>Code to be executed after the core has been initialized
+</td></tr><tr><td>uidPrefix</td><td>string</td><td><tt>'__'</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>Prefix to be used for automatically generated control IDs. Must be choosen carefully to avoid conflicts with application defined IDs or DOM IDs
+</td></tr><tr><td>ignoreUrlParams</td><td>boolean</td><td><tt>false</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>Security relevant parameter that allows applications to disable configuration modifications via URL parameters.
+</td></tr><tr><td>weinreServer</td><td>string</td><td><i></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>URL to a WEINRE server to be used for debugging purposes. If set, UI5 will automatically include the WEINRE target module
+</td></tr><tr><td>weinreId</td><td>string</td><td></i></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td> 
+</td></tr><tr><td>xx-loadAllMode</td><td>boolean</td><td><tt>false</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td><strong>This is an experimental feature which might be modified or removed in future versions</strong>. <br />Used internally by the runtime. To activate it, load sap-ui-core-all.js instead of sap.ui.core.js
+</td></tr><tr><td>preload</td><td>not specified, auto, sync or async</td><td><tt>'auto'</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td>After loading the UI5 Core runtime, but before loading any further libraries, so called 'preload' files are loaded that contain all modules of a library. The modules are only loaded but not executed which should reduce initialization time. When set to 'auto', the runtime automatically uses 'sync' when running from optimized sources. When set to <tt>sync</tt>, the preload files for the declared libraries are loaded synchronously, when seto to <tt>async</tt> they are loaded asynchronously. for any other value (e.g. blank), the preload feature is deactivated and modules are loaded on demand.
+</td></tr><tr><td>xx-test-mobile</td><td>boolean</td><td><tt>false</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td><strong>This is an experimental feature which might be modified or removed in future versions</strong>. <br />Activates support for mobile device specific events (like touch events) so that standard UI5 controls can be tested on such devices
+</td></tr><tr><td>xx-fakeOS</td><td>string</td><td><tt>undefined</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td><strong>This is an experimental feature which might be modified or removed in future versions</strong>. <br /> Used to simulate iOS/Android/BlackBerry/Windows Phone on desktop PCs for easier development of mobile apps and controls. Supported values are: "ios", "android" "blackberry", and "winphone". The user-agent will be modified and the complete runtime and theming of the UI5 Mobile library will act like on the selected mobile platform. This includes browser detection mechanisms like <tt>jQuery.browser</tt>.<br />Touch events will also be simulated from the respective mouse events (see xx-test-mobile)<br /><strong>Only works on desktop Webkit browsers (Chrome and Safari) and Internet Explorer 10</strong>, in other browsers and on mobile devices this switch has no effect. Note that IE10 only supports the Windows Phone simulation and the Webkit browsers only support iOS/Android/BlackBerry simulation.<br />This configuration parameter is not handled by the UI5 configuration object and only available as URL parameter and as attribute in the bootstrap script tag.
+</td></tr><tr><td>xx-bindingSyntax</td><td>string</td><td><tt>'simple'</tt></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td> </td><td><strong>This is an experimental feature which might be modified or removed in future versions</strong>. <br /> Whether to use the simple binding syntax or the complex one. Only affects bindings that are defined as strings (e.g. in the constructor of a control or when specifying a binding in a declarative view, like XMLView or HTMLView. See the <a class="wiki" href="CalcFields.html#ExtendedsyntaxforcalculatedFields">Databinding Documentation</a> for details. 
+</td></tr><tr><td>xx-supportedLanguages</td><td>string[]</td><td><tt>[]</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td><strong>This is an experimental feature which might be modified or removed in future versions</strong>. <br /> With this option the client can be instructed to limit its backend requests for translatable texts to the configured set of languages. An empty value or the value <tt>*</tt> allows any language, the value <tt>default</tt> limits the requests to the set of languages that are delivered with SAPUI5.
+</td></tr><tr><td>xx-preloadLibCss</td><td>string[]</td><td><tt>[]</tt></td><td><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /></td><td> </td><td><strong>This is an experimental feature which might be modified or removed in future versions</strong>. <br /> Specifies a list of UI libraries (same syntax as for the <tt>libs</tt> property) for which the UI5 core does <strong>not</strong> include the <tt>library.css</tt> stylesheet in the head of the page. If the list starts with an exclamation mark (<tt>! </tt>), no stylesheet is loaded at all for the specified libs (it is assumed that the application takes care of loading CSS, e.g. a manually merged, single CSS file). Otherwise, the Core instructs the backend to create a merged CSS for the specified libs. In both cases, if the first libraries name is an asterisk (<tt>*</tt>), it will be expanded to the list of already configured libraries. <br /> <strong>Note:</strong> The merge feature is currently only available for Java and only for apps that include the additional backend component <tt>resource-ext</tt>. Without the merge, applications can include their own merged CSS file and suppress the loading of the standard library.css
+</td></tr></table>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

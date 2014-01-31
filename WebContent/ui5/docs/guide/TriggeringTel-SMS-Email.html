@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/TriggeringTel-SMS-Email – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="TriggeringPhoneSMSE-Mail">Triggering Phone/SMS/E-Mail</h1>
+<p>
+With SAPUI5 for Mobile you can easily trigger phone's native applications like E-Mail, Telephone and SMS.
+This can be very useful because you can set predefined values for the application and users don't have to enter these fields by themselves.
+When displaying personal information like phone numbers and email you can initiate a phone call or email application with just one tap.
+</p>
+<h2 id="API">API</h2>
+<p>
+Let's first take a look at the <a class="ext-link" href="../api/symbols/sap.m.URLHelper.html" title="symbols/sap.m.URLHelper.html in Merged JSDoc"><span class="icon"> </span>API</a> and in the next chapter we will build simple examples.
+You can find URLHelper API from 
+</p>
+<h3 id="TriggerTelephoneApplication">Trigger Telephone Application</h3>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">triggerTel</span><span class="o">(</span> <span class="o">[</span>Telephone Number<span class="o">]</span> <span class="o">);</span> <span class="c1">//Telephone number is optional
+</span></pre></div><h3 id="TriggerSMSApplication">Trigger SMS Application</h3>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">triggerSms</span><span class="o">(</span> <span class="o">[</span>Telephone Number<span class="o">]</span> <span class="o">);</span> <span class="c1">//Telephone number is optional
+</span></pre></div><h3 id="TriggerEmailApplication">Trigger Email Application</h3>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">triggerEmail</span><span class="o">(</span> <span class="o">[</span>Destination Email<span class="o">],</span> <span class="o">[</span>Subject<span class="o">],</span> <span class="o">[</span>Default Message Text<span class="o">],</span> <span class="o">[</span>CC<span class="o">],</span> <span class="o">[</span>BCC<span class="o">]</span> <span class="o">);</span> <span class="c1">// All parameters are optional
+</span></pre></div><h3 id="RedirectToCustomURL">Redirect To Custom URL</h3>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">redirect</span><span class="o">(</span> URL <span class="o">);</span> <span class="c1">//URL is required and can be used for custom protocols(e.g http, ftp, ...)
+</span></pre></div><h2 id="Examples">Examples</h2>
+<p>
+Firstly, let's create our sample data and then you will see the different possibilities in examples.
+</p>
+<div class="code"><pre>var person <span class="o">=</span> <span class="o">{</span>
+    name <span class="o">:</span> <span class="s">"John Smith"</span><span class="o">,</span>
+    tel <span class="o">:</span> <span class="s">"+49 62227 747474"</span><span class="o">,</span>
+    sms <span class="o">:</span> <span class="s">"+49 173 123456"</span><span class="o">,</span>
+    email <span class="o">:</span> <span class="s">"john.smith@sap.com"</span><span class="o">,</span>
+    website <span class="o">:</span> <span class="s">"http://www.sap.com"</span>
+<span class="o">};</span>
+</pre></div><p>
+Triggering an external application can be done at any time but most often it happens as a reaction to a UI control throwing an event. The next sections illustrate some of the most typical use cases.
+</p>
+<h3 id="ClickButtonToTriggerPhoneCall">Click Button To Trigger Phone Call</h3>
+<p>
+Lets build a button that the user can click to place a call. 
+</p>
+<div class="code"><pre><span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+    text <span class="o">:</span> person<span class="o">.</span><span class="na">tel</span><span class="o">,</span>
+    icon <span class="o">:</span> <span class="s">"images/action.png"</span><span class="o">,</span> <span class="cm">/* Depends where your images are located */</span>
+    tap <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+        sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">triggerTel</span><span class="o">(</span>person<span class="o">.</span><span class="na">tel</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><h3 id="ClickImageToTriggerEmail">Click Image To Trigger Email</h3>
+<p>
+You can also set Subject and Message of the email app.
+</p>
+<div class="code"><pre><span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Image</span><span class="o">({</span>
+    src <span class="o">:</span> <span class="s">"images/website.png"</span><span class="o">,</span>  <span class="cm">/* Depends where your images are located */</span>
+    tap <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+        sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">triggerEmail</span><span class="o">(</span>person<span class="o">.</span><span class="na">website</span><span class="o">,</span> <span class="s">"Info"</span><span class="o">,</span> <span class="s">"Dear "</span> <span class="o">+</span> person<span class="o">.</span><span class="na">name</span> <span class="o">+</span> <span class="s">","</span><span class="o">);</span> 
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><h3 id="InsideList">Inside List</h3>
+<p>
+DisplayListItem with active feedback is the most popular use-case.
+</p>
+<div class="code"><pre><span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">DisplayListItem</span><span class="o">({</span>
+    label <span class="o">:</span> <span class="s">"Sms"</span><span class="o">,</span>
+    value <span class="o">:</span> <span class="s">"( "</span> <span class="o">+</span> person<span class="o">.</span><span class="na">sms</span> <span class="o">+</span> <span class="s">" )"</span><span class="o">,</span>
+    type <span class="o">:</span> <span class="s">"Active"</span><span class="o">,</span>
+    tap <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+        sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">triggerSms</span><span class="o">(</span>person<span class="o">.</span><span class="na">sms</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+But if you want to use any other control inside the list this is still possible with <a class="missing wiki">InputListItem?</a>.
+</p>
+<div class="code"><pre><span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">InputListItem</span><span class="o">({</span>
+    label <span class="o">:</span> <span class="s">"Website"</span><span class="o">,</span>
+    content <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+        text <span class="o">:</span> person<span class="o">.</span><span class="na">website</span><span class="o">,</span>
+        tap <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+            sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">redirect</span><span class="o">(</span>person<span class="o">.</span><span class="na">website</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">})</span>
+<span class="o">});</span>
+</pre></div><h2 id="NOTES">NOTES</h2>
+<ol><li>If you have an "*" or "#" inside of the Telephone Number then iOS does not try to trigger phone call.
+</li><li>In Android you can add multiple recipients for an SMS by separating recipient numbers using ";".
+</li><li>According to "RFC 2368" you can set multiple subscribers for the email application by separating each with "," but please keep in mind this still depends on the application (e.g Outlook uses ";" as separator).
+</li><li>You can use the sap.m.URLHelper.redirect method to use custom URL Schemes:
+<ol class="loweralpha"><li>For iOS: <a class="ext-link" href="http://developer.apple.com/library/safari/#featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html"><span class="icon"> </span>http://developer.apple.com/library/safari/#featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html</a>
+</li><li>For Android: <a class="ext-link" href="http://developer.android.com/guide/appendix/g-app-intents.html"><span class="icon"> </span>http://developer.android.com/guide/appendix/g-app-intents.html</a>
+</li><li>URI schemes: <a class="ext-link" href="http://en.wikipedia.org/wiki/URI_scheme"><span class="icon"> </span>http://en.wikipedia.org/wiki/URI_scheme</a>
+</li></ol></li><li>If you just want to get a URI back but you want no redirect to happen, then you can use normalize methods which have the same parameter as trigger methods, like:
+<div class="code"><pre><span class="cm">/*
+ * These methods do not redirect but return URI scheme back as string.
+ * All parameters are optional
+ */</span>
+sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">normalizeTel</span><span class="o">(</span> <span class="o">[</span>Telephone Number<span class="o">]</span> <span class="o">);</span>
+sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">normalizeSms</span><span class="o">(</span> <span class="o">[</span>Telephone Number<span class="o">]</span> <span class="o">);</span>
+sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">URLHelper</span><span class="o">.</span><span class="na">normalizeEmail</span><span class="o">(</span> <span class="o">[</span>Destination Email<span class="o">],</span> <span class="o">[</span>Subject<span class="o">],</span> <span class="o">[</span>Default Message Text<span class="o">],</span> <span class="o">[</span>CC<span class="o">],</span> <span class="o">[</span>BCC<span class="o">]</span> <span class="o">);</span>
+</pre></div></li><li>You can find URLHelper API under <a class="ext-link" href="../api/symbols/sap.m.URLHelper.html" title="symbols/sap.m.URLHelper.html in Merged JSDoc"><span class="icon"> </span>this link</a>
+</li></ol>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

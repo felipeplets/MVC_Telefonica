@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Fragments – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="Fragments">Fragments</h1>
+<p>
+In short, Fragments are pieces of UI - just like SAPUI5 MVC Views, but without the View Control around the content and without their own Controller.
+</p>
+<h2 id="Introduction">Introduction</h2>
+<p>
+UI parts which should be used in several Views cannot be easily defined - either they have to be created as new controls (development overhead) or they have to be created as Views (runtime overhead; they have a separate controller but would like to have the same controller as the View; in case of Dialogs it's not even possible).<br />
+Furthermore Views and popup controls like Dialogs do not go well together: the Dialog content can be defined as a View, but the Dialog itself always has to be created programmatically.
+</p>
+<p>
+To solve these issues, "Fragments" are introduced as a new concept: Fragments are light-weight UI parts (UI sub-trees) which can be re-used, defined similar to Views (in XML, HTML, JS), but do not have any controller or other behavior code involved. In case code is required and for event handler methods they should be able to connect to existing controllers of the "owning" View. So one important characteristics of Fragments is that they are independent of the MVC concept and can be used without using MVC, but when used together with Views and Controllers, Fragments can make use of them and integrate nicely.
+</p>
+<p>
+Similar to <a class="ext-link" href="http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-B63ED1A3"><span class="icon"> </span>DocumentFragments</a> in HTML, when inserted into a UI5 UI tree the Fragment itself shall have no HTML representation. Instead, its content is inserted. So Fragments are not like controls, but rather like a factory creating the contained controls. <br />
+They support re-use and View modularization without adding overhead.
+</p>
+<p>
+Because of the huge similarities of Fragments and the definition and usage of MVC Views, it is important to be familiar with the <a href="MVC.html">SAPUI5 MVC concept</a>. Many topics like e.g. the Fragment content definition are identical and are hence not described here in detail.
+</p>
+<h2 id="ImportantDisclaimer">Important Disclaimer</h2>
+<p>
+As of the initial release of Fragments in version 1.15.0 of SAPUI5, they are marked as <strong>experimental</strong>, so the API can change at any time and they are not guaranteed to work properly.
+</p>
+<h2 id="TypesofFragments">Types of Fragments</h2>
+<p>
+Just like MVC Views can be defined in several formats (declarative as XML, HTML and JSON as well as imperative as JavaScript), Fragments can be defined in several formats. Initially supported are:
+</p>
+<ul><li>XML Fragments
+</li><li>HTML Fragments
+</li><li>JS Fragments
+</li></ul><p>
+Additional types can be implemented and plugged in.
+</p>
+<h2 id="DefinitionofFragments">Definition of Fragments</h2>
+<p>
+Typically Fragments are defined (like Views) within a separate File (after all that's their purpose). The same rules for the file location apply, but the file name does not end with *.view.*, but with *.fragment.*.
+</p>
+<h3 id="DefinitionofXMLFragments">Definition of XML Fragments</h3>
+<p>
+A very simple XML Fragment is defined like this:
+</p>
+<div class="code"><pre><span class="nt">&lt;Button</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">id=</span><span class="s">"btnInFragment"</span> <span class="na">text=</span><span class="s">"Hello World"</span> <span class="nt">/&gt;</span>
+</pre></div><p>
+This model would be located in a file named e.g. "&hellip;/my/useful/VerySimpleUiPart.fragment.xml" and then be referenced by its name "my.useful.UiPart", so it can be found by the module loading mechanism.
+</p>
+<p>
+In contrast to XMLViews, there is no <tt>&lt;View&gt;</tt> tag as root element, but there is immediately some "normal" SAPUI5 Control.
+Apart from that everything works identically. 
+</p>
+<p>
+A slightly more complex Fragment is defined like this (e.g. stored as ""&hellip;/my/useful/SimpleUiPart.fragment.xml"):
+</p>
+<div class="code"><pre><span class="nt">&lt;VBox</span> <span class="na">xmlns=</span><span class="s">"sap.m"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">"My Label inside an XML fragment"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Button</span> <span class="na">id=</span><span class="s">"btnInFragment"</span> <span class="na">text=</span><span class="s">"Hello World"</span> <span class="na">press=</span><span class="s">"doSomething"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"{/someText}"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/VBox&gt;</span>
+</pre></div><p>
+The "doSomething" value of the "press" event attribute means that the event handler is bound to the "doSomething" method of a Controller - this means that this Fragment can only be instantiated with a Controller given that has such a method. Otherwise the code will throw an error.
+</p>
+<p>
+One can see how also the data binding syntax is the same as in XMLViews. Of course this requires the Fragment to be placed into a part of the UI tree where the Model is available.
+</p>
+<h3 id="DefinitionofJavaScriptFragments">Definition of JavaScript Fragments</h3>
+<p>
+A very simple JS Fragment is defined like this:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsfragment</span><span class="o">(</span><span class="s">"my.useful.UiPartX"</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nl">createContent:</span> function<span class="o">(</span>oController<span class="o">)</span> <span class="o">{</span>
+        var oButton <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+            <span class="nl">text:</span><span class="s">"Hello World"</span><span class="o">,</span>
+            <span class="nl">press:</span>oController<span class="o">.</span><span class="na">doSomething</span>
+        <span class="o">});</span>
+        <span class="k">return</span> oButton<span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+This defines a new Fragment with the name "my.useful.UiPartX" which can then be used in arbitrary places.
+</p>
+<p>
+Like in Views:
+</p>
+<ul><li>the structure is very similar: a name and an object is given, where the object has a <tt>createContent()</tt> function
+</li><li>the createContent function is responsible for the UI definition and has to return a Control (might be extended to an Array of controls in the future)
+</li><li>this definition can happen at any place - either inline or in a file on its own ("&hellip;/my/useful/UiPartX.fragment.js")
+</li><li>the oController may be given or null
+</li><li>if a Controller is given, its methods can be used for the event handlers of controls
+</li></ul><p>
+But different than in Views:
+</p>
+<ul><li>there is no <tt>getControllerName()</tt> method. Fragments cannot specify to have a Controller.
+</li><li>whether <tt>oController</tt> is given or not is NOT a decision of the Fragment, but a decision of the code instantiating the Fragment. If that Code is part of a Controller, it can pass a reference to itself to the Fragment. This means there can be a dependency between Controllers and Fragments: Fragments may expect a Controller to exist and to have certain methods. And Controllers may expect certain Controls to be in the Fragment. This is in line with the purpose of Fragments to be very light-weight re-use entities not providing much encapsulation. For more encapsulation Views or even Components are better suited.
+</li></ul><h3 id="DefinitionofHTMLFragments">Definition of HTML Fragments</h3>
+<p>
+A very simple HTML Fragment can be defined like this (and stored as "&hellip;/my/useful/UiPartZ.fragment.html"):
+</p>
+<div class="code"><pre><span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.m.Button"</span> <span class="na">data-press=</span><span class="s">"doSomething"</span> <span class="na">data-text=</span><span class="s">"Hello World"</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div><p>
+The syntax is the same as in HTMLViews, but the &lt;template&gt; tag normally present in HTMLViews (and used to specify e.g. the Controller name) is not used in Fragments. Like XML and JS Fragments, HTML Fragments cannot specify a Controller to be instantiated. They can use a Controller for binding event handler methods, but only if the code instantiating them passes a Controller.
+</p>
+<h2 id="InstantiationusageofFragments">Instantiation/usage of Fragments</h2>
+<p>
+One important difference to Views is that Fragments are no Controls. While Views are Control instances which have their own HTML and their own set of properties and may (usually will) contain other controls, the Fragments just consist of their content. Views <i>contain</i> their content Controls, Fragments <i>consist</i> of their content Controls.<br />
+E.g. when a Fragment containing a Button is instantiated, there is only a Button. Or when a Fragment consisting of a Dialog is instantiated, a Dialog control is returned.
+</p>
+<p>
+The generic function to instantiate Fragments is <tt>sap.ui.fragment()</tt>. This method can be called with either the name, the type and optionally a Controller or with a configuration object and an optional Controller. It returns the root Control contained in the Fragment (or an Array of root controls, depending on the Fragment).
+</p>
+<p>
+However, normally the Fragment type is known in advance, so typically one of the specific methods is used as described below. All of these methods have in common that:
+</p>
+<ul><li>A fragment name must be given. This name must be resolvable to the fragment file URL by the UI5 module loading mechanism. In case of JS Fragments the name may also be defined inline.
+</li><li>A Controller can be optionally given (some Fragments may require a Controller and certain methods to be present in this Controller)
+</li><li>An ID can be optionally given. If no ID is given, any Control IDs specified in the Fragment are used as-is. If a Fragment is used several times this can lead to duplicate IDs. One way to avoid that problem is to specify a Fragment ID. This ID will then be used as prefix for all Controls in this Fragment instance. See the section on "Unique IDs" for more details.
+</li></ul><h3 id="InstantiatingJavaScriptFragmentsprogrammatically">Instantiating JavaScript Fragments programmatically</h3>
+<p>
+The JavaScript Fragment defined above would be instantiated from a Controller as follows:
+</p>
+<div class="code"><pre>var myButton <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsfragment</span><span class="o">(</span><span class="s">"my.useful.UiPartX"</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span> <span class="c1">// assuming "this" is the Controller
+</span></pre></div><p>
+This Button can now be used like a normally-created one.
+</p>
+<p>
+Note how a Controller instance is passed as second parameter. This is required in this case because that particular Fragment tries to bind the Button press handler to the method "doSomething" in the given Controller. With no Controller given this would cause an error.
+</p>
+<p>
+Within a JSView's <tt>createContent()</tt> method the Fragment content could be included like this:
+</p>
+<div class="code"><pre><span class="o">...</span>
+   <span class="nl">createContent:</span> function<span class="o">(</span>oController<span class="o">)</span> <span class="o">{</span>
+      var hLayout <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">HorizontalLayout</span><span class="o">();</span>
+      <span class="o">...</span>
+      var myFragment <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsfragment</span><span class="o">(</span><span class="s">"my.useful.UiPartX"</span><span class="o">,</span> oController<span class="o">);</span> <span class="c1">// here the Fragment is instantiated
+</span>      hLayout<span class="o">.</span><span class="na">addContent</span><span class="o">(</span>myFragment<span class="o">);</span>
+      <span class="o">...</span>
+      <span class="k">return</span> hLayout<span class="o">;</span>
+   <span class="o">}</span>
+<span class="o">...</span>
+</pre></div><p>
+The Fragment content (=the Button) would be added to the Layout which is the content of this JSView.
+</p>
+<p>
+Other Fragments not requiring a Controller can of course be instantiated without passing a Controller. But it also does not hurt to pass the Controller - it is only used for setting up the event handlers (or within the createContent() method, in case of JS Fragments).
+</p>
+<h3 id="InstantiatingXMLFragmentsprogrammatically">Instantiating XML Fragments programmatically</h3>
+<p>
+The !XML Fragment defined above would be instantiated as follows:
+</p>
+<div class="code"><pre>var myButton <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">xmlfragment</span><span class="o">(</span><span class="s">"my.useful.VerySimpleUiPart"</span><span class="o">);</span> <span class="c1">// this specific fragment does not need a Controller
+</span></pre></div><p>
+The same can of course be done in JSViews. Fragments of any type can be used within Views on any type (just like View types can also be mixed).
+</p>
+<h3 id="InstantiatingHTMLFragmentsprogrammatically">Instantiating HTML Fragments programmatically</h3>
+<p>
+The HTML Fragment defined above would be instantiated as follows:
+</p>
+<div class="code"><pre>var myButton <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">htmlfragment</span><span class="o">(</span><span class="s">"my.useful.UiPartZ"</span><span class="o">,</span> oController<span class="o">);</span> <span class="c1">// this specific fragment again needs a Controller
+</span></pre></div><p>
+No surprises here&hellip; <br />
+Again this can be done at any place in the code (provided a Controller is available) and the returned Button can be used like any Button.
+</p>
+<h3 id="InstantiatingFragmentsofanytypeindeclarativeViews">Instantiating Fragments (of any type) in declarative Views</h3>
+<p>
+In XMLViews Fragments are used just like regular controls, or more precisely: like Views.
+</p>
+<div class="code"><pre><span class="nt">&lt;mvc:View</span> <span class="na">xmlns:mvc=</span><span class="s">"sap.ui.core.mvc"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span> <span class="na">xmlns:commons=</span><span class="s">"sap.ui.commons"</span> <span class="na">controllerName=</span><span class="s">"testdata.fragments.XMLViewController"</span> <span class="nt">&gt;</span>
+    
+    <span class="nt">&lt;commons:HorizontalDivider</span> <span class="nt">/&gt;</span>
+    
+    <span class="nt">&lt;core:Fragment</span>               <span class="na">fragmentName=</span><span class="s">"my.useful.SimpleUiPart"</span> <span class="na">type=</span><span class="s">"XML"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;core:Fragment</span> <span class="na">id=</span><span class="s">"xmlInXml"</span> <span class="na">fragmentName=</span><span class="s">"my.useful.SimpleUiPart"</span> <span class="na">type=</span><span class="s">"XML"</span> <span class="nt">/&gt;</span>
+    
+    <span class="nt">&lt;commons:HorizontalDivider</span> <span class="nt">/&gt;</span>
+    
+    <span class="nt">&lt;core:Fragment</span>              <span class="na">fragmentName=</span><span class="s">"my.useful.UiPartX"</span> <span class="na">type=</span><span class="s">"JS"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;core:Fragment</span> <span class="na">id=</span><span class="s">"jsInXml"</span> <span class="na">fragmentName=</span><span class="s">"my.useful.UiPartX"</span> <span class="na">type=</span><span class="s">"JS"</span> <span class="nt">/&gt;</span>
+    
+    <span class="nt">&lt;commons:HorizontalDivider</span> <span class="nt">/&gt;</span>
+    
+    <span class="nt">&lt;core:Fragment</span>                <span class="na">fragmentName=</span><span class="s">"my.useful.UiPartZ"</span> <span class="na">type=</span><span class="s">"HTML"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;core:Fragment</span> <span class="na">id=</span><span class="s">"htmlInXml"</span> <span class="na">fragmentName=</span><span class="s">"my.useful.UiPartZ"</span> <span class="na">type=</span><span class="s">"HTML"</span> <span class="nt">/&gt;</span>
+
+        
+<span class="nt">&lt;/mvc:View&gt;</span>
+</pre></div><p>
+In this XMLView there are all three types of Fragments from above included/instantiated, each type twice: once without a given ID and once with given ID. (The effect of giving or not giving Fragment IDs is explained in the section on unique IDs.)
+</p>
+<p>
+These Fragment references basically work like import statements including the Fragment content controls.
+</p>
+<h2 id="OtherObjectsinsteadofControllers">Other Objects instead of Controllers</h2>
+<p>
+Strictly spoken the oController object given when instantiating a Fragment does not need to be an object of type sap.ui.core.mvc.Controller. It is entirely up to the Fragment what to expect from this object.
+This object is passed to the createContent method of JS Fragments and in case of the declarative Fragment types (XML, HTML) the event handler methods are searched on this object. So in most cases instead of a real Controller object any JavaScript object could be given - provided it has the required methods.
+</p>
+<p>
+E.g. in case of the above HTML Fragment:
+</p>
+<div class="code"><pre>var oDummyController <span class="o">=</span> <span class="o">{</span>
+   <span class="nl">doSomething:</span> function<span class="o">()</span> <span class="o">{</span>
+      <span class="c1">// ...do whatever should happen when the Button in the Fragment is pressed...
+</span>   <span class="o">}</span>
+<span class="o">};</span>
+
+var myButton <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">htmlfragment</span><span class="o">(</span><span class="s">"my.useful.UiPartZ"</span><span class="o">,</span> oDummyController<span class="o">);</span> <span class="c1">// this specific fragment needs a Controller - but just gets a dummy Controller here
+</span></pre></div><p>
+This can be used in an environment where no MVC is used, but still functionality for the Fragments should be provided, or also for unit-testing Fragments with mock Controllers.
+</p>
+<h2 id="DialogsandotherPopupsasFragments">Dialogs (and other Popups) as Fragments</h2>
+<p>
+Fragments are suited to declaratively define Dialogs and other Popup controls which are not part of the normal page UI structure. This is a huge advantage over Views which do not support this usage (basically because the View Control is always a wrapper around the View content).
+</p>
+<h3 id="DefiningDialogsasFragments">Defining Dialogs as Fragments</h3>
+<p>
+To use Fragments for defining popups, just let the root Control of the Fragment be a Dialog or similar control.
+</p>
+<p>
+Here is an XML Fragment Dialog example:
+</p>
+<div class="code"><pre><span class="nt">&lt;Dialog</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">title=</span><span class="s">"XML Fragment Dialog"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextView</span> <span class="na">text=</span><span class="s">"{/dialogText}"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;buttons&gt;</span>
+        <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"Close"</span> <span class="na">press=</span><span class="s">"closeDialog"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/buttons&gt;</span>
+<span class="nt">&lt;/Dialog&gt;</span>
+</pre></div><p>
+Other Fragment types are used the same way to define a Dialog etc. as Fragment. E.g. in JS Fragments, the createContent() method returns a Dialog control:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsfragment</span><span class="o">(</span><span class="s">"testdata.fragments.JSFragmentDialog"</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nl">createContent:</span> function<span class="o">(</span>oController<span class="o">)</span> <span class="o">{</span>
+        var oDialog <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Dialog</span><span class="o">({</span><span class="nl">title:</span> <span class="s">"JavaScript Fragment Dialog"</span><span class="o">});</span>
+        
+        var oText <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextView</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"{/dialogText}"</span><span class="o">});</span>
+        oDialog<span class="o">.</span><span class="na">addContent</span><span class="o">(</span>oText<span class="o">);</span>
+        
+        var oButton <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+            <span class="nl">text:</span> <span class="s">"Close"</span><span class="o">,</span>
+            <span class="nl">press:</span> function<span class="o">(){</span>oDialog <span class="o">.</span><span class="na">close</span><span class="o">();}</span>
+        <span class="o">});</span>
+        oDialog<span class="o">.</span><span class="na">addButton</span><span class="o">(</span>oButton<span class="o">);</span>
+
+        <span class="k">return</span> oDialog<span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><h3 id="UsingDialogsdefinedasFragments">Using Dialogs defined as Fragments</h3>
+<p>
+Regardless of the Fragment type, the Fragment instantiation function (as always) returns the root Control of the Fragment, which is now a Dialog Control that can be used like any Dialog, e.g. it can be immediately opened:
+</p>
+<div class="code"><pre>var oDialogFragment <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsfragment</span><span class="o">(</span><span class="s">"testdata.fragments.JSFragmentDialog"</span><span class="o">);</span>
+oDialogFragment<span class="o">.</span><span class="na">open</span><span class="o">();</span>
+</pre></div><p>
+Note that any global Model is available for Data Binding within this Dialog, and of course also any Model set on the Dialog itself. But if this Dialog is opened from a Controller, the Model of this Controller's View is NOT automatically available within the Dialog Fragment (because the Dialog is not part of the View UI).<br />
+So if the above code for opening the Fragment Dialog is part of a Controller, it could set the View's Model on the Dialog:
+</p>
+<div class="code"><pre>var oDialogFragment <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsfragment</span><span class="o">(</span><span class="s">"testdata.fragments.JSFragmentDialog"</span><span class="o">);</span>
+oDialogFragment<span class="o">.</span><span class="na">setModel</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">getView</span><span class="o">().</span><span class="na">getModel</span><span class="o">());</span>
+oDialogFragment<span class="o">.</span><span class="na">open</span><span class="o">();</span>
+</pre></div><h2 id="InlineDefinitionandInstatiationofFragments">Inline Definition and Instatiation of Fragments</h2>
+<p>
+In addition to external definition in separate files, Fragments can also be defined inline and immediately instantiated. The content definition and also the instantiation syntax are just the same as described above, but instead of the "fragmentName" the "fragmentContent" needs to be given.
+</p>
+<p>
+This feature can be used for prototyping or for dynamic Fragment composition or loading Fragment content from sources which are not accessible by the normal module loading mechanism, but in general inline definitions of Fragments plays only a minor role.
+</p>
+<p>
+JS Fragment definitions as described above can be done inline as well as within a separate file without any changes. Inline definition of XML and HTML Fragments is described below:
+</p>
+<h3 id="InlineXMLFragmentExample">Inline XML Fragment Example</h3>
+<div class="code"><pre><span class="c1">// define the XML fragment as a string (or load it from anywhere)
+</span>var myXml <span class="o">=</span> <span class="err">'</span><span class="o">&lt;</span>Panel xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span> text<span class="o">=</span><span class="s">"Hello World"</span><span class="o">&gt;&lt;</span>Button text<span class="o">=</span><span class="s">"Hello World"</span><span class="o">&gt;&lt;/</span>Button<span class="o">&gt;&lt;/</span>Panel<span class="o">&gt;</span><span class="err">'</span><span class="o">;</span>
+
+<span class="c1">// use this XML string as "fragmentContent"
+</span>var oFragment <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">xmlfragment</span><span class="o">({</span><span class="nl">fragmentContent:</span>myXml<span class="o">});</span> <span class="c1">// oFragment is now the Panel Control
+</span>
+<span class="c1">// put the Fragment content into the document
+</span>oFragment<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="err">'</span>content<span class="err">'</span><span class="o">);</span>
+</pre></div><h3 id="InlineHTMLFragmentExample">Inline HTML Fragment Example</h3>
+<div class="code"><pre><span class="c1">// define the HTML fragment as a string (or load it from anywhere)
+</span>var myHtml <span class="o">=</span> <span class="err">'</span><span class="o">&lt;</span>div data<span class="o">-</span>sap<span class="o">-</span>ui<span class="o">-</span>type<span class="o">=</span><span class="s">"sap.m.Button"</span> data<span class="o">-</span>text<span class="o">=</span><span class="s">"Hello World"</span><span class="o">&gt;&lt;/</span>div<span class="o">&gt;</span><span class="err">'</span><span class="o">;</span>
+
+<span class="c1">// use this HTML string as "fragmentContent"
+</span>var oFragment <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">htmlfragment</span><span class="o">({</span><span class="nl">fragmentContent:</span>myHtml<span class="o">});</span> <span class="c1">// oFragment is now the Button Control
+</span>
+<span class="c1">// put the Fragment content into the document
+</span>oFragment<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="err">'</span>content<span class="err">'</span><span class="o">);</span>
+</pre></div><h2 id="UniqueIDs">Unique IDs</h2>
+<p>
+For re-usable components the question of how to achieve unique IDs is always important. In general, IDs in SAPUI5 are either generated (and automatically unique) or given as string constants. In MVC Views, which are another type of reusable components, all IDs which are <i>given</i> as static Strings inside the declarative Views are automatically prefixed with the View ID. The methods View.byId() and View.createId() are used to handle these prefixed IDs when only the static Control ID is known.
+</p>
+<p>
+Fragments are meant to be a more light-weight concept of separating and re-using UI parts, and in addition there are no Fragment instances (in contrast to View instances) which could have IDs and handle ID prefixing helper functions. Therefore static IDs in Fragments are by default used as-is, i.e. they are NOT prefixed to make them unique. (Not-given IDs are still generated.)<br />
+But when a Fragment is supposed to be used several times within one application, the prefixing mechanism can still be used, by giving an ID when instantiating the Fragment.
+</p>
+<p>
+Note that you should never rely on the specific prefixing syntax (because it may change). Always use methods like "byId()" and "createId()", as described below.
+</p>
+<h3 id="IDsindeclarativeXMLHTMLFragments">IDs in declarative XML/HTML Fragments</h3>
+<p>
+This means when a Fragment contains a given Control ID and the same Fragment is instantiated twice <i>without giving and ID when instantiating the Fragment</i>, there will be a duplicate ID error.
+</p>
+<p>
+Given the following XML Fragment example:
+</p>
+<div class="code"><pre><span class="nt">&lt;HorizontalLayout</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;Button</span>                    <span class="na">text=</span><span class="s">"Hello World"</span> <span class="nt">/&gt;</span>
+   <span class="nt">&lt;Button</span> <span class="na">id=</span><span class="s">"btnInFragment"</span> <span class="na">text=</span><span class="s">"Hello World"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/HorizontalLayout&gt;</span>
+</pre></div><ul><li>The first Button will ALWAYS have a generated ID, which could e.g. look like: "<tt>__button2</tt>". This is regardless of how the Fragment is instantiated or whetehr it resides inside a View.
+</li><li>The second Button will:
+<ul><li>&hellip;have the ID "<tt>btnInFragment</tt>" when the Fragment is instantiated without giving an ID (easy to use, but risk of ID collisions when instantiated multiple times):
+<ul><li><tt>sap.ui.htmlfragment("my.useful.UiPartZ"); // Button ID will not be prefixed</tt>
+</li></ul></li><li>&hellip;have the ID "<tt>myFragment--btnInFragment</tt>" when the Fragment is instantiated giving the ID "myFragment" (do not rely on the exact syntax of this prefixing!)
+<ul><li><tt>sap.ui.htmlfragment("myFragment", "my.useful.UiPartZ"); // Button ID will get prefixed by "myFragment"</tt>
+</li></ul></li></ul></li></ul><h3 id="IDsinJSFragments">IDs in JS Fragments</h3>
+<p>
+Just like in JSViews, the JS Fragments have a special behavior regarding IDs because the Fragment logic cannot influence the IDs of Controls created in the createContent() method. So when a static ID is given within a JS Fragment, the <tt>this.createId()</tt> method should be used:
+</p>
+<div class="code"><pre><span class="nl">createContent:</span> function<span class="o">(</span>oController<span class="o">)</span> <span class="o">{</span>
+    var oButton <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">createId</span><span class="o">(</span><span class="s">"btnInJsFragment"</span><span class="o">),</span> <span class="o">{</span> <span class="c1">// use createId() to let the Fragment incluence the ID
+</span>        <span class="nl">text:</span> <span class="s">"Hello JS World"</span>
+    <span class="o">});</span>
+    <span class="k">return</span> oButton <span class="o">;</span>
+<span class="o">}</span>
+</pre></div><p>
+If an ID was given at Fragment instatiation time, createId() will add it as prefix. If not, createId() will leave the given ID untouched. (However, a containing View may add its prefix, see below.)
+</p>
+<h3 id="IDswhenaFragmentisusedwithinaView">IDs when a Fragment is used within a View</h3>
+<p>
+When a Fragment is used within a declarative View, like an XMLView or HTMLView, the same as above applies: generated IDs are not prefixed at all, given IDs are:
+</p>
+<ul><li>prefixed with only the View ID when no Fragment ID was given
+</li><li>prefixed with View ID AND Fragment ID when a Fragment ID was given
+</li></ul><h3 id="RetrievingControlinstancesbytheirID">Retrieving Control instances by their ID</h3>
+<p>
+When a Control inside a Fragment has an ID given, it can be found by knowing the ID. Due to the above prefixing that guarantees unique IDs there are different cases possible which require different calls.
+</p>
+<p>
+Assuming the Control has ID "myControl" - how to retrieve it by its ID?
+</p>
+<ul><li>When the Fragment is NOT part of a View:
+<ul><li>When NO Fragment ID was given:  <tt>myControl = sap.ui.getCore().byId("myControl")</tt>
+</li><li>When a Fragment ID "myFrag" was given:  <tt>myControl = sap.ui.core.Fragment.byId("myFrag", "myControl")</tt>
+</li></ul></li></ul><p>
+ 
+</p>
+<ul><li>When the Fragment is embedded into a View and the code is inside a Controller (assuming "this" is the Controller):
+<ul><li>When NO Fragment ID was given:  <tt>myControl = this.byId("myControl")</tt>
+</li><li>When a Fragment ID "myFrag" was given:  <tt>myControl = this.byId(sap.ui.core.Fragment.createId("myFrag", "myControl"))</tt>
+</li></ul></li></ul><h2 id="FragmentswithmultipleRootNodes">Fragments with multiple Root Nodes</h2>
+<p>
+XML- and JavaScript Fragments are not restricted to have exactly one root Control containing all other Controls as children.
+</p>
+<p>
+In JS-Fragments, the "createContent()" method can optionally return an array of Controls:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsfragment</span><span class="o">(</span><span class="s">"sap.ui.core.fragmenttest.MultiRootFragment"</span><span class="o">,</span> <span class="o">{</span>
+
+    <span class="nl">createContent:</span> function<span class="o">(</span>oController<span class="o">)</span> <span class="o">{</span>
+        var oLabel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span><span class="nl">text:</span><span class="s">"These controls are within one multi-root Fragment:"</span><span class="o">});</span>
+        var oInput <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Input</span><span class="o">();</span>
+        var oButton <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Still in the same Fragment"</span><span class="o">});</span>
+
+        <span class="k">return</span> <span class="o">[</span> oLabel<span class="o">,</span> oInput<span class="o">,</span> oButton <span class="o">];</span>
+    <span class="o">}</span>
+
+<span class="o">});</span>
+</pre></div><p>
+As XML documents need to have exactly one root node, to achieve XML Fragments with multiple root nodes, an additional <tt>&lt;FragmentDefinition&gt;</tt> tag needs to be added as root element containing the actual root controls. This <tt>&lt;FragmentDefinition&gt;</tt> tag will not have any representation in HTML at runtime; the children are added directly to wherever this Fragment is placed.
+</p>
+<div class="code"><pre><span class="nt">&lt;core:FragmentDefinition</span> <span class="na">xmlns=</span><span class="s">"sap.m"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">"These controls are within one multi-root Fragment:"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Input</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"Still in the same Fragment"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/core:FragmentDefinition&gt;</span>
+</pre></div><p>
+For HTML Fragments this feature is currently not available.
+</p>
+<h2 id="WhentousewhichFragmentType">When to use which Fragment Type?</h2>
+<p>
+Why are there different types of Fragments? Because use-cases are different and because some developers prefer declarative UIs while others prefer programmatically constructing them. There is no "best" choice, but the <a href="MVC.html#WhentousewhichViewtype">suggestions when to use which View type</a> also apply to Fragments.
+</p>
+<h2 id="RegisteringadditionalFragmentTypes">Registering additional Fragment Types</h2>
+<p>
+The details of this plugin mechanism are not finalized yet. In general the registration is done using:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">Fragment</span><span class="o">.</span><span class="na">registerType</span><span class="o">(</span>sType<span class="o">,</span> oFragmentImpl<span class="o">);</span>
+</pre></div><p>
+Registering an existing type will override the previous type definition.
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

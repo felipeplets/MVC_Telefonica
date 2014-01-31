@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/DataBinding/BindingAggregations – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h2 id="BindingAggregations">Binding Aggregations</h2>
+<p>
+</p><p>
+</p>
+<p>
+The aggregation binding can likewise be defined either in the settings object in the constructor, or with the separate <tt>bindAggregation</tt> method call. The aggregation binding requires a template to be defined, which is cloned for each bound entry of the list. For each clone that is created, the binding context is set to the respective list entry, so that all bindings of the template are resolved relative to the entry. The aggregated elements will be destroyed and recreated whenever the bound list in the data model is changed.
+</p>
+<p>
+Controls that are able to visualize large data sets, like the Table or the RowRepeater, do not create clones for all entries of the list, but just for the currently visible entries. This is done using a custom <tt>updateAggregation</tt> method as described in <a class="wiki" href="UsageInControl.html">Data Binding in Custom Controls</a>.
+</p>
+<p>
+To bind an aggregation, you first have to create a template or provide a factory function, which is then passed when defining the aggregation binding itself. In the <tt>settings</tt> object, it looks like this:
+</p>
+<div class="code"><pre>var oItemTemplate <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">ListItem</span><span class="o">({</span><span class="nl">text:</span><span class="s">"{name}"</span><span class="o">});</span>
+var oComboBox <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">ComboBox</span><span class="o">({</span>
+    <span class="nl">items:</span> <span class="o">{</span>
+        <span class="nl">path:</span> <span class="s">"/company/contacts"</span><span class="o">,</span> 
+        <span class="nl">template:</span> oItemTemplate
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+The aggregation binding can also be defined using the <tt>bindAggregation</tt> method of a control, as follows:
+</p>
+<div class="code"><pre>oComboBox<span class="o">.</span><span class="na">bindAggregation</span><span class="o">(</span><span class="s">"items"</span><span class="o">,</span> <span class="s">"/company/contacts"</span><span class="o">,</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">ListItem</span><span class="o">({</span><span class="nl">text:</span><span class="s">"{name}"</span><span class="o">}));</span>
+</pre></div><p>
+Some controls have a typed binding method for aggregations that are likely to be bound by the application:
+</p>
+<div class="code"><pre>oComboBox<span class="o">.</span><span class="na">bindItems</span><span class="o">(</span><span class="s">"/company/contacts"</span><span class="o">,</span> oItemTemplate<span class="o">);</span>
+</pre></div><p>
+To remove an aggregation binding, you can use the <tt>unbindProperty</tt> method. This is done automatically whenever a control is destroyed.
+</p>
+<div class="code"><pre>oComboBox<span class="o">.</span><span class="na">unbindAggregation</span><span class="o">(</span><span class="s">"items"</span><span class="o">);</span>
+</pre></div><p>
+For more information, see
+<a class="ext-link" href="../api/symbols/sap.ui.core.Element.html#bindAggregation" title="symbols/sap.ui.core.Element.html#bindAggregation in Merged JSDoc"><span class="icon"> </span>API reference</a>.
+</p>
+<h3 id="UsingTemplateControls">Using Template Controls</h3>
+<p>
+Using template controls within the aggregation binding is usually the right choice for structured data, where you have lists of entries with the same properties. A template is not necessarily a single control, as in the items above, but can be a tree of controls. For each entry in the list, a deep clone of the template will be created and added to the bound aggregation.
+</p>
+<div class="code"><pre>var oMatrixLayout <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">MatrixLayout</span><span class="o">();</span>
+
+var oRowTemplate <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">MatrixLayoutRow</span><span class="o">({</span>
+    <span class="nl">cells:</span> <span class="o">[</span>
+        <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">MatrixLayoutCell</span><span class="o">({</span>
+            <span class="nl">content:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span><span class="nl">text:</span><span class="s">"Name:"</span><span class="o">})</span>
+        <span class="o">}),</span>
+        <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">MatrixLayoutCell</span><span class="o">({</span>
+            <span class="nl">content:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextView</span><span class="o">({</span><span class="nl">text:</span><span class="s">"{name}"</span><span class="o">})</span>
+        <span class="o">})</span>
+    <span class="o">]</span>
+<span class="o">});</span>
+
+oMatrixLayout<span class="o">.</span><span class="na">bindAggregation</span><span class="o">(</span><span class="s">"rows"</span><span class="o">,</span> <span class="s">"/company/contacts"</span><span class="o">,</span> oRowTemplate<span class="o">);</span>   
+</pre></div><h3 id="UsingFactoryFunctions">Using Factory Functions</h3>
+<p>
+The factory function is the more powerful approach to creating controls from model data. Here the factory function is called for every entry in the list to create the controls necessary to represent the current entry. The developer can decide freely, whether it is the same control with different properties set or even a completely different control for each entry.
+</p>
+<p>
+The factory function gets the parameters <tt>sId</tt>, which must be used as they ID for the created control and the context-object <tt>oContext</tt>, which allows accessing data from the list entry. It must return an instance of <tt>sap.ui.core.Element</tt>.
+</p>
+<div class="code"><pre>oContainer<span class="o">.</span><span class="na">bindAggregation</span><span class="o">(</span><span class="s">"content"</span><span class="o">,</span> <span class="s">"/company/properties"</span><span class="o">,</span> function<span class="o">(</span>sId<span class="o">,</span> oContext<span class="o">)</span> <span class="o">{</span>
+    var value <span class="o">=</span> oContext<span class="o">.</span><span class="na">getProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">);</span>
+    <span class="k">switch</span><span class="o">(</span>typeof value<span class="o">)</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="s">"string"</span><span class="o">:</span>
+            <span class="k">return</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">(</span>sId<span class="o">,</span> <span class="o">{</span>
+                <span class="nl">value:</span> <span class="o">{</span>
+                    <span class="nl">path:</span> <span class="s">"value"</span><span class="o">,</span>
+                    <span class="nl">type:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">type</span><span class="o">.</span><span class="na">String</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        <span class="k">case</span> <span class="s">"number"</span><span class="o">:</span>
+            <span class="k">return</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">(</span>sId<span class="o">,</span> <span class="o">{</span>
+                <span class="nl">value:</span> <span class="o">{</span>
+                    <span class="nl">path:</span> <span class="s">"value"</span><span class="o">,</span>
+                    <span class="nl">type:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">type</span><span class="o">.</span><span class="na">Float</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        <span class="k">case</span> <span class="s">"boolean"</span><span class="o">:</span>
+            <span class="k">return</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">CheckBox</span><span class="o">(</span>sId<span class="o">,</span> <span class="o">{</span>
+                <span class="nl">checked:</span> <span class="o">{</span>
+                    <span class="nl">path:</span> <span class="s">"value"</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">});</span> 
+</pre></div><h4 id="SortingandFilteringforAggregationBinding">Sorting and Filtering for Aggregation Binding</h4>
+<p>
+You can provide initial sorting and filtering when specifying the aggregation binding. Proceed as follows:
+</p>
+<ul><li>Define a sorter and/or filters:
+</li></ul><div class="code"><pre>var oSorter <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Sorter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> <span class="c1">// sort descending
+</span>var oFilter1 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Filter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterOperator</span><span class="o">.</span><span class="na">StartsWith</span><span class="o">,</span> <span class="s">"M"</span><span class="o">);</span>
+var oFilter2 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Filter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterOperator</span><span class="o">.</span><span class="na">Contains</span><span class="o">,</span> <span class="s">"Paz"</span><span class="o">);</span>
+var oFilter3 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Filter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterOperator</span><span class="o">.</span><span class="na">BT</span><span class="o">,</span> <span class="s">"A"</span><span class="o">,</span><span class="s">"G"</span><span class="o">);</span> <span class="c1">// name between A and G
+</span></pre></div><ul><li>Hand the sorter and/or filters to the aggregation binding:
+</li></ul><div class="code"><pre>var oComboBox <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">ComboBox</span><span class="o">({</span>
+    <span class="nl">items:</span> <span class="o">{</span><span class="nl">path:</span><span class="s">"/company/contacts"</span><span class="o">,</span> <span class="nl">template:</span>oItemTemplate<span class="o">,</span> <span class="nl">sorter:</span>oSorter<span class="o">,</span> <span class="nl">filters:</span><span class="o">[</span>oFilter1<span class="o">,</span>oFilter2<span class="o">,</span>oFilter3<span class="o">]}</span>
+<span class="o">});</span>
+</pre></div><p>
+You can also use the other aggregation binding possibilities (for example, <tt>bindAggregation</tt>, <tt>bindItems</tt>) and provide the sorter and filters as parameters.
+</p>
+<p>
+To sort/filter data manually after the aggregation binding is complete you can do so by getting the corresponding binding and calling the sort/filter function:
+</p>
+<div class="code"><pre>var oSorter <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Sorter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> <span class="c1">// sort descending
+</span>var oFilter1 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Filter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterOperator</span><span class="o">.</span><span class="na">StartsWith</span><span class="o">,</span> <span class="s">"M"</span><span class="o">);</span>
+var oFilter2 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Filter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterOperator</span><span class="o">.</span><span class="na">Contains</span><span class="o">,</span> <span class="s">"Paz"</span><span class="o">);</span>
+var oFilter3 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Filter</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterOperator</span><span class="o">.</span><span class="na">BT</span><span class="o">,</span> <span class="s">"A"</span><span class="o">,</span><span class="s">"G"</span><span class="o">);</span> <span class="c1">// name between A and G
+</span>
+<span class="c1">// manual sorting
+</span>oTable<span class="o">.</span><span class="na">getBinding</span><span class="o">(</span><span class="s">"rows"</span><span class="o">).</span><span class="na">sort</span><span class="o">(</span>oSorter<span class="o">);</span>
+
+<span class="c1">// manual filtering
+</span>oTable<span class="o">.</span><span class="na">getBinding</span><span class="o">(</span><span class="s">"rows"</span><span class="o">).</span><span class="na">filter</span><span class="o">([</span>oFilter1<span class="o">,</span>oFilter2<span class="o">,</span>oFilter3<span class="o">],</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterType</span><span class="o">.</span><span class="na">Application</span><span class="o">);</span>
+oComboBox<span class="o">.</span><span class="na">getBinding</span><span class="o">(</span><span class="s">"items"</span><span class="o">).</span><span class="na">filter</span><span class="o">([</span>oFilter1<span class="o">,</span>oFilter2<span class="o">,</span>oFilter3<span class="o">],</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">FilterType</span><span class="o">.</span><span class="na">Application</span><span class="o">);</span>
+</pre></div><p>
+For manual filtering you should always pass the FilterType. There are two Types of FilterTypes. Application filters should only be used by the application to modify filtering. Control filters are changed by controls (for example the Table) to modify the displayed data. Control filters should not be modified by the application.
+</p>
+<p>
+To get the binding of a control you have to know the name of the aggregation which is for example 'rows' for the table control.
+</p>
+<p>
+For more information about the various sorting and filter methods and operators, see the JS Doc API:<br />
+</p>
+<p>
+<a class="ext-link" href="../api/symbols/sap.ui.model.Sorter.html" title="symbols/sap.ui.model.Sorter.html in Merged JSDoc"><span class="icon"> </span>Sorter</a><br />
+</p>
+<p>
+<a class="ext-link" href="../api/symbols/sap.ui.model.Filter.html" title="symbols/sap.ui.model.Filter.html in Merged JSDoc"><span class="icon"> </span>Filter</a><br />
+</p>
+<p>
+<a class="ext-link" href="../api/symbols/sap.ui.model.FilterOperator.html" title="symbols/sap.ui.model.FilterOperator.html in Merged JSDoc"><span class="icon"> </span>Filter operators</a>
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

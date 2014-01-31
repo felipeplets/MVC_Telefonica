@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="BestPracticeforBuildingMobileApplications">Best Practice for Building Mobile Applications</h1>
+<h2 id="GoalofthisDocument">Goal of this Document</h2>
+<p>
+SAPUI5 is not a restrictive UI framework but more a collection of UI controls together with loosely coupled infrastructure components like basic MVC support, data binding, localization and others. This approach offers great flexibilty but also requires more care in application development and will most likely yield in heterogenous application structures. 
+</p>
+<p>
+This document provides a best practice how to structure application projects along the most typical scenarios with a clean and consistent structure. Technically, the whole application could also just be coded into one single HTML file - and the simple "Hello World" applications are built exactly like this to make basic functionality easy to understand. But when creating reasonably complex applications a clean architecture is key for efficient development and maintainability. There are many degrees of freedom where this documentation decides for one of the possible options. E.g. when it comes to the file structure or the granularity of Views or even the usage of the MVC concept at all. This does not mean that other options are wrong. In fact, other options may suit specific applications even better and some decisions also depend on project experience, team setup or plain taste. Nevertheless, this document should provide valuable suggestions for a good application structure, it's just important to know that this is not the only possible or correct way to build SAPUI5 applications.
+</p>
+<p>
+This document contains sections that refer to concepts or controls which are only available in the mobile library of SAPUI5 ('sap.m'), but most suggestions are the same or very similar for desktop applications.
+</p>
+<h2 id="ShoppingCartApp">Shopping Cart App</h2>
+<p>
+The concepts are applied to the 'Shopping Cart' demo app, and its source code can also help understand the proposed concepts. 
+</p>
+<p>
+This picture provides an overview of the involved components:
+</p>
+<p>
+<img width="800px" src="cartAppOverview_v7.png" />
+</p>
+<p>
+In the beginning the <strong>browser</strong> loads the web applications's <strong>index.html</strong> which contains itself only minimal code. The index.html then loads the <strong>Application.js</strong> which actually launches the application and instantiates the <strong>App View</strong> which holds the <strong>sap.m.App</strong> control that serves as root container for all UI controls.
+</p>
+<p>
+The application user interface is split into six pages: <strong>Home, Category, Product, Cart, Entry</strong> and <strong>Order</strong>. These pages are represented each by a view containing the <strong>sap.m.Page</strong> control and a controller handling the view events. When trigger a navigation to another page an event is send via the <strong>EventBus</strong> to the App Controller. There are no direct dependencies between views, and those EventBus events are only used for navigation and parameter handover between pages.
+</p>
+<p>
+To enable the back button of Android devices the <strong>jQuery.sap.history</strong> plugin is used which listens to changes in the browser history and triggers the App Controller for backward navigation.
+</p>
+<p>
+The <strong>InstanceManager</strong> tracks open instances of dialogs and popovers. The App controller checks on backward navigation for open instances and closes them on demand.
+</p>
+<p>
+There are two data models: The <strong>Product Model</strong> containing the available goods. The <strong>Cart Model</strong> contains the items put into the shopping cart. 
+In addition there are two models that contain resources used by the application: The <strong>Image Model</strong> abstracts from access paths and the <strong>i18n Model</strong> connects to translated texts.
+</p>
+<p>
+The <strong>Formatter.js</strong> class is an example for utility coding that is referenced by all views.
+</p>
+<h2 id="DetailedGuidance">Detailed Guidance</h2>
+<ul><li><a class="wiki" href="FileStructure.1.html">File Structure</a> – Proposed structure and naming for the file system layout
+</li><li><a class="wiki" href="IndexHtml.html">index.html</a> -  Detailed description how to structure the index.html
+</li><li><a class="wiki" href="ApplicationJs.html">Application.js</a> – An example of the Application.js that starts up the application
+</li><li><a class="wiki" href="BackEndConnection.html">Connecting to the Back End</a> – Guidance how to handle mock data and use HTTP Proxy to overcome the Same-Origin-Policy
+</li><li><a class="wiki" href="CustomHTML.html">Custom HTML</a> – How to include custom HTML in your apps
+</li><li><a class="wiki" href="Navigation.2.html">Navigation</a> – A deep dive into navigation handling explaing all about the navigation events, history handling and instance manager
+</li><li><a class="wiki" href="i18nModel.html">i18n Model</a> – Explains how to localize your app and setup the i18n model
+</li><li><a class="wiki" href="deviceModel.html">Device Model</a> – Explains how adapt declarative views to the device
+</li><li><a class="wiki" href="ImageModel.html">Image Model</a> – Explains how to setup the image model
+</li><li><a class="wiki" href="Utilities.html">Utilities</a> – Where to put all the utility stuff (aka reused javascript coding)
+</li><li><a class="wiki" href="LazyLoading.html">Lazy Loading</a> – How to achieve lazy loading of the pages in the App Controller
+</li><li><a class="wiki" href="MessageHandling.html">Message Handling</a> - Guides you in the process of showing messages to the user
+</li><li><a class="wiki" href="MockData.html">Mock Data</a> - Using mock data allows you to test and demo your app without a live service
+</li></ul><p>
+<br />
+<br />
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

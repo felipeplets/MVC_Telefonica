@@ -1,0 +1,1051 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		<title>JsDoc Report - SAP UI development Toolkit for HTML5 - API Reference - sap.ui.test.qunit</title>
+		<link rel=stylesheet href="../default.css" type="text/css">
+		
+			
+		    
+				  <script type="text/javascript" src="../../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+				
+		    
+			
+		    
+				  <script type="text/javascript" src="../../../js/utils.js"></script>
+				
+		    
+			
+		    
+		    
+				  <link rel="stylesheet" href="../../../theme/default.css" />
+				
+			
+				
+	</head>
+
+	<body>
+
+
+		<div id="main">
+			<div id="content">
+
+					<h1 class="classTitle static">
+					
+					Namespace sap.ui.test.qunit
+					</h1>
+					
+					
+					
+					
+					<hr/>
+
+			
+
+					<div class="full-description">
+						<p>The <code>sap.ui.test.qunit</code> namespace contains helper functionality for
+QUnit tests.</p>
+						
+						
+						
+						
+						
+						
+					</div>
+					
+		
+
+
+					
+		
+			
+
+					
+		
+
+
+					
+		
+
+
+					
+
+
+
+					
+						
+						
+						<div class="summary section">
+							<div class="sectionTitle">Method Summary</div>
+							<div class="sectionItems">
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Delays the start of the test until everything is rendered or - if given - for the specified milliseconds."><a href="../symbols/sap.ui.test.qunit.html#.delayTestStart">sap.ui.test.qunit.delayTestStart</a></b><span class='signature'>(<span title="(int) optional delay in milliseconds">iDelay</span><i class="help" title="Optional parameter">?</i>)</span>
+									<span class='description'>Delays the start of the test until everything is rendered or - if given - for the specified milliseconds.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmtically triggers a keypress event on a specified input field target and appends the character to the value of this input field."><a href="../symbols/sap.ui.test.qunit.html#.triggerCharacterInput">sap.ui.test.qunit.triggerCharacterInput</a></b><span class='signature'>(<span title="(string | DOMElement) The ID of a DOM input field or a DOM input field which serves as target">oInput</span>, <span title="(string) Only the first char of the string will be passed via keypress event">sChar</span>)</span>
+									<span class='description'>Programmtically triggers a keypress event on a specified input field target and appends the character to the value of this input field.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmtically triggers an event specified by its name on a specified target with some optional parameters."><a href="../symbols/sap.ui.test.qunit.html#.triggerEvent">sap.ui.test.qunit.triggerEvent</a></b><span class='signature'>(<span title="(string) The name of the browser event (like &quot;click&quot;)">sEventName</span>, <span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(object) The parameters which should be attached to the event in JSON notation (depending on the event type).">oParams</span><i class="help" title="Optional parameter">?</i>)</span>
+									<span class='description'>Programmtically triggers an event specified by its name on a specified target with some optional parameters.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmtically triggers a keydown event on a specified target."><a href="../symbols/sap.ui.test.qunit.html#.triggerKeydown">sap.ui.test.qunit.triggerKeydown</a></b><span class='signature'>(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string | int) The keys name as defined in jQuery.sap.KeyCodes or its key code">sKey</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+									<span class='description'>Programmtically triggers a keydown event on a specified target.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmtically triggers a keyboard event specified by its name on a specified target."><a href="../symbols/sap.ui.test.qunit.html#.triggerKeyEvent">sap.ui.test.qunit.triggerKeyEvent</a></b><span class='signature'>(<span title="(string) The name of the browser keyboard event (like &quot;keydown&quot;)">sEventType</span>, <span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string | int) The keys name as defined in jQuery.sap.KeyCodes or its key code">sKey</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+									<span class='description'>Programmtically triggers a keyboard event specified by its name on a specified target.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmtically triggers a keypress event on a specified target."><a href="../symbols/sap.ui.test.qunit.html#.triggerKeypress">sap.ui.test.qunit.triggerKeypress</a></b><span class='signature'>(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string) Only the first char of the string will be passed via keypress event">sChar</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+									<span class='description'>Programmtically triggers a keypress event on a specified target.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmtically triggers a keydup event on a specified target."><a href="../symbols/sap.ui.test.qunit.html#.triggerKeyup">sap.ui.test.qunit.triggerKeyup</a></b><span class='signature'>(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string | int) The keys name as defined in jQuery.sap.KeyCodes or its key code">sKey</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+									<span class='description'>Programmtically triggers a keydup event on a specified target.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmatically triggers a mouse event specified by its name on a specified target."><a href="../symbols/sap.ui.test.qunit.html#.triggerMouseEvent">sap.ui.test.qunit.triggerMouseEvent</a></b><span class='signature'>(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string) The name of the browser mouse event (like &quot;click&quot;)">sEventType</span>, <span title="(int) The offset X position of the mouse pointer during the event">iOffsetX</span>, <span title="(int) The offset Y position of the mouse pointer during the event">iOffsetY</span>, <span title="(int) The page X position of the mouse pointer during the event">iPageX</span>, <span title="(int) The page Y position of the mouse pointer during the event">iPageY</span>)</span>
+									<span class='description'>Programmatically triggers a mouse event specified by its name on a specified target.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static">
+									<b class="icon" title="Programmatically triggers a touch event specified by its name."><a href="../symbols/sap.ui.test.qunit.html#.triggerTouchEvent">sap.ui.test.qunit.triggerTouchEvent</a></b><span class='signature'>(<span title="(string) The name of the touch event (touchstart, touchmove, touchend)">sEventName</span>, <span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(object) The parameters which should be attached to the event in JSON notation (depending on the event type).">oParams</span><i class="help" title="Optional parameter">?</i>)</span>
+									<span class='description'>Programmatically triggers a touch event specified by its name.</span>
+								</div>
+							
+								<div class="sectionItem classMethod static deprecated">
+									<b class="icon" title=""><a href="../symbols/sap.ui.test.qunit.html#.triggerKeyboardEvent">sap.ui.test.qunit.triggerKeyboardEvent</a></b><span class='signature'>(<span>oTarget</span>, <span>sKey</span>, <span>bShiftKey</span>, <span>bAltKey</span>, <span>bCtrlKey</span>)</span>
+									<span class='description'></span>
+								</div>
+							
+							</div>
+						</div>
+						
+						
+						
+					
+		
+		
+
+					
+		
+
+		
+					
+		
+		
+					
+					
+		
+					
+					
+						<div class="details section">
+							<div class="sectionTitle">
+								Method Detail
+							</div>
+							<div class="sectionItems">
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".delayTestStart"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.delayTestStart<span class="signature">(<span title="(int) optional delay in milliseconds">iDelay</span><i class="help" title="Optional parameter">?</i>)</span>
+											
+										</div>
+										<div class="full-description">
+											Delays the start of the test until everything is rendered or - if given - for the specified milliseconds.
+This function must be called before the first test function.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>iDelay</b><i class="help" title="Optional parameter">?, Default: </i>
+													</td>
+													<td class="methodItemDesc">
+												    optional delay in milliseconds
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerCharacterInput"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerCharacterInput<span class="signature">(<span title="(string | DOMElement) The ID of a DOM input field or a DOM input field which serves as target">oInput</span>, <span title="(string) Only the first char of the string will be passed via keypress event">sChar</span>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmtically triggers a keypress event on a specified input field target and appends the character to the value
+of this input field.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oInput</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM input field or a DOM input field which serves as target
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sChar</b>
+													</td>
+													<td class="methodItemDesc">
+												    Only the first char of the string will be passed via keypress event
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														<a href="../symbols/sap.ui.test.qunit.html#.triggerKeypress">sap.ui.test.qunit.triggerKeypress</a>
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerEvent"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerEvent<span class="signature">(<span title="(string) The name of the browser event (like &quot;click&quot;)">sEventName</span>, <span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(object) The parameters which should be attached to the event in JSON notation (depending on the event type).">oParams</span><i class="help" title="Optional parameter">?</i>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmtically triggers an event specified by its name on a specified target with some optional parameters.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sEventName</b>
+													</td>
+													<td class="methodItemDesc">
+												    The name of the browser event (like "click")
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM element or a DOM element which serves as target of the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{object}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oParams</b><i class="help" title="Optional parameter">?, Default: </i>
+													</td>
+													<td class="methodItemDesc">
+												    The parameters which should be attached to the event in JSON notation (depending on the event type).
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														http://api.jquery.com/trigger/
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerKeydown"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerKeydown<span class="signature">(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string | int) The keys name as defined in jQuery.sap.KeyCodes or its key code">sKey</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmtically triggers a keydown event on a specified target.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM element or a DOM element which serves as target of the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    The keys name as defined in <code>jQuery.sap.KeyCodes</code> or its key code
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bShiftKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the shift key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bAltKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the alt key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bCtrlKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the ctrl key is down in addition
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														<a href="../symbols/sap.ui.test.qunit.html#.triggerKeyEvent">sap.ui.test.qunit.triggerKeyEvent</a>
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerKeyEvent"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerKeyEvent<span class="signature">(<span title="(string) The name of the browser keyboard event (like &quot;keydown&quot;)">sEventType</span>, <span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string | int) The keys name as defined in jQuery.sap.KeyCodes or its key code">sKey</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmtically triggers a keyboard event specified by its name on a specified target.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sEventType</b>
+													</td>
+													<td class="methodItemDesc">
+												    The name of the browser keyboard event (like "keydown")
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM element or a DOM element which serves as target of the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    The keys name as defined in <code>jQuery.sap.KeyCodes</code> or its key code
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bShiftKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the shift key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bAltKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the alt key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bCtrlKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the ctrl key is down in addition
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														<a href="../symbols/sap.ui.test.qunit.html#.triggerEvent">sap.ui.test.qunit.triggerEvent</a>
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerKeypress"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerKeypress<span class="signature">(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string) Only the first char of the string will be passed via keypress event">sChar</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmtically triggers a keypress event on a specified target.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM element or a DOM element which serves as target of the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sChar</b>
+													</td>
+													<td class="methodItemDesc">
+												    Only the first char of the string will be passed via keypress event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bShiftKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the shift key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bAltKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the alt key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bCtrlKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the ctrl key is down in addition
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														<a href="../symbols/sap.ui.test.qunit.html#.triggerEvent">sap.ui.test.qunit.triggerEvent</a>
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerKeyup"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerKeyup<span class="signature">(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string | int) The keys name as defined in jQuery.sap.KeyCodes or its key code">sKey</span>, <span title="(boolean) Indicates whether the shift key is down in addition">bShiftKey</span>, <span title="(boolean) Indicates whether the alt key is down in addition">bAltKey</span>, <span title="(boolean) Indicates whether the ctrl key is down in addition">bCtrlKey</span>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmtically triggers a keydup event on a specified target.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM element or a DOM element which serves as target of the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    The keys name as defined in <code>jQuery.sap.KeyCodes</code> or its key code
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bShiftKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the shift key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bAltKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the alt key is down in addition
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{boolean}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>bCtrlKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    Indicates whether the ctrl key is down in addition
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														<a href="../symbols/sap.ui.test.qunit.html#.triggerKeyEvent">sap.ui.test.qunit.triggerKeyEvent</a>
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerMouseEvent"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerMouseEvent<span class="signature">(<span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(string) The name of the browser mouse event (like &quot;click&quot;)">sEventType</span>, <span title="(int) The offset X position of the mouse pointer during the event">iOffsetX</span>, <span title="(int) The offset Y position of the mouse pointer during the event">iOffsetY</span>, <span title="(int) The page X position of the mouse pointer during the event">iPageX</span>, <span title="(int) The page Y position of the mouse pointer during the event">iPageY</span>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmatically triggers a mouse event specified by its name on a specified target.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM element or a DOM element which serves as target of the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sEventType</b>
+													</td>
+													<td class="methodItemDesc">
+												    The name of the browser mouse event (like "click")
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>iOffsetX</b>
+													</td>
+													<td class="methodItemDesc">
+												    The offset X position of the mouse pointer during the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>iOffsetY</b>
+													</td>
+													<td class="methodItemDesc">
+												    The offset Y position of the mouse pointer during the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>iPageX</b>
+													</td>
+													<td class="methodItemDesc">
+												    The page X position of the mouse pointer during the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{int}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>iPageY</b>
+													</td>
+													<td class="methodItemDesc">
+												    The page Y position of the mouse pointer during the event
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														<a href="../symbols/sap.ui.test.qunit.html#.triggerEvent">sap.ui.test.qunit.triggerEvent</a>
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+									<div class='sectionItem classMethod static'>
+										<a name=".triggerTouchEvent"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerTouchEvent<span class="signature">(<span title="(string) The name of the touch event (touchstart, touchmove, touchend)">sEventName</span>, <span title="(string | DOMElement) The ID of a DOM element or a DOM element which serves as target of the event">oTarget</span>, <span title="(object) The parameters which should be attached to the event in JSON notation (depending on the event type).">oParams</span><i class="help" title="Optional parameter">?</i>)</span>
+											
+										</div>
+										<div class="full-description">
+											Programmatically triggers a touch event specified by its name.
+The onEVENTNAME functions are called directly on the "nearest" control / element of the given target.
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>sEventName</b>
+													</td>
+													<td class="methodItemDesc">
+												    The name of the touch event (touchstart, touchmove, touchend)
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{string|DOMElement}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    The ID of a DOM element or a DOM element which serves as target of the event
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  <span class="light">{object}</span> 
+													</td>
+													<td class="methodItemName">
+													  <b>oParams</b><i class="help" title="Optional parameter">?, Default: </i>
+													</td>
+													<td class="methodItemDesc">
+												    The parameters which should be attached to the event in JSON notation (depending on the event type).
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+										
+										
+										
+										
+										
+									</div>
+								
+									<div class='sectionItem classMethod static deprecated'>
+										<a name=".triggerKeyboardEvent"> </a>
+										<div class="itemTitle icon">
+											sap.ui.test.qunit.triggerKeyboardEvent<span class="signature">(<span>oTarget</span>, <span>sKey</span>, <span>bShiftKey</span>, <span>bAltKey</span>, <span>bCtrlKey</span>)</span>
+											
+										</div>
+										<div class="full-description">
+											
+											
+											
+											
+										
+											
+										</div>
+										
+										
+											<div class="heading">Parameters:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemType">
+													  
+													</td>
+													<td class="methodItemName">
+													  <b>oTarget</b>
+													</td>
+													<td class="methodItemDesc">
+												    
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  
+													</td>
+													<td class="methodItemName">
+													  <b>sKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  
+													</td>
+													<td class="methodItemName">
+													  <b>bShiftKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  
+													</td>
+													<td class="methodItemName">
+													  <b>bAltKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    
+													</td>
+												</tr>
+											
+												<tr>
+													<td class="methodItemType">
+													  
+													</td>
+													<td class="methodItemName">
+													  <b>bCtrlKey</b>
+													</td>
+													<td class="methodItemDesc">
+												    
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+										
+											<dl class="detailList deprecation">
+												<dt class="heading">Deprecated:</dt>
+												<dt>
+													Use <code>sap.ui.test.qunit.triggerKeydown</code> instead.
+												</dt>
+											</dl>
+										
+										
+										
+										
+										
+										
+											<div class="heading">See:</div>
+											<table class="methodItem"><tbody>
+											
+												<tr>
+													<td class="methodItemDesc">
+														<a href="../symbols/sap.ui.test.qunit.html#.triggerKeydown">sap.ui.test.qunit.triggerKeydown</a>
+													</td>
+												</tr>
+											
+											</tbody></table>
+										
+									</div>
+								
+							</div>
+						</div>
+					
+
+
+		</div>
+	</div>
+
+				
+	</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/IndexHtml – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="index.html">index.html</h1>
+<p>
+The index.html entry page of an application should be structured as shown below. The content is:
+</p>
+<ul><li>The HTML5 DOCTYPE
+</li><li>The meta tag instructing Internet Explorer to use the newest rendering mode - for UI5 Mobile this would be in preparation for future IE support, for UI5 desktop this is required to make sure IE does not use a compatibility mode.
+</li><li>The charset settings (usually UTF-8, but adapt to what is actually the case)
+</li><li>The application &lt;title&gt;
+</li><li>The UI5 bootstrap script tag loading SAPUI5 and the required control libraries and theme
+</li><li>Any application CSS stylesheet links (the UI5 theme stylesheets will be inserted directly after the bootstrap tag, so loading the application stylesheets here guarantees that they can more easily override UI5 styles)
+</li><li>A script tag starting the application
+</li><li>The HTML body where the UI5 content will be rendered
+</li></ul><p>
+Of course, specific applications may require additional script tags to load external files or some HTML structure within the body or a script tag before loading UI5 to configure the UI5 runtime. This suggestion here does not say such extensions are not allowed.
+</p>
+<p>
+The index.html file can then look like this:
+</p>
+<div class="code"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge"</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+        
+        <span class="nt">&lt;title&gt;</span>XYZ<span class="nt">&lt;/title&gt;</span>
+        
+        <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span> 
+            <span class="na">src=</span><span class="s">"XYZ"</span>
+            <span class="na">data-sap-ui-theme=</span><span class="s">"XYZ"</span>
+            <span class="na">data-sap-ui-libs=</span><span class="s">"XYZ"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/script&gt;</span>
+        
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="na">href=</span><span class="s">"css/style.css"</span><span class="nt">&gt;</span>            
+        
+        <span class="nt">&lt;script&gt;</span>
+            <span class="c1">// Tell UI5 where to find application content
+</span>            <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">localResources</span><span class="p">(</span><span class="s2">"util"</span><span class="p">);</span>  <span class="c1">// paths starting with "util" will be resolved relative to the index.html location
+</span>            <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">localResources</span><span class="p">(</span><span class="s2">"view"</span><span class="p">);</span>
+            <span class="nx">jQuery</span><span class="p">.</span><span class="nx">sap</span><span class="p">.</span><span class="nx">registerModulePath</span><span class="p">(</span><span class="s1">'Application'</span><span class="p">,</span> <span class="s1">'Application'</span><span class="p">);</span>
+
+            <span class="c1">// Launch application
+</span>            <span class="nx">jQuery</span><span class="p">.</span><span class="nx">sap</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">"Application"</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">oApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">({</span><span class="nx">root</span> <span class="o">:</span> <span class="s2">"content"</span><span class="p">});</span> <span class="c1">// instantiate your application and mark the HTML element with id "content" as location for the UI
+</span>        <span class="nt">&lt;/script&gt;</span>  
+
+        
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body</span> <span class="na">class=</span><span class="s">"sapUiBody"</span> <span class="na">id=</span><span class="s">"content"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

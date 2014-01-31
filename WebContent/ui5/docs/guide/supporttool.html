@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/supporttool – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="Support-Tool">Support-Tool</h1>
+<p>
+<br />
+</p>
+<h2 id="AccessingtheTool">Accessing the Tool</h2>
+<p>
+The Support-Tool can be opened inside an existing SAPUI5 Application using the shortcut <strong>CTRL + SHIFT + ALT + S</strong>(upport).<br />
+<br />
+</p>
+<h2 id="Activatingdebugsources">Activating debug sources</h2>
+<p>
+<img src="support_tool_001.png" />
+</p>
+<p>
+In order to use the debugging-functionalities it is important that the debug-sources are used.<br />
+The „Debug Sources“-Switch should be set to "ON". If that is not the case, it can be turned on using the "Toggle" link.
+<br />
+<br />
+</p>
+<h2 id="Control-Tree">Control-Tree</h2>
+<p>
+The Control-Tree shows all existing controls in the application in a tree-view.
+<br />
+</p>
+<h3 id="SelectingaControl">Selecting a Control</h3>
+<p>
+<img src="support_tool_002.png" />
+</p>
+<p>
+To select a control, either the entry in the ControlTree can be clicked&hellip;
+</p>
+<p>
+<img src="control_selection.png" />
+</p>
+<p>
+&hellip;or a control inside of the application while holding down <strong>CTRL + SHIFT + ALT</strong> and clicking on it.
+</p>
+<h3 id="Changingproperties">Changing properties</h3>
+<p>
+<img src="changing-properties.png" />
+</p>
+<p>
+Properties of a control can be changed in the "Properties"-Tab
+<br />
+</p>
+<h3 id="ShowingData-BindingInformation">Showing Data-Binding Information</h3>
+<p>
+<img src="bindings.png" />
+</p>
+<p>
+The "Binding Infos"-Tab shows all existing bindings for the control with some helpful information.<br />
+The binding can be refreshed by clicking on the "Refresh"-Button.
+</p>
+<p>
+<img src="binding-contexts.png" />
+</p>
+<p>
+The binding-context for the currently selected control is also shown there.
+<br />
+The hyperlinks can be used to navigate to the specific controls.
+</p>
+<p>
+<br />
+</p>
+<h3 id="AddingremovingProperty-Breakpoints">Adding / removing Property-Breakpoints</h3>
+<p>
+<img src="support_tool_003.png" />
+</p>
+<p>
+The two checkboxes can be used to add or remove a breakpoint for the get/set-method of a control-property.
+The lefthand checkbox handles the get-method, the righthand one the set-method.
+A checked checkbox means that the breakpoint is active.
+</p>
+<h3 id="AddingremovingMethod-Breakpoints">Adding / removing Method-Breakpoints</h3>
+<p>
+<img src="support_tool_004.png" />
+</p>
+<p>
+The auto completion can be used to find and select a method.
+</p>
+<p>
+<img src="support_tool_005.png" />
+</p>
+<p>
+The dropdown-box can be also used to select a method.
+</p>
+<p>
+<img src="support_tool_006.png" />
+</p>
+<p>
+A breakpoint for the currently selected method can be added through the "Add-Breakpoint"-button or by pressing the ENTER-key.
+</p>
+<p>
+<img src="support_tool_007.png" />
+</p>
+<p>
+To remove a breakpoint, the red "X" can be used. To only appears when hovering over the entry.
+</p>
+<h3 id="DebuggingaMethod">Debugging a Method</h3>
+<p>
+To start debugging, the browser's debugging-tool has to be opened and activated. If this is not the case and a breakpoint is reached a alert message will open.
+</p>
+<p>
+Once a method with an active breakpoint gets executed, the script stops, but not directly in the method.
+</p>
+<p>
+<img src="support_tool_008.png" />
+</p>
+<p>
+The execution stops at the "debugger" statement. To get inside the real method, the step-over/into functionality of the debugger can be used.
+</p>
+<p>
+<img src="support_tool_009.png" />
+<br />
+</p>
+<h2 id="Debugging-View">Debugging-View</h2>
+<p>
+The debugging-view allows to set breakpoints for methods on class-level.
+</p>
+<p>
+<img src="support_tool_010.png" />
+</p>
+<p>
+On the lefthand side a class can be selected in the same way as a method in the ControlTree.
+</p>
+<p>
+<img src="support_tool_011.png" />
+</p>
+<p>
+A class can be selected by clicking on it in the class-list below.<br />
+To remove the class (and all active breakpoints of class-methods) the red "X" can be used. It only appears when hovering over an entry in the list.<br />
+The number of active breakpoints and all methods is also shown for each class once it was selected for the first time.
+<br />
+<br />
+</p>
+<p>
+With the righthand view, breakpoints for methods of the currently selected class can be added / removed.
+This works in the same way as in the ControlTree.
+</p>
+<h2 id="XMLViewConversion">XML View Conversion</h2>
+<ul><li>We have to admit that many our code samples are written in JavaScript … while all you Fiori developers spend most of your time in an XML editor. As there is no time to convert all our code samples we now provide a generic conversion tool. 
+</li><li>Follow these steps:
+<ul><li>Run the desired UI5 app in your browser. E.g. open some page in the test suite.
+</li><li>Press CRTL-ALT-SHIFT-S to open the support tool
+</li><li>Open the “Control Tree” panel
+</li><li>Select the root UI area in the left side tree
+</li><li>Switch to the “Export” tab and press “Export XML”
+</li><li>Open the downloaded ZIP archive and extract file(s) to the file system<br />
+</li></ul></li></ul><p>
+<img src="exportToXml.jpg" />         
+</p>
+<ul><li>Output
+<ul><li>If you app does not contain a view all the stuff will be put into one view.
+</li><li>If you app contains views (and they are all loaded) they will be outputed as separate files.
+</li></ul></li><li>Be aware that the conversion captures the runtime state of the app which can differ from the build declaration.
+</li></ul>
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

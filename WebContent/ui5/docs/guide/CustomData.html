@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/CustomData – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="CustomData-AttachingdataobjectstoControls">CustomData - Attaching data objects to Controls</h1>
+<p>
+Sometimes it is desired to attach data to UI5 controls, similarly to what jQuery.data() offers.
+To support this, the method <tt>data()</tt> has been added to the base class <tt>sap.ui.core.Element</tt>.<br />
+</p>
+<p>
+The method can be used to set and get data, the API is equal to jQuery's data(): <a class="ext-link" href="http://api.jquery.com/data/"><span class="icon"> </span>http://api.jquery.com/data/</a>. Data can also be attached declaratively, in XMLViews and JSONViews. Data binding can also be used in all these scenarios.
+</p>
+<p>
+Optionally, this data can also be written to the HTML DOM as "data-*" attribute - but only when it is a string.
+</p>
+<h2 id="Settingandretrievingdata">Setting and retrieving data</h2>
+<div class="code"><pre>myButton<span class="o">.</span><span class="na">data</span><span class="o">(</span><span class="s">"myData"</span><span class="o">,</span> <span class="s">"Hello"</span><span class="o">);</span>  <span class="c1">// attach some data to the Button
+</span>
+alert<span class="o">(</span>myButton<span class="o">.</span><span class="na">data</span><span class="o">(</span><span class="s">"myData"</span><span class="o">));</span>     <span class="c1">// alerts "Hello"
+</span>
+var dataObject <span class="o">=</span> myButton<span class="o">.</span><span class="na">data</span><span class="o">();</span>  <span class="c1">// a JS object containing ALL data
+</span>alert<span class="o">(</span>dataObject<span class="o">.</span><span class="na">myData</span><span class="o">);</span>          <span class="c1">// alerts "Hello"
+</span></pre></div><h2 id="Bindingdata:usageinalistbinding">Binding data: usage in a list binding</h2>
+<div class="code"><pre><span class="c1">// create a JSONModel, fill in the data and bind the ListBox to this model
+</span>var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">();</span>
+oModel<span class="o">.</span><span class="na">setData</span><span class="o">(</span>aData<span class="o">);</span>                                      <span class="c1">// aData is a data array consisting of elements like {question:"Some question?",answer:"Some answer!"}
+</span>var ctrl <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">ListBox</span><span class="o">({</span><span class="nl">select:</span>giveAnswer<span class="o">});</span> <span class="c1">// method giveAnswer() retrieves the custom data from the selected ListItem
+</span>ctrl<span class="o">.</span><span class="na">setModel</span><span class="o">(</span>oModel<span class="o">);</span>
+
+<span class="c1">// create an item template and bind the question data to the "text" property
+</span>var oItemTemplate <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">ListItem</span><span class="o">();</span>
+oItemTemplate<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"text"</span><span class="o">,</span> <span class="s">"question"</span><span class="o">);</span>
+
+<span class="c1">// create a CustomData template, set its key to "answer" and bind its value to the answer data
+</span>var oDataTemplate <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">CustomData</span><span class="o">({</span><span class="nl">key:</span><span class="s">"answer"</span><span class="o">});</span>
+oDataTemplate<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> <span class="s">"answer"</span><span class="o">);</span>
+
+<span class="c1">// add the CustomData template to the item template
+</span>oItemTemplate<span class="o">.</span><span class="na">addCustomData</span><span class="o">(</span>oDataTemplate<span class="o">);</span>
+
+<span class="c1">// bind the items to the "questions" (which is the name of the data array)
+</span>ctrl<span class="o">.</span><span class="na">bindAggregation</span><span class="o">(</span><span class="s">"items"</span><span class="o">,</span> <span class="s">"questions"</span><span class="o">,</span> oItemTemplate<span class="o">);</span>
+</pre></div><p>
+A running example can be found in the UI5 testsuite (look for "<a class="missing wiki">CustomData?</a>" in sap.ui.core).
+</p>
+<h2 id="UsageinXMLViews">Usage in XMLViews</h2>
+<p>
+In XMLViews, CustomData objects could be written as the normal aggregated objects they are. But to reduce the amount of code and improve readability massively, a shortcut notation has been introduced: you can directly write the data attributes into the control tags. You just need to use a special namespace for these attributes: <tt>myNamespace="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"</tt>.<br />
+This namespace looks different and more formal than the existing MVC namespaces, but that's by intention. The other namespaces will also be adapted to this more formal naming scheme soon.
+</p>
+<h3 id="Withoutdatabinding">Without data binding</h3>
+<p>
+The following example shows how the string "just great" is attached to a Button:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span> <span class="na">xmlns:mvc=</span><span class="s">"sap.ui.core.mvc"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">controllerName=</span><span class="s">"my.own.controller"</span> 
+           <span class="na">xmlns:app=</span><span class="s">"http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;Button</span> <span class="na">id=</span><span class="s">"myBtn"</span> <span class="na">text=</span><span class="s">"Click to show stored coordinates data"</span> <span class="na">app:mySuperExtraData=</span><span class="s">"just great"</span> <span class="na">press=</span><span class="s">"alertCoordinates"</span><span class="nt">&gt;&lt;/Button&gt;</span>
+<span class="nt">&lt;/core:View&gt;</span>
+</pre></div><p>
+This string would be returned at runtime by calling <tt>button.data("mySuperExtraData")</tt>.
+</p>
+<h3 id="Withdatabinding">With data binding</h3>
+<p>
+Data binding can as well be used with the usual notation:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span> <span class="na">xmlns:mvc=</span><span class="s">"sap.ui.core.mvc"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">controllerName=</span><span class="s">"my.own.controller"</span> 
+           <span class="na">xmlns:app=</span><span class="s">"http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;Button</span> <span class="na">id=</span><span class="s">"myBtn"</span> <span class="na">text=</span><span class="s">"Click to show stored coordinates data"</span> <span class="na">app:coords=</span><span class="s">"{data}"</span> <span class="na">press=</span><span class="s">"alertCoordinates"</span><span class="nt">&gt;&lt;/Button&gt;</span>
+<span class="nt">&lt;/core:View&gt;</span>
+</pre></div><h2 id="UsageinJSONViews">Usage in JSONViews</h2>
+<p>
+To add custom data to any Element in a JSONView (in these examples again depicted with data binding), you can add the following to the Element properties:
+</p>
+<div class="code"><pre><span class="nl">customData:</span> <span class="o">{</span>
+  <span class="nl">Type:</span><span class="s">"sap.ui.core.CustomData"</span><span class="o">,</span>
+    <span class="nl">key:</span><span class="s">"coords"</span><span class="o">,</span>
+    <span class="nl">value:</span><span class="s">"{data}"</span> <span class="c1">// bind custom data
+</span>  <span class="o">}</span>
+</pre></div><p>
+For multiple data elements to be added, use an array:
+</p>
+<div class="code"><pre><span class="nl">customData:</span> <span class="o">[{</span>
+  <span class="nl">Type:</span><span class="s">"sap.ui.core.CustomData"</span><span class="o">,</span>
+    <span class="nl">key:</span><span class="s">"coords"</span><span class="o">,</span>
+    <span class="nl">value:</span><span class="s">"{data}"</span> <span class="c1">// bind custom data
+</span>  <span class="o">},</span>
+  <span class="o">{</span>
+  <span class="nl">Type:</span><span class="s">"sap.ui.core.CustomData"</span><span class="o">,</span>
+    <span class="nl">key:</span><span class="s">"coords"</span><span class="o">,</span>
+    <span class="nl">value:</span><span class="s">"{data}"</span> <span class="c1">// bind custom data
+</span>  <span class="o">}]</span>
+</pre></div><p>
+In context, it looks as follows:
+</p>
+<div class="code"><pre>        var json <span class="o">=</span> 
+            <span class="o">{</span> 
+                <span class="nl">Type:</span> <span class="s">"sap.ui.core.JSONView"</span><span class="o">,</span>
+                <span class="nl">controllerName:</span><span class="s">"my.own.controller"</span><span class="o">,</span>
+                <span class="nl">content:</span> <span class="o">[{</span>
+                    <span class="nl">Type:</span><span class="s">"sap.ui.commons.Panel"</span><span class="o">,</span>
+                    <span class="nl">content:</span><span class="o">[{</span>
+                        <span class="nl">Type:</span><span class="s">"sap.ui.commons.Button"</span><span class="o">,</span>
+                        <span class="nl">text:</span><span class="s">"{actionName}"</span><span class="o">,</span>
+                        <span class="nl">press:</span> <span class="s">"doSomething"</span><span class="o">,</span>
+                        <span class="nl">customData:</span> <span class="o">{</span>
+                            <span class="nl">Type:</span><span class="s">"sap.ui.core.CustomData"</span><span class="o">,</span>
+                            <span class="nl">key:</span><span class="s">"coords"</span><span class="o">,</span>
+                            <span class="nl">value:</span><span class="s">"{data}"</span> <span class="c1">// bind custom data
+</span>                        <span class="o">}</span>
+                    <span class="o">}]</span>
+                <span class="o">}]</span>
+            <span class="o">};</span>
+
+</pre></div><h2 id="UsageinHTMLViews">Usage in HTMLViews</h2>
+<p>
+In HTMLViews , CustomData objects could be added to any control or element with a specific HTML attribute. The syntax looks like this: <tt>data-custom-data:my-key="myValue"</tt>. A custom data attribute begins with <tt>data-custom-data:</tt> and is followed by the name of the key. The dashes converts the following character into an upper case character. The value can be either a string or a binding expression:
+</p>
+<div class="code"><pre>  <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.commons.Button"</span> <span class="na">data-text=</span><span class="s">"This button is added dynamically"</span> <span class="na">data-custom-data:my-key=</span><span class="s">"myValue"</span> <span class="na">data-custom-data:my-bound-key=</span><span class="s">"{/mypath}"</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div><h2 id="WritingdatatotheHTMLDOMasdata-attribute">Writing data to the HTML DOM as data-* attribute</h2>
+<p>
+It can be useful to write the custom data to the HTML DOM, e.g. to generate markers in the HTML from data-binding which then can be used for data-dependent styling, or to create stable anchors in the HTML which can be used for automated tests.<br />
+A "data-" prefix is added to the key and the result is then written as attribute into the root HTML element of the control. The CustomData value is written as attribute value.
+</p>
+<p>
+This only works when the key is a valid HTML ID and the value is a string (otherwise an error is logged). Note that HTML attribute names are case-insensitive and the key may be converted to lowercase by browsers!
+</p>
+<p>
+Be careful not to write too much data into the DOM!
+</p>
+<p>
+In JavaScript the flag can be set like this:
+</p>
+<div class="code"><pre>myButton<span class="o">.</span><span class="na">data</span><span class="o">(</span><span class="s">"mydata"</span><span class="o">,</span> <span class="s">"Hello"</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>  <span class="c1">// attach some data to the Button and mark it as "write to HTML"
+</span></pre></div><p>
+In XMLViews the aggregation has currently to be written in expanded notation to set the writeToDom flag:
+</p>
+<div class="code"><pre><span class="nt">&lt;Button</span> <span class="err">...</span> <span class="nt">&gt;</span>
+  <span class="nt">&lt;customData&gt;</span>
+    <span class="nt">&lt;core:CustomData</span> <span class="na">key=</span><span class="s">"mydata"</span> <span class="na">value=</span><span class="s">"Hello"</span> <span class="na">writeToDom=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/customData&gt;</span>
+<span class="nt">&lt;/Button&gt;</span>
+</pre></div><p>
+Resulting HTML:
+</p>
+<pre class="wiki">&lt;button ...  data-myData="Hello"  ... &gt;
+</pre><p>
+Now CSS can use attribute selectors to check presence or the value of the custom data attribute:
+</p>
+<div class="code"><pre> <span class="nt">button</span><span class="o">[</span><span class="nt">data-mydata</span><span class="o">=</span><span class="s2">"Hello"</span><span class="o">]</span> <span class="p">{</span>
+       <span class="k">border</span><span class="o">:</span> <span class="m">3px</span> <span class="k">solid</span> <span class="nb">red</span> <span class="cp">!important</span><span class="p">;</span>
+ <span class="p">}</span>
+</pre></div>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

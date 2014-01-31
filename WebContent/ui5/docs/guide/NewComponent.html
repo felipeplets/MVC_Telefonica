@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Components/NewComponent – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="HowtocreateanewSAPUI5Componentin5minutesandincludeitinUI5applicationin5seconds">How to create a new SAPUI5 Component in 5 minutes and include it in UI5 application in 5 seconds</h1>
+<p>
+This page explains <strong>how to create a new SAPUI5 Component and use it in a UI5 application - from scratch within few minutes</strong>.<br />
+</p>
+<ul><li>If you are interested in exactly using the component on this page without reading too much, you can <strong>jump right <a class="wiki" href="NewComponent.html#Andhowtodoitin5seconds">down to the respective section</a></strong>  on this page.<br />
+</li><li>If you prefer a solid introduction, please wait until the detailed documentation is written.
+</li></ul><p>
+<br />
+</p>
+<h2 id="Explanation">Explanation</h2>
+<p>
+This page assumes you have seen and understood the <a class="wiki" href="http://vesapui5.dhcp.wdf.sap.corp:1080/trac/sapui5/wiki/HelloWorld">SAPUI5 in 20 seconds</a> example, so you are familiar with how UI5 is loaded, how controls are instantiated and how they are added to the HTML page.<br />
+This page therefore only explains the Component-specific parts.
+</p>
+<h3 id="WhatisaComponent">What is a Component?</h3>
+<p>
+UI5 components are independent and reusable parts of the UI5 Application that may be developed by different development teams in different projects. A UI5 component consists of a folder that has a name of the component and that at least contains two files: <br />
+</p>
+<ul><li>Component.js - the Component Controller that also includes the metadata for runtime, and <br />
+</li><li>component.json - Component descriptor that contains the metadata for design time.
+</li></ul><p>
+<br />
+A realworld component normally brings with it also its own stylesheets, views, images, i18n and scripts that this component is using on top:
+<br />
+<img src="real_component.PNG" />
+<br />
+</p>
+<p>
+There are two types of components 
+</p>
+<ul><li>one has a UI part (UIComponent) 
+</li><li>the other one doesn't (Faceless Component) 
+</li></ul><p>
+The UIComponent represents an appearance on a part of the screen, the Faceless Component can be for example just a service, delivering the data without any representation on the screen. 
+ 
+<tt>sap.ui.core.Component</tt> is the base class of Faceless Components and <tt>sap.ui.core.UIComponent</tt>, so <tt>sap.ui.core.Component</tt> is the base class for all UI5 Components. 
+Components can either inherit from their base classes or from other component in order to inherit and extend its functionality.
+</p>
+<p>
+<br />
+</p>
+<h3 id="CreatinganewComponent">Creating a new Component</h3>
+<p>
+In this example we want to create a new component from scratch, without inheriting from an existing component (which would also be possible).
+</p>
+<p>
+The component we develop just has a button with some configurable text.
+First of all, you have to create a new folder named like your component, for example "button". 
+In this folder create files "Component.js" and "component.json":
+<br />
+</p>
+<p>
+<img src="button.PNG" alt="Example of the button component folder" title="Example of the button component folder" />
+<br />
+</p>
+<p>
+Component.js:
+<br />
+</p>
+<div class="code"><pre><span class="c1">// define a new (simple) UIComponent
+</span>jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">require</span><span class="o">(</span><span class="s">"sap.ui.core.UIComponent"</span><span class="o">);</span>
+jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">require</span><span class="o">(</span><span class="s">"sap.ui.commons.Button"</span><span class="o">);</span>
+jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">declare</span><span class="o">(</span><span class="s">"samples.components.button.Component"</span><span class="o">);</span>
+
+<span class="c1">// new Component
+</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">UIComponent</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"samples.components.button.Component"</span><span class="o">,</span> <span class="o">{</span>
+
+    metadata <span class="o">:</span> <span class="o">{</span>
+        properties <span class="o">:</span> <span class="o">{</span>
+            <span class="nl">text:</span> <span class="s">"string"</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+
+
+samples<span class="o">.</span><span class="na">components</span><span class="o">.</span><span class="na">button</span><span class="o">.</span><span class="na">Component</span><span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">createContent</span> <span class="o">=</span> function<span class="o">(){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">oButton</span> <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">createId</span><span class="o">(</span><span class="s">"btn"</span><span class="o">));</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">oButton</span><span class="o">;</span> 
+<span class="o">};</span> 
+
+<span class="cm">/*
+* Overrides setText method of the component to set this text in the button
+*/</span>
+samples<span class="o">.</span><span class="na">components</span><span class="o">.</span><span class="na">button</span><span class="o">.</span><span class="na">Component</span><span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">setText</span> <span class="o">=</span> function<span class="o">(</span>sText<span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">oButton</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span>sText<span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"text"</span><span class="o">,</span> sText<span class="o">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+<span class="o">};</span>
+
+</pre></div><p>
+<br />
+The component definition/implementation object consists of 
+</p>
+<ol><li>the metadata of the component( which properties, aggregations, events does it have? )
+</li><li>any methods the component should have
+</li></ol><p>
+<br />
+</p>
+<h4 id="ComponentAPIMetadata">Component API/Metadata</h4>
+<p>
+The metadata of our sample component defines one property and its type:
+</p>
+<div class="code"><pre>   metadata <span class="o">:</span> <span class="o">{</span>
+      properties <span class="o">:</span> <span class="o">{</span>           <span class="c1">// setter and getter are created behind the scenes, incl. data binding and type validation
+</span>         <span class="s">"text"</span> <span class="o">:</span> <span class="s">"string"</span>     <span class="c1">// in simple cases, just define the type
+</span>      <span class="o">}</span>
+   <span class="o">}</span>
+</pre></div><p>
+The Component implementation knows two special methods:
+</p>
+<ul><li><tt>init</tt>: connects the model between the control and the component 
+</li><li><tt>createContent</tt>: returns the Component UI as a tree of UI5 controls 
+</li></ul><p>
+component.json. This file is needed for design time environments like the <a class="missing wiki">AppDesigner?</a> so it knows the specifics of the component.The file is not loaded during the runtime of an application and thus not needed there.
+ 
+</p>
+<div class="code"><pre>   <span class="o">{</span>
+    <span class="s">"name"</span><span class="o">:</span> <span class="s">"samples.components.button"</span><span class="o">,</span>
+    <span class="s">"version"</span><span class="o">:</span> <span class="s">"0.1.0"</span><span class="o">,</span>
+    <span class="s">"description"</span><span class="o">:</span> <span class="s">"Sample button components"</span><span class="o">,</span>
+    <span class="s">"keywords"</span><span class="o">:</span> <span class="o">[</span>
+        <span class="s">"button"</span><span class="o">,</span>
+        <span class="s">"example"</span> 
+    <span class="o">],</span>
+    <span class="s">"dependencies"</span><span class="o">:</span> <span class="o">{</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div><p>
+In this case the Component is VERY simple, just consisting of one Button. 
+</p>
+<p>
+<br />
+</p>
+<p>
+Now the Component is ready to be used.
+</p>
+<p>
+<br />
+</p>
+<h3 id="UsingtheComponentinanApplication">Using the Component in an Application</h3>
+<p>
+Once the Component is defined as above, it can be used right away, just like any other UI5 Component. Let's create and display two instances:
+</p>
+<div class="code"><pre>       <span class="c1">// Create a component
+</span>       var oComp1 <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">createComponent</span><span class="o">({</span>
+        <span class="nl">name:</span> <span class="s">"samples.components.button"</span><span class="o">,</span>
+        <span class="nl">id:</span> <span class="s">"Comp1"</span><span class="o">,</span> 
+        <span class="nl">settings:</span> <span class="o">{</span><span class="nl">text:</span> <span class="s">"Hello World"</span><span class="o">}</span>
+    <span class="o">});</span>
+        <span class="c1">// Create a Ui container 
+</span>    var oCompCont1 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">ComponentContainer</span><span class="o">(</span><span class="s">"CompCont1"</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nl">component:</span> oComp1
+    <span class="o">});</span>
+        <span class="c1">// place this Ui Container with the Component inside into UI Area 
+</span>    oCompCont1<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="s">"target1"</span><span class="o">);</span>
+
+
+        <span class="c1">// You can also create a component and container at once. 
+</span>        <span class="c1">// In this example the container will create a new component according to the name.
+</span>    var oCompCont2 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">ComponentContainer</span><span class="o">(</span><span class="s">"CompCont2"</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nl">name:</span> <span class="s">"samples.components.button"</span><span class="o">,</span>
+        <span class="nl">settings:</span> <span class="o">{</span><span class="nl">text:</span> <span class="s">"Hello World again"</span><span class="o">}</span>
+    <span class="o">});</span>
+    oCompCont2<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="s">"target2"</span><span class="o">);</span>     
+</pre></div><p>
+That's it.
+</p>
+<p>
+<br />
+</p>
+<h2 id="Andhowtodoitin5seconds">And how to do it in 5 seconds</h2>
+<p>
+It will work in 5 seconds only if the component "button" already exists. 
+Assumption for these instructions to work exactly as described: you have a Windows Computer, Internet Explorer 8 (or newer) or Firefox 3.6 (or newer) and an active network connection within the SAP network. (Safari and Chrome do not allow AJAX requests for HTML pages on the file system)<br />
+(In Internet Explorer you might have to accept a security question or even change the settings. On other operating systems the instructions should work similarly.)
+</p>
+<ol><li>Right-click your desktop, select "New" &rarr; "Text Document"
+</li><li>Name the new file "component.html" and accept the extension change warning
+</li><li>Right-click the new file and select "Edit" (make sure it opens in Notepad or so, NOT in MS Word!)
+</li><li>Copy&amp;Paste the below HTML code and save the file (e.g. press Ctrl-S)
+</li><li>Replace the path placeholder in the bootstrap to point to your available sap-ui-core.js (depending on how you consume UI5).
+</li><li>Drag the file to this browser window
+</li><li>End. Nothing else. That was it.
+</li></ol><div class="code"><pre><span class="cp">&lt;!DOCTYPE HTML&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;title&gt;</span>Component - sap.ui.core<span class="nt">&lt;/title&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span> <span class="na">type=</span><span class="s">"text/javascript"</span>
+    <span class="na">src=</span><span class="s">"[INSERT PATH TO YOUR sap-ui-core.js HERE]"</span>
+    <span class="na">data-sap-ui-theme=</span><span class="s">"sap_goldreflection"</span> <span class="na">data-sap-ui-libs=</span><span class="s">"sap.ui.commons"</span><span class="nt">&gt;</span>
+
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+    <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">localResources</span><span class="p">(</span><span class="s2">"samples"</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">oComp1</span> <span class="o">=</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">getCore</span><span class="p">().</span><span class="nx">createComponent</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">"samples.components.button"</span><span class="p">,</span>
+        <span class="nx">id</span><span class="o">:</span> <span class="s2">"Comp1"</span><span class="p">,</span> 
+        <span class="nx">settings</span><span class="o">:</span> <span class="p">{</span><span class="nx">text</span><span class="o">:</span> <span class="s2">"Hello World"</span><span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="kd">var</span> <span class="nx">oCompCont1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">core</span><span class="p">.</span><span class="nx">ComponentContainer</span><span class="p">(</span><span class="s2">"CompCont1"</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">component</span><span class="o">:</span> <span class="nx">oComp1</span>
+    <span class="p">});</span>
+    <span class="nx">oCompCont1</span><span class="p">.</span><span class="nx">placeAt</span><span class="p">(</span><span class="s2">"target1"</span><span class="p">);</span>
+    
+    <span class="kd">var</span> <span class="nx">oCompCont2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">core</span><span class="p">.</span><span class="nx">ComponentContainer</span><span class="p">(</span><span class="s2">"CompCont2"</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">"samples.components.button"</span><span class="p">,</span>
+        <span class="nx">settings</span><span class="o">:</span> <span class="p">{</span><span class="nx">text</span><span class="o">:</span> <span class="s2">"Hello World again"</span><span class="p">}</span>
+    <span class="p">});</span>
+    <span class="nx">oCompCont2</span><span class="p">.</span><span class="nx">placeAt</span><span class="p">(</span><span class="s2">"target2"</span><span class="p">);</span>
+
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body</span> <span class="na">class=</span><span class="s">"sapUiBody"</span> <span class="na">role=</span><span class="s">"application"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>
+        Test Page for
+        <span class="nt">&lt;code&gt;</span>sap.ui.core.Component<span class="nt">&lt;/code&gt;</span>
+    <span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;br&gt;</span>
+    <span class="nt">&lt;h2&gt;</span>Component Container<span class="nt">&lt;/h2&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"target1"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"target2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div><p>
+<br />
+</p>
+<h2 id="Result">Result</h2>
+<p>
+If you followed the steps above you should now see two buttons appear on the page.
+</p>
+<p>
+<br />
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

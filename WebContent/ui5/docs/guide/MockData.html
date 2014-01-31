@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/MockData – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="MockData">Mock Data</h1>
+<p>
+</p><p>
+</p>
+<p>
+It is common to start development of an application with local mock data first. Application can be connected to the real data server at the later stage of development. Such mock data can be also useful for testing and problem solving in cases when access to the data service is not available or requires efforts to set up.
+</p>
+<h2 id="SwitchtoMockMode">Switch to Mock Mode</h2>
+<p>
+Switching the application to mock mode is done by adding a URL parameter "responderOn" with the value "true".
+</p>
+<p>
+In the application it is helpfull to provide the check of this URL parameter one time in a central place. We put this to the "model.Config" object that lies in the "model" folder.
+</p>
+<div class="code"><pre>jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">declare</span><span class="o">(</span><span class="s">"model.Config"</span><span class="o">);</span>
+
+model<span class="o">.</span><span class="na">Config</span> <span class="o">=</span> <span class="o">{};</span>
+
+<span class="o">(</span>function <span class="o">()</span> <span class="o">{</span>
+    
+    <span class="c1">// The "reponder" URL parameter defines if the app shall run with mock data
+</span>    var responderOn <span class="o">=</span> jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">getUriParameters</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="s">"responderOn"</span><span class="o">);</span>
+    
+    <span class="c1">// set the flag for later usage
+</span>    model<span class="o">.</span><span class="na">Config</span><span class="o">.</span><span class="na">isMock</span> <span class="o">=</span> <span class="o">(</span><span class="s">"true"</span> <span class="o">===</span> responderOn<span class="o">);</span>
+<span class="o">}</span>
+<span class="o">)();</span>
+</pre></div><h2 id="UsetheUI5MockServer">Use the UI5 Mock Server</h2>
+<p>
+The most comfortable way to run your application with mock data is by using the <a class="ext-link" href="../api/symbols/sap.ui.app.MockServer.html" title="symbols/sap.ui.app.MockServer.html in Merged JSDoc"><span class="icon"> </span>sap.ui.app.MockServer</a>. It intercepts the HTTP calls to the server and produces a faked output to the client. All this is transparent to your data binding and usage of oData model and feels like a real server.
+</p>
+<h2 id="StartMockServer">Start Mock Server</h2>
+<p>
+You start the mock server when initializing your application:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">app</span><span class="o">.</span><span class="na">Application</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"Application"</span><span class="o">,</span> <span class="o">{</span>
+    
+    init <span class="o">:</span> function <span class="o">()</span> <span class="o">{</span>
+        
+        <span class="o">...</span>
+        
+        <span class="c1">// start mock server
+</span>        <span class="k">if</span> <span class="o">(</span>model<span class="o">.</span><span class="na">Config</span><span class="o">.</span><span class="na">isMock</span><span class="o">)</span> <span class="o">{</span>
+            jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">require</span><span class="o">(</span><span class="s">"sap.ui.app.MockServer"</span><span class="o">);</span>
+            var oMockServer <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">app</span><span class="o">.</span><span class="na">MockServer</span><span class="o">({</span>
+                <span class="nl">rootUri:</span> model<span class="o">.</span><span class="na">Config</span><span class="o">.</span><span class="na">getServiceUrl</span><span class="o">();</span>
+            <span class="o">});</span>
+            oMockServer<span class="o">.</span><span class="na">simulate</span><span class="o">(</span><span class="s">"model/metadata.xml"</span><span class="o">,</span> <span class="s">"model/"</span><span class="o">);</span>
+            oMockServer<span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="o">}</span>
+</pre></div><h2 id="ProvideMockMetadata">Provide Mock Metadata</h2>
+<p>
+The mock server needs a <strong>metadata</strong> XML file describing the data structure of your service. You can easily obtain this by opening the oData service root URL in a browser with the suffix "$metadata" appended. Copy the resulting XML file into the model folder of your application. 
+</p>
+<p>
+<img width="800px" src="metadataurl.png" />
+</p>
+<p>
+Remove any kind of link that points internal servers. They are not need.
+</p>
+<p>
+<img width="800px" src="delLinks.png" />
+</p>
+<h2 id="ProvideMockData">Provide Mock Data</h2>
+<p>
+You have two options to produce <strong>mock data</strong>:
+</p>
+<ul><li>Template: You provide template JSON files for each entity that are used by the mock server to produce the output. Put all the templates into the model folder.
+</li><li>Random: The mock server can produce random mock data. This makes it very easy for you but does not result in beatifull data matching your business scenario.
+</li></ul><p>
+To avoid "not found" error messages of the mock server you should remove all entities and associations from the metadata for which you have not provided JSON template files.
+</p>
+<p>
+<img src="model.PNG" />
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/Scrolling – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="ScrollinginSAPUI5mobile">Scrolling in SAPUI5 mobile</h1>
+<p>
+Because of limited size of mobile devices, scrolling is an essential topic in mobile user experience. Smooth and easy scrolling is important for user acceptance of mobile applications.
+</p>
+<p>
+In general, application programmers do not need to take care of scrolling when using the <tt>sap.m</tt> control library - scrolling is provided automatically by the <a class="ext-link" href="../api/symbols/sap.m.Page.html" title="symbols/sap.m.Page.html in Merged JSDoc"><span class="icon"> </span>sap.m.Page</a>, <a class="ext-link" href="../api/symbols/sap.m.Dialog.html" title="symbols/sap.m.Dialog.html in Merged JSDoc"><span class="icon"> </span>sap.m.Dialog</a>, <a class="ext-link" href="../api/symbols/sap.m.Popover.html" title="symbols/sap.m.Popover.html in Merged JSDoc"><span class="icon"> </span>sap.m.Popover</a>, and <a class="ext-link" href="../api/symbols/sap.m.ScrollContainer.html" title="symbols/sap.m.ScrollContainer.html in Merged JSDoc"><span class="icon"> </span>sap.m.ScrollContainer</a> controls. However, if you are going to create a custom scrollable control, read the description below.
+</p>
+<h2 id="Implementationdetails">Implementation details</h2>
+<p>
+Unfortunately, scrolling support in mobile browsers is very weak and inconsistent. Only the newest platforms and browsers start to support partially usable scrolling functionality.
+</p>
+<p>
+Hence, SAPUI5 embeds the open source <a class="ext-link" href="http://cubiq.org/iscroll-4"><span class="icon"> </span>iScroll4</a> library that takes care of scrolling in the application. Though the library is globally available in a UI5 application, programmers should not call it directly. The <a class="ext-link" href="../api/symbols/sap.ui.core.delegate.ScrollEnablement.html" title="symbols/sap.ui.core.delegate.ScrollEnablement.html in Merged JSDoc"><span class="icon"> </span>sap.ui.core.delegate.ScrollEnablement</a> delegate that provides all needed functionality and smooth integration of iScroll4 into the SAPUI5 library should be used instead of this.
+</p>
+<h3 id="Donotusenestedscrolling">Do not use nested scrolling</h3>
+<p>
+We do not recommend to use nested levels of scrolling, for example, when a page with enabled vertical scrolling contains a scroll container that has vertical scrolling too. Such combinations may lead to behavior that is unexpected both for programmers and users.
+</p>
+<h3 id="Implementacustomscrollcontainer">Implement a custom scroll container</h3>
+<p>
+A custom control that needs to provide a scrollable area for its content should implement the following steps:
+</p>
+<ol><li>Instantiate a <tt>sap.ui.core.delegate.ScrollEnablement</tt> delegate, at best in the <tt>.onAfterRendering</tt> callback. 
+</li><li>Implement a <tt>.getScrollDelegate</tt> method that returns the current instance of the delegate to other controls.
+</li><li>Destroy the <tt>ScrollEnablement</tt> delegate on exit.
+</li></ol><p>
+Example:
+</p>
+<div class="code"><pre>myCustomScroller<span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">onAfterRendering</span> <span class="o">=</span> function<span class="o">()</span> <span class="o">{</span>
+  <span class="k">if</span><span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">_oScroller</span><span class="o">){</span>
+    jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">require</span><span class="o">(</span><span class="s">"sap.ui.core.delegate.ScrollEnablement"</span><span class="o">);</span>
+    <span class="c1">// attach a scroller to the scrollable container DOM element
+</span>    <span class="k">this</span><span class="o">.</span><span class="na">_oScroller</span> <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">delegate</span><span class="o">.</span><span class="na">ScrollEnablement</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">_scrollContainerId</span><span class="o">,</span> <span class="o">{</span>
+      <span class="nl">horizontal:</span> <span class="kc">false</span><span class="o">,</span>
+      <span class="nl">vertical:</span> <span class="kc">true</span>
+    <span class="o">});</span>
+  <span class="o">}</span>
+<span class="o">};</span>
+
+myCustomScroller<span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">getScrollDelegate</span> <span class="o">=</span> function<span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">_oScroller</span><span class="o">;</span>
+<span class="o">};</span>
+
+myCustomScroller<span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">exit</span> <span class="o">=</span> function<span class="o">()</span> <span class="o">{</span>
+  <span class="k">if</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">_oScroller</span><span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_oScroller</span><span class="o">.</span><span class="na">destroy</span><span class="o">();</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">_oScroller</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">};</span>
+</pre></div><p>
+Note: Though the UI5 library includes also a <a class="ext-link" href="http://zynga.github.com/scroller/"><span class="icon"> </span>Zynga scroller</a>, it is an experimental alternative to iScroll4 that is not supported in UI5 and may be used for testing only. The configuration parameter <tt>oConfig.zynga=true</tt> of the scrolling delegate should therefore not be used.
+</p>
+<h3 id="Interactionwiththescrollcontainers">Interaction with the scroll containers</h3>
+<p>
+There are cases, when an embedded control controls scrolling of the parent container, if required. These are
+</p>
+<ul><li>a <a class="ext-link" href="../api/symbols/sap.m.ScrollContainer.html" title="symbols/sap.m.ScrollContainer.html in Merged JSDoc"><span class="icon"> </span>sap.m.ScrollContainer</a> inside of a <a class="ext-link" href="../api/symbols/sap.m.Page.html" title="symbols/sap.m.Page.html in Merged JSDoc"><span class="icon"> </span>Page</a> may block parent scrolling, if it scrolls in the same direction itself;
+</li><li>a <a class="ext-link" href="../api/symbols/sap.m.TextArea.html" title="symbols/sap.m.TextArea.html in Merged JSDoc"><span class="icon"> </span>sap.m.TeaxtArea</a> control in edit mode blocks parent scrolling, so that the user can scroll text contents during input;
+</li><li>a <a class="ext-link" href="../api/symbols/sap.m.GrowingList.html" title="symbols/sap.m.GrowingList.html in Merged JSDoc"><span class="icon"> </span>sap.m.GrowingList</a> control scrolls parent container to update positions of visible items after the new items have been loaded from the server.
+</li></ul><p>
+When using a <a class="ext-link" href="../api/symbols/sap.m.FlexBox.html" title="symbols/sap.m.FlexBox.html in Merged JSDoc"><span class="icon"> </span>sap.m.FlexBox</a> with <tt>fitContainer</tt> set to true inside of a Page, the <tt>enableScrolling</tt> property of the Page needs to be set to false for the FlexBox to fit the viewport.
+</p>
+<h2 id="PulltoRefresh">Pull to Refresh</h2>
+<p>
+The SAPUI5 mobile library supports the "pull down to refresh" functionality that allows users to refresh lists or page content with fresh data from server. To implement it, create a  <a class="ext-link" href="../api/symbols/sap.m.PullToRefresh.html" title="symbols/sap.m.PullToRefresh.html in Merged JSDoc"><span class="icon"> </span>sap.m.PullToRefresh</a> control and put it as the first control into a page or a scroll container that contains the list that needs to be refreshed.
+</p>
+<p>
+Example:
+</p>
+<div class="code"><pre>var pullToRefresh <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">PullToRefresh</span><span class="o">({</span>
+  <span class="nl">description:</span> getLastUpdatedTime<span class="o">(),</span>
+  <span class="nl">refresh:</span> function<span class="o">(){</span>
+    pullToRefresh<span class="o">.</span><span class="na">setDescription</span><span class="o">(</span><span class="s">"loading from server..."</span><span class="o">);</span>
+    <span class="c1">// request new data from server
+</span>    getNewData<span class="o">({</span> 
+      <span class="c1">// when data comes from server
+</span>      <span class="nl">onSuccess:</span> <span class="o">{</span>
+        pullToRefresh<span class="o">.</span><span class="na">hide</span><span class="o">();</span>
+        pullToRefresh<span class="o">.</span><span class="na">setDescription</span><span class="o">(</span>getLastUpdatedTime<span class="o">());</span>
+        redrawList<span class="o">();</span>
+      <span class="o">}</span>
+    <span class="o">});</span>
+  <span class="o">};</span>
+</pre></div><p>
+The application should request new data on the <tt>refresh</tt> event and call the <tt>hide</tt> method when the data is received and the list is refreshed. You can provide a URL to a custom logo image with <tt>customIcon</tt> or switch display of logo of by setting <tt>showIcon</tt> to <tt>false</tt>. The first line of text "Pull to refresh" is standard and cannot be changed. However, you may set an optional description text to display, for example, the last update time.
+</p>
+<p>
+Note: PullToRefresh control is part of the scroll area and therefore its height is reflected in the scroll bar calculation and display. The user can see that the page can be scrolled down to reveal the pull-down area.
+</p>
+<h3 id="PulltoRefreshonDesktop">Pull to Refresh on Desktop</h3>
+<p>
+<a class="ext-link" href="../api/symbols/sap.m.PullToRefresh.html" title="symbols/sap.m.PullToRefresh.html in Merged JSDoc"><span class="icon"> </span>sap.m.PullToRefresh</a> control can be used in desktop applications in the sap_bluecrystal theme. However, it is a static control on desktop without pull capability. Users can fire the refresh event by clicking the corresponding icon. If the information about last refresh time is not needed, we recommend to hide PullToRefresh on desktop completely and use a <a class="ext-link" href="../api/symbols/sap.m.SearchField.html" title="symbols/sap.m.SearchField.html in Merged JSDoc"><span class="icon"> </span>SearchField</a> with <tt>showRefreshButton</tt> enabled instead.
+</p>
+<h3 id="Carousel">Carousel</h3>
+<p>
+Pull to Refresh does not work with a Carousel if both are contained in a page: in order to make Pull to Refresh work, the page has to enable scrolling which leads to problems with the Carousel (Carousel not visible). Suggested Workaround: Add a <a class="ext-link" href="../api/symbols/sap.m.PullToRefresh.html" title="symbols/sap.m.PullToRefresh.html in Merged JSDoc"><span class="icon"> </span>sap.m.PullToRefresh</a>instance to each page that you add to your Carousel.
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

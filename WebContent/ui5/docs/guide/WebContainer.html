@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/WebContainer – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="RunninginHybridWebContainers">Running in Hybrid Web Containers</h1>
+<h2 id="GeneralConsiderations">General Considerations</h2>
+<p>
+SAPUI5 Mobile apps can be built either as web applications which are loaded from a certain URL, or as so-called "Hybrid Apps" which have a native app wrapper, for example <a class="ext-link" href="http://www.phonegap.com"><span class="icon"> </span>PhoneGap</a>, but the entire user interface consists of a HTML viewer where the normal SAPUI5 content is displayed.<br />
+Both have advantages and disadvantages. Hybrid Apps can be published in App Stores, the whole application code and the UI5 library files can also be embedded into this Hybrid container, so these files are rather installed once than downloaded on every application start. On the other hand this means that the total library size matters because every user has to install everything. In normal web applications the library deployed on the server may be huge, but only the needed parts are downloaded at runtime.
+</p>
+<p>
+For these Hybrid Apps, the static package of SAPUI5 Mobile can be used to include all needed SAPUI5 resources, but still have a relatively small total library size because all test pages etc. are removed from this special package. The file is:
+</p>
+<ul><li>sapui5-mobile-opt-static.zip  (or sapui5-mobile-static.zip)
+</li></ul><p>
+It contains the debug version of all Javascript files as well as the optimized and minified one (which are used by default) so it can be used for productive as well as debug purposes.
+</p>
+<p>
+To use this package e.g. in PhoneGap, it just needs to be unzipped inside the respective resource location of the app development project. The PhoneGap build will then include the files and make them available at runtime.
+</p>
+<h2 id="OptimizingthePackageSize:DeleteUnneededFiles">Optimizing the Package Size: Delete Unneeded Files</h2>
+<p>
+While the above file is already pretty small (and small enough for inclusion in hybrid apps), the size can be further reduced and optimized for specific applications by deleting unneeded files:
+</p>
+<ul><li>In <tt>/resources</tt> you can delete either <tt>sap-ui-core-nojQuery.js</tt> if you reference UI5 normally, or <tt>sap-ui-core.js</tt> if you reference the nojQuery version and reference jQuery separately (e.g. because you run in a Sybase Hybrid Container).
+</li><li>In <tt>/resources/sap/ui/thirdparty</tt> you can delete the entire <tt>jquery</tt> and <tt>jqueryui</tt> folders when you use the normal <tt>sap-ui-core.js</tt> file for bootstrap (they may only be needed when using the <tt>sap-ui-core-nojQuery.js</tt> script, and even then you may have another copy of jQuery available, so that folder can still be deleted).
+</li><li>In each folder <tt>/resources/sap/* ... */themes</tt> you can delete the "base" and either the "sap_bluecrystal" or the "sap_mvi" folder (depending on which theme you use)
+</li></ul><p>
+Of all JavaScript files there is an optimized and a "-dbg" version of each file, so when deleting the above files make sure you always delete both versions of them! <br />
+If you do not want to allow easy debugging and you want to go for minimum installation size, also ALL *-dbg.js files can be deleted.
+</p>
+<p>
+Further files can be deleted, but the size reduction is limited and finding out what is not required gets increasingly difficult.
+</p>
+
+<h2 id="DeviceReadyEvent">Device Ready Event</h2>
+<p>
+The hybrid web container takes some time to initialize itself. During the initialization, it will block sending AJAX request which means the Javascript code will stop at the line where AJAX request is sent and won't do further code execution. This leads to a UI freeze effect which isn't the purpose of sending AJAX request. Since the oData model in SAPUI5 uses AJAX request internally, the oData model initialization must be done after the hybrid container is ready in order not to block the user interface.
+</p>
+<p>
+Luckily, hybrid containers fire a special event when it's ready. This event is called <i>deviceready</i> in PhoneGap. Simply moving the code where the oData model is created and set to the core object or any other controls' model property to the deviceready event listener will fix the freezing UI issue. The code may look like below:
+</p>
+<div class="code"><pre><span class="nt">&lt;script&gt;</span>
+<span class="c">&lt;!--</span> <span class="nx">put</span> <span class="nx">the</span> <span class="nx">following</span> <span class="nx">code</span> <span class="k">in</span> <span class="nx">the</span> <span class="nx">beginning</span> <span class="nx">of</span> <span class="nx">the</span> <span class="nx">application</span> <span class="nx">code</span> <span class="o">--&gt;</span>
+<span class="kd">function</span> <span class="nx">appReady</span><span class="p">(){</span>
+    <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">getCore</span><span class="p">().</span><span class="nx">setModel</span><span class="p">(</span><span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">odata</span><span class="p">.</span><span class="nx">ODataModel</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">ODATA_URL</span><span class="o">&gt;</span><span class="p">,</span> <span class="kc">false</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="c">&lt;!--</span> <span class="nx">bind</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">deviceready</span> <span class="nx">event</span> <span class="o">--&gt;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"deviceready"</span><span class="p">,</span> <span class="nx">appReady</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div><h2 id="CrossDomainRestriction">Cross Domain Restriction</h2>
+<p>
+When data needs to be loaded from external server or service using AJAX, the external domain has to be configured inside the hybrid web container in order to make the AJAX request go through the cross domain restriction. Talking about PhoneGap, please see the reference <a class="ext-link" href="http://docs.phonegap.com/en/2.0.0/guide_whitelist_index.md.html#Domain%20Whitelist%20Guide"><span class="icon"> </span>page</a> for detailed information.
+</p>
+<p>
+We have integrated our demo applications into PhoneGap and here are our findings after doing the integration:
+</p>
+<h3 id="Android">Android</h3>
+<p>
+There is no cross domain restriction any more if the AJAX code runs inside the webview in Android which means we can load data using AJAX from everywhere. This is what we found but in the PhoneGap documentation, it says the domain still needs to be configured in one XML file.
+</p>
+<h3 id="iOS">iOS</h3>
+<p>
+There's still this restriction in Webview in iOS, the domain that will be visited using AJAX should be added to a while list file in order to enable this to go through the restriction. For the detailed information about this white list file, please see the reference <a class="ext-link" href="http://docs.phonegap.com/en/2.0.0/guide_whitelist_index.md.html#Domain%20Whitelist%20Guide"><span class="icon"> </span>here</a>.
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

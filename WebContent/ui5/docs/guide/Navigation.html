@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Navigation – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="Navigation">Navigation</h1>
+<p>
+</p><p>
+</p>
+<h2 id="Benefits">Benefits</h2>
+<ul><li>Passing data from the hash to any view that's interested in it.
+</li><li>Navigation will adjust the current hash to be a bookmarkable url.
+</li><li>Auto generation of views, depending on the hash. (optional).
+</li></ul><h2 id="SimpleSample">Simple Sample</h2>
+<p>
+A route is used to notify your application if the hash hash changed to a certain value. When a route matches the hash, it provides the data passed over the hash to a defined handler.
+</p>
+<p>
+If you are using a UI-Component, please read the corresponding chapter, since the component will create a router for you.
+</p>
+<p>
+Lets say we have following url www.myApp.com#product/5. We want to be informed that the hash is pointing to prodct and the value is 5. We need to configure the following thing:
+</p>
+<div class="code"><pre><span class="c1">//Somewhere at the start of your application
+</span>var oRoutes <span class="o">=</span> <span class="o">{</span>
+            <span class="c1">// name used for listening or navigating to this route
+</span>            <span class="s">"specificProduct"</span> <span class="o">:</span> <span class="o">{</span>
+                <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">"product/{id}"</span> <span class="c1">// will be the url and from has to be provided in the data
+</span>            <span class="o">}</span>
+        <span class="o">}</span>
+
+var oRouter <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">routing</span><span class="o">.</span><span class="na">Router</span><span class="o">(</span>oRoutes<span class="o">);</span>
+
+<span class="c1">//this is used to retrieve the instance again 
+</span>oRouter<span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="s">"appRouter"</span><span class="o">);</span>
+
+<span class="c1">//starts reacting on the hashchange + parses the current hash and notifies callbacks
+</span>oRouter<span class="o">.</span><span class="na">initialize</span><span class="o">();</span>
+</pre></div><p>
+The pattern of the route will be matched against the hash. The {} means this segment of the url will be passed to a handler with the value it contains. In our example hash the id will be "5".
+</p>
+<p>
+Let's take a look at how we cold register to this:
+       
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"MyApp.View1"</span><span class="o">,</span> <span class="o">{</span>
+ <span class="c1">//inside of a controller
+</span>    <span class="nl">onInit:</span> function<span class="o">()</span> <span class="o">{</span>
+        var oRouter <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">routing</span><span class="o">.</span><span class="na">Router</span><span class="o">.</span><span class="na">getRouter</span><span class="o">(</span><span class="s">"appRouter"</span><span class="o">);</span>
+
+        oRouter<span class="o">.</span><span class="na">attachRouteMatched</span><span class="o">(</span>function<span class="o">(</span>oEvent<span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span>oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"name"</span><span class="o">)</span> <span class="o">!==</span> <span class="s">"specificProduct"</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">return</span><span class="o">;</span> <span class="c1">//we only want to react to events for the specificProductRoute
+</span>                        <span class="o">}</span>
+                        <span class="c1">//We now know we hit the specificProduct route and retrieve the id
+</span>            <span class="k">this</span><span class="o">.</span><span class="na">_selectItemWithId</span><span class="o">(</span>oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"arguments"</span><span class="o">).</span><span class="na">id</span><span class="o">);</span>
+                  <span class="c1">//bind the this pointer to the callback
+</span>        <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+       <span class="o">},</span>
+
+    _selectItemWithId <span class="o">:</span> function<span class="o">(</span>id<span class="o">)</span> <span class="o">{</span>
+        <span class="c1">//implementation eg: select an item in a list
+</span>       <span class="o">}</span>
+</pre></div><h2 id="RoutinginComponents">Routing in Components</h2>
+<h3 id="Configuration">Configuration</h3>
+<p>
+UI Components are able to initialize a router based on the component metadata.
+</p>
+<div class="code"><pre>metadata <span class="o">:</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="nl">routing:</span> <span class="o">{</span>
+        <span class="nl">config:</span> <span class="o">{</span> <span class="c1">// default values for routing
+</span>            viewType <span class="o">:</span> <span class="s">"XML"</span><span class="o">,</span>
+            <span class="nl">viewPath:</span> <span class="s">"default.path.view"</span><span class="o">,</span>
+            <span class="nl">clearTarget:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+        <span class="nl">routes:</span> <span class="o">{</span> <span class="c1">// contains routing configuration objects
+</span>            <span class="s">"myRouteName"</span> <span class="o">:</span> <span class="o">{</span>
+                name <span class="o">:</span> <span class="o">,</span>
+                pattern <span class="o">:</span> <span class="s">"FirstView/{from}"</span><span class="o">,</span>
+                view <span class="o">:</span> <span class="s">"myViewId"</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</pre></div><p>
+The routing metadata has two parameters. 
+</p>
+<ol><li>routes<br />
+contains an array with all routes defined by the component
+</li></ol><ol start="2"><li>config<br />
+contains default values, which are applied, if no setting is specified by a route. Default settings are overwritten by custom route settings
+</li></ol><h3 id="Initializationoftherouter">Initialization of the router</h3>
+<p>
+The router needs to be initialized by the component. E.g. in the init function.
+</p>
+<div class="code"><pre>init <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+    sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">UIComponent</span><span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">init</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> arguments<span class="o">);</span>
+    <span class="c1">// this component should automatically initialize the router!
+</span>    <span class="k">this</span><span class="o">.</span><span class="na">getRouter</span><span class="o">().</span><span class="na">initialize</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div><h3 id="Accessingtherouter">Accessing the router</h3>
+<p>
+To access the router and use it's functionality you can use the static <tt> getRouterFor </tt> function of the UIComponent. You can pass either a controller or a view.
+</p>
+<div class="code"><pre>var oRouter <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">UIComponent</span><span class="o">.</span><span class="na">getRouterFor</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</pre></div><p>
+You can also use the getRouter() function of your UIComponent.
+</p>
+<h3 id="Ownershipofviews">Ownership of views</h3>
+<p>
+All views which are generated by the router are automatically created in the context of the component.
+</p>
+<h2 id="Configuration1">Configuration</h2>
+<h3 id="Routes">Routes</h3>
+<h4 id="MandatoryParameters">Mandatory Parameters</h4>
+<p>
+<strong>name</strong>
+eg: 
+       
+</p>
+<div class="code"><pre><span class="s">"routing"</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="c1">// name used for listening or navigating to this route
+</span>            <span class="s">"specificProduct"</span> <span class="o">:</span> <span class="o">{</span>
+                <span class="c1">//all the optionalParameters
+</span>            <span class="o">}</span>
+        <span class="o">}</span>
+</pre></div><p>
+The name of a route is mainly used to identify the route. It has to be unique within one Router instance. If you are adding a callback on the routeMatched event of the router you need to check for this name.
+Also if you want to use the navTo method of the Router the first parameter you need to provide is this name.
+</p>
+<h4 id="OptionalParameters">Optional Parameters</h4>
+<p>
+<strong>pattern</strong>
+</p>
+<p>
+The pattern is the string that is matched against the hash. Only the first route with a matching pattern, will trigger the callbacks.
+There are a few special characters / url segments:
+</p>
+<ul><li>/ - seperator for an url segment
+</li><li>{variableName} - mandatory variable eg: foo/{bar} will not match against the hash foo/
+</li><li>:optionalVariableName: - optional variable eg: foo/:bar: will match against foo/ but bar will be undefined in the callback
+</li><li>:myVariable*: - ignores separators and puts everything that follows in this variable eg: foo/{bar*} will match against foo/bar/one and will have "bar/one" as value of bar
+</li><li>:?query: - puts key value pairs into a query variable eg: ?foo=bar&amp;one=two will add a parameter { "?query" : { foo : "bar" , one : "two" } }
+</li></ul><p>
+To test out patterns you can use this Page, so you don't need to build an application for testing patterns
+[Page - testing route patterns|<a class="ext-link" href="http://veui5infra.dhcp.wdf.sap.corp:8080//uilib-sample/test-resources/sap/ui/core/samples/routing/RoutePatterns.html"><span class="icon"> </span>http://veui5infra.dhcp.wdf.sap.corp:8080//uilib-sample/test-resources/sap/ui/core/samples/routing/RoutePatterns.html</a>]
+</p>
+<p>
+Issue in 1.16.2 - patterns that are undefined will match the empty hash. Workaroud: normaly you will only skip the pattern if you have subroutes. Taking the same pattern as one of the subroutes is the correct workaround, since subroutes get registered before their parents.
+</p>
+<ul><li>view<br />
+The name of a view that will be created. The view will only be created the first time this route will be matched. After that it will be taken from a cache. To place the view into a Control use the targetAggregation and targetControl.
+</li></ul><ul><li>viewType<br />
+The type of the view that is going to be created. Eg: sap.ui.core.mvc.<a class="missing wiki">ViewType?</a>.XML
+</li></ul><ul><li>viewPath<br />
+A prefix that will be prependet in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".
+</li></ul><ul><li>targetParent<br />
+the id of a view where the targetControl will be searched in. If this is left empty, the framework will take the view of the parent route. If you define the config in an UI component, the content of the UI component will be the parent of your top level routes.
+</li></ul><ul><li>targetControl<br />
+The id of a control where your views will be put into. You also need to specify targetAggregation if you want to put the created view into the aggregation. If you leave the targetControl empty, the targetcontrol of the parentRoute will be taken.
+</li></ul><ul><li>targetAggregation<br />
+The name of an aggregation of the targetControl, that contains views. Eg: a <a class="missing wiki">NavigationContainer?</a> has an aggregation Pages , another Example is the Shell it has Content.
+</li></ul><ul><li>clearTarget<br />
+Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. Clearing means all of the elements in the aggregation will be removed (not destroyed).
+</li></ul><ul><li>subroutes<br />
+An object of routes - Each route in this object may contain all the parameters listed here. Routes added to soubroutes may have subroutes again. The subroutes get inserted before their parents. That means if a subroute matches, the parent pattern will not be matching.
+</li></ul><ul><li>callback<br />
+A optional function which is executed after the route has matched. Normally it should be avoided to use the callback, since you cannot do this in a declarative fashion. Use router.attachRouteMatched instead.
+</li></ul><h3 id="Router">Router</h3>
+<p>
+The router configuration does support all the values a Route support. If a route does not provide a value, the value of the Router configuration will be taken.
+</p>
+<p>
+eg: 
+</p>
+<div class="code"><pre><span class="c1">//provides the default values for all views
+</span><span class="s">"routing"</span> <span class="o">:</span> <span class="o">{</span>
+
+    <span class="cm">/*
+    * The default values for every route
+    */</span>
+    <span class="s">"config"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"viewType"</span> <span class="o">:</span> <span class="s">"XML"</span><span class="o">,</span>
+        <span class="s">"viewPath"</span> <span class="o">:</span> <span class="s">"MyApp.view"</span><span class="o">,</span>
+    <span class="o">},</span>
+
+    <span class="s">"routes"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"myRoute"</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="s">"viewType"</span> <span class="o">:</span> <span class="s">"JS"</span><span class="o">,</span>
+        <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">"foo"</span><span class="o">,</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">},</span>
+
+<span class="c1">//results in following config:
+</span><span class="o">{</span>
+    <span class="c1">//taken from default, since the route does not specify it
+</span>    <span class="s">"viewPath"</span><span class="o">:</span> <span class="s">"MyApp.view"</span><span class="o">,</span>
+    <span class="c1">//taken from default, since the route does not specify it
+</span>    <span class="s">"viewType"</span> <span class="o">:</span> <span class="s">"JS"</span><span class="o">,</span>
+    <span class="c1">//taken from routes
+</span>    <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">"foo"</span><span class="o">,</span>
+    <span class="c1">//taken from routes 
+</span>    <span class="s">"name"</span> <span class="o">:</span> <span class="s">"myRoute"</span>
+<span class="o">}</span>
+
+</pre></div><h2 id="Howtonavigate">How to navigate</h2>
+<p>
+<strong>navTo(routeName, data)</strong>
+</p>
+<p>
+This method will Navigate to the given route, fill the hash with data. And the listener callbacks of controllers listening to this route will be provided with data.
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"MyApp.View2"</span><span class="o">,</span> <span class="o">{</span>
+  <span class="nl">anyEvent:</span> function<span class="o">()</span> <span class="o">{</span>
+        sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">UIComponent</span><span class="o">.</span><span class="na">getRouterFor</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">navTo</span><span class="o">(</span><span class="s">"View2"</span><span class="o">,{</span> <span class="nl">from:</span> <span class="s">"View 1"</span><span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+The hash will not change to product/5 because "view1" is matching the name of our route defined in the example configuration (see with-bookmarking configuration). The property productId of the data object, has to match the placeholder in the pattern of the route&nbsp;
+</p>
+<p>
+And because we are changing the hash, all the listeners to this hash will be informed.
+</p>
+<h2 id="Events">Events</h2>
+<h3 id="routeMatched">routeMatched</h3>
+<p>
+The route matched event is fired everytime a changed hash matches some route. To only react to specific routes you can check if the name parameter matches the route you want to listen to.
+The event has the following parameters:
+</p>
+<ul><li>name<br />
+the name of the route which has matched
+</li></ul><ul><li>arguments<br />
+an object of arguments which were part of the route
+</li></ul><ul><li>targetControl<br />
+If a targetControl is given, the control instance in which the view was inserted
+</li></ul><ul><li>view<br />
+If a view was inserted, the instance of the view
+</li></ul><div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"MyApp.View1"</span><span class="o">,</span> <span class="o">{</span>
+
+    <span class="nl">onInit:</span> function<span class="o">()</span> <span class="o">{</span>
+        var oRouter <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">routing</span><span class="o">.</span><span class="na">Router</span><span class="o">.</span><span class="na">getRouter</span><span class="o">(</span><span class="s">"appRouter"</span><span class="o">);</span>
+
+        oRouter<span class="o">.</span><span class="na">attachRouteMatched</span><span class="o">(</span>function<span class="o">(</span>oEvent<span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span>oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"name"</span><span class="o">)</span> <span class="o">!==</span> <span class="s">"view1"</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">return</span><span class="o">:</span>
+                        <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="na">_selectItemWithId</span><span class="o">(</span>oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"arguments"</span><span class="o">).</span><span class="na">id</span><span class="o">);</span>
+        <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+       <span class="o">},</span>
+
+    _selectItemWithId <span class="o">:</span> function<span class="o">(</span>id<span class="o">)</span> <span class="o">{</span>
+        <span class="c1">//implementation
+</span>       <span class="o">}</span>
+</pre></div><h3 id="viewCreated">viewCreated</h3>
+<p>
+A view created event will be fired everytime a new view has been created by the navigation system.
+The event has the following parameters:
+</p>
+<ul><li>view<br />
+the view instance
+</li></ul><ul><li>viewName<br />
+the name of the view
+</li></ul><ul><li>type<br />
+The view type
+</li></ul><h2 id="Advancedconcepts">Advanced concepts</h2>
+<h3 id="Routematching">Route matching</h3>
+<p>
+The order of defining routes mathers: Only the first route that matches will be matched. The rule is, to define specific routes first: 
+</p>
+<p>
+eg: 
+</p>
+<div class="code"><pre><span class="c1">//this is '''wrong'''
+</span><span class="o">{</span>
+    <span class="s">"secondRoute"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">"foo/{id}"</span>
+    <span class="o">},</span>
+    <span class="s">"firstRoute"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">"foo/bar"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div><p>
+if you enter #foo/bar the "secondRoute" will be hit passing bar as id and the first route will never be hit. That's why you should put the config like this:
+</p>
+<p>
+eg: 
+</p>
+<div class="code"><pre><span class="c1">//this is '''correct'''
+</span><span class="o">{</span>
+    <span class="s">"firstRoute"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">"foo/bar"</span>
+    <span class="o">},</span>
+    <span class="s">"secondRoute"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">"foo/{id}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div><p>
+now #foo/bar will match the firstRoute and foo/anything will match the secon route
+</p>
+<h3 id="BuildingacatchallRoutetohandlerequeststhatdontmatchanyroute">Building a catchall Route to handle requests that don't match any route</h3>
+<p>
+If you defined a catchall Route you should always define it as the last route, since the first route that gets hit will be informed. All routes defined after the Route that was hit first, will be ignored. See Route matching.
+</p>
+<div class="code"><pre>routes <span class="o">:</span> <span class="o">{</span>
+    <span class="c1">// a lot of other routes before this one
+</span>    <span class="s">"catchall"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"pattern"</span> <span class="o">:</span> <span class="s">":all*:"</span><span class="o">,</span> <span class="c1">//catchall patter: hash #my/hash/5 will put "my/hash/5" into the variable all of the arguments object
+</span>        <span class="s">"viewId"</span> <span class="o">:</span> <span class="s">"Welcome"</span><span class="o">,</span> <span class="c1">// any request not matching a hash will go to the Welcome page (you could also define a not found page)
+</span>    <span class="o">}</span>
+</pre></div>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

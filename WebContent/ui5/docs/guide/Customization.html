@@ -1,0 +1,427 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Customization – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="ExtensibilityandCustomizing">Extensibility and Customizing</h1>
+<h2 id="Introduction">Introduction</h2>
+<p>
+When a SAPUI5 application is not developed as custom application but delivered as standard application to many customers, these customers may require adaptations of the standard application. The same applies if an application is adapted by partners or for specific industries. This document describes the SAPUI5-related parts of this customization configuration.
+</p>
+<h2 id="OverallConcept">Overall Concept</h2>
+<p>
+Customization is based on the configuration of Components. A special area of their configuration is dedicated to customization information. <br />
+Such a customization can be performed on a custom application that extends a delivered standard application. Any replacement or extension Views and custom Controllers will also be part of this custom application, but if such extensions are not required, the custom application project will only contain the Component definition with the customization configuration.<br />
+The delivered standard application remains unchanged and hence the extension is considered to be modification free. <br />
+The custom application becomes the start-up project which then launches the delivered standard application with the additional customizing configuration.
+</p>
+<p>
+Several aspects can be customized:
+</p>
+<ul><li>Views can be extended by inserting custom content (Views or Fragments) into Extension Points in the UI structure provided by application development
+</li><li>Views can be replaced entirely by custom-developed Views
+</li><li>Views can be modified by customizing specific properties of controls
+</li><li>Controllers can be extended with additional code (optionally overriding existing code)
+</li><li>i18N resource texts can be customized
+</li><li>New views can be added
+</li><li>New navigation paths can be added
+</li><li>Navigation routes can be customized
+</li></ul><h2 id="ConfigurationExample">Configuration Example</h2>
+<p>
+The configuration goes into the Component.js file of the custom application. 
+</p>
+<ul><li>The custom application Component needs to inherit from the main Component of the customized application. 
+<ul><li>It may be required to use <tt>registerModulePath(...)</tt> to make the location of the original application/Component known to UI5.
+</li></ul></li><li>The configuration in the "customizing" section contains the metadata of the extensions, describing the objects that are replaced or extended.
+</li></ul><p>
+The configuration structure is as follows:
+</p>
+<div class="code"><pre>some<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">Component</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"some.customer.Component"</span><span class="o">,</span> <span class="o">{</span>
+    
+    metadata <span class="o">:</span> <span class="o">{</span>
+        <span class="o">.....</span><span class="na">some</span> configuration
+        <span class="nl">config:</span> <span class="o">{</span>
+            <span class="o">.....</span><span class="na">some</span> configuration
+        <span class="o">},</span>
+        <span class="nl">customizing:</span> <span class="o">{</span>
+                      
+            <span class="s">"sap.ui.viewExtensions"</span><span class="o">:</span> <span class="o">{</span>        
+                <span class="s">"samples.components.ext.sap.Sub2"</span><span class="o">:</span> <span class="o">{</span>    
+                    <span class="s">"extension2"</span><span class="o">:</span> <span class="o">{</span>    
+                        <span class="nl">className:</span> <span class="s">"sap.ui.core.Fragment"</span><span class="o">,</span>    
+                        <span class="nl">fragmentName:</span> <span class="s">"samples.components.ext.customer.CustomFrag1"</span><span class="o">,</span>
+                        <span class="nl">type:</span> <span class="s">"XML"</span>
+                    <span class="o">},</span>    
+                    <span class="s">"extension3"</span><span class="o">:</span> <span class="o">{</span>    
+                        <span class="nl">className:</span> <span class="s">"sap.ui.core.mvc.View"</span><span class="o">,</span>
+                        <span class="nl">viewName:</span> <span class="s">"samples.components.ext.customer.CustomSubSubView1"</span><span class="o">,</span>            
+                        <span class="nl">type:</span> <span class="s">"XML"</span>
+                    <span class="o">}</span>    
+                <span class="o">}</span>
+            <span class="o">},</span>
+            
+            <span class="s">"sap.ui.viewModifications"</span><span class="o">:</span> <span class="o">{</span>        
+                <span class="s">"samples.components.ext.sap.Sub3"</span><span class="o">:</span> <span class="o">{</span>    
+                    <span class="s">"someCustomizableTextControl"</span><span class="o">:</span> <span class="o">{</span>    
+                        <span class="s">"visible"</span><span class="o">:</span> <span class="kc">false</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>    
+            <span class="o">},</span>
+
+            <span class="s">"sap.ui.viewReplacements"</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s">"samples.components.ext.sap.Sub1"</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nl">viewName:</span> <span class="s">"samples.components.ext.customer.CustomSub1"</span><span class="o">,</span>
+                    <span class="nl">type:</span> <span class="s">"XML"</span>
+                <span class="o">}</span>
+            <span class="o">},</span>
+            
+            <span class="s">"sap.ui.controllerExtensions"</span><span class="o">:</span> <span class="o">{</span>    
+                <span class="s">"samples.components.ext.sap.Main"</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="s">"controllerName"</span><span class="o">:</span> <span class="s">"samples.components.ext.customer.MainExtension"</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+"sap.ui.viewExtensions" is used for providing custom view content in a specified extension point in the standard delivered application. <br />
+"sap.ui.viewModifications" is used for overriding certain properties of controls in the standard delivered application. <br />
+"sap.ui.viewReplacements" is used for replacing a view in a delivered standard application with a custom view. <br /> 
+"sap.ui.controllerExtensions" is used for replacing a controller in a delivered standard application with a custom controller.
+</p>
+<h2 id="ViewExtension">View Extension</h2>
+<h3 id="ExtensionPointsProvision">Extension Points Provision</h3>
+<p>
+Extension points are inserted in the views of delivered standard applications. This will enable extensibility of delivered standard applications by inserting custom content at the location of these extension points. <br /> 
+At certain places of XML Views where it is likely that customers may want to insert custom content, applications can insert special tags which serve as anchor for extensions. <br /> 
+For example: In the below view, there are 3 extension points defined. Namely extension1, extension2 and extension3.<br />
+The extension name together with the View name is the identifier of these extension points.
+</p>
+<div class="code"><pre><span class="o">&lt;</span><span class="nl">mvc:</span>View xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span>  <span class="nl">xmlns:</span>core<span class="o">=</span><span class="s">"sap.ui.core"</span> <span class="nl">xmlns:</span>mvc<span class="o">=</span><span class="s">"sap.ui.core.mvc"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nl">core:</span>ExtensionPoint name<span class="o">=</span><span class="s">"extension1"</span> <span class="o">/&gt;</span>
+    <span class="o">&lt;</span>TextView text<span class="o">=</span><span class="s">"SAP View 'Sub2' - this one is extended by the customer and there should be a button after this text"</span><span class="o">&gt;&lt;/</span>TextView<span class="o">&gt;</span>    
+    <span class="o">&lt;</span><span class="nl">core:</span>ExtensionPoint name<span class="o">=</span><span class="s">"extension2"</span> <span class="o">/&gt;</span>   
+    <span class="o">&lt;</span><span class="nl">core:</span>ExtensionPoint name<span class="o">=</span><span class="s">"extension3"</span> <span class="o">/&gt;</span>   
+<span class="o">&lt;/</span><span class="nl">mvc:</span>View<span class="o">&gt;</span>
+</pre></div><p>
+Note that for Table-like controls (with aggregations that span two dimensions, like rows and columns), ExtensionPoints need to be provided in both dimensions. E.g. in the sap.m.Table one ExtensionPoint needs to be provided in the "columns" aggregation, another one in the provided template ColumnListItem's "cells" aggregation.
+</p>
+<h3 id="ExtensionPointswithDefaultContent">Extension Points with Default Content</h3>
+<p>
+While empty ExtensionPoints offer the possibility to insert additional content, applications can also provide default content inside ExtensionPoints. As long as no custom content is defined, this original default content is used. But when custom content is defined, the default content is completely ignored.
+</p>
+<p>
+This feature is particularly interesting for aggregations which are filled by data binding: in XMLViews one item is given which is used as template. Applications who want customers to be able to exchange these items by custom ListItems can enclose the default ListItems in an &lt;<a class="missing wiki">ExtensionPoint?</a>&gt; tag:
+</p>
+<div class="code"><pre><span class="o">&lt;</span><span class="nl">mvc:</span>View xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span>  <span class="nl">xmlns:</span>core<span class="o">=</span><span class="s">"sap.ui.core"</span> <span class="nl">xmlns:</span>mvc<span class="o">=</span><span class="s">"sap.ui.core.mvc"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span>ListBox items<span class="o">=</span><span class="s">"{/names}"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nl">core:</span>ExtensionPoint name<span class="o">=</span><span class="s">"extension1"</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span>ListItem text<span class="o">=</span><span class="err">"</span><span class="o">{</span>firstName<span class="o">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;/</span><span class="nl">core:</span>ExtensionPoint<span class="o">&gt;</span>
+    <span class="o">&lt;/</span>ListBox<span class="o">&gt;</span>  
+<span class="o">&lt;/</span><span class="nl">mvc:</span>View<span class="o">&gt;</span>
+</pre></div><p>
+Of course this is possible for all "multiple" aggregations, not only for Lists.
+</p>
+<h3 id="ExtensionContentDefinition">Extension Content Definition</h3>
+<p>
+In the custom application, customers can choose to define the Extension Content (either a Fragment or a View) which will be inserted at the position where the <tt>&lt;core:ExtensionPoint /&gt;</tt> is inserted. Refer to the <a class="wiki" href="Fragments.html">Fragment</a> and <a class="wiki" href="MVC.html">View documentation</a> for details on Fragments/Views.
+</p>
+<p>
+The extension name together with the View name is the identifier of this extension point. <br />
+For example: For the extension points defined in the standard delivered application as in above section, a customer can define the content for each extension as shown below. <br />
+The below section describes the customizing that connects the Extension Point in the standard delivered application and the Extension Content in the customer application. <br />
+</p>
+<div class="code"><pre><span class="nl">customizing:</span> <span class="o">{</span>
+        
+    <span class="s">"sap.ui.viewExtensions"</span><span class="o">:</span> <span class="o">{</span>
+        <span class="s">"samples.components.ext.sap.Sub2"</span><span class="o">:</span> <span class="o">{</span>
+            <span class="s">"extension2"</span><span class="o">:</span> <span class="o">{</span>
+                <span class="nl">className:</span> <span class="s">"sap.ui.core.Fragment"</span><span class="o">,</span>
+                <span class="nl">fragmentName:</span> <span class="s">"samples.components.ext.customer.CustomFrag1"</span><span class="o">,</span>
+                <span class="nl">type:</span> <span class="s">"XML"</span>
+            <span class="o">},</span>
+            <span class="s">"extension3"</span><span class="o">:</span> <span class="o">{</span>
+                <span class="nl">className:</span> <span class="s">"sap.ui.core.mvc.View"</span><span class="o">,</span>
+                <span class="nl">viewName:</span> <span class="s">"samples.components.ext.customer.CustomSubSubView1"</span><span class="o">,</span>
+                <span class="nl">type:</span> <span class="s">"XML"</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+    <span class="o">.....</span><span class="na">some</span> more content
+</pre></div><p>
+The below section describes the Extension Content in the customer application in a fragment file called <i>CustomFrag1.fragment.xml</i> <br />
+</p>
+<div class="code"><pre><span class="o">&lt;</span>Button xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span> text<span class="o">=</span><span class="s">"This Button is in an Extension Fragment"</span> <span class="o">/&gt;</span>
+</pre></div><p>
+Note that you can also add multiple root-level controls using one Fragment (see the <a class="wiki" href="Fragments.html">Fragment documentation</a> for an example how to add a <tt>&lt;FragmentDefinition&gt;</tt> node as XML root element in this case).
+</p>
+<p>
+The below section describes the Extension Content in the customer application in a view file called <i>CustomSubSubView1.view.xml</i> <br />
+</p>
+<div class="code"><pre><span class="o">&lt;</span><span class="nl">mvc:</span>View xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span>  <span class="nl">xmlns:</span>core<span class="o">=</span><span class="s">"sap.ui.core"</span> <span class="nl">xmlns:</span>mvc<span class="o">=</span><span class="s">"sap.ui.core.mvc"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nl">core:</span>ExtensionPoint name<span class="o">=</span><span class="s">"extension1"</span> <span class="o">/&gt;</span>
+    <span class="o">&lt;</span>TextView text<span class="o">=</span><span class="s">"Customer View 'SubSubView1' - this one extends the original SAP View 'Sub2' - and even custom Views can be extended:"</span><span class="o">&gt;&lt;/</span>TextView<span class="o">&gt;</span>   
+    <span class="o">&lt;</span><span class="nl">core:</span>ExtensionPoint name<span class="o">=</span><span class="s">"extension2"</span> <span class="o">/&gt;</span>   
+<span class="o">&lt;/</span><span class="nl">mvc:</span>View<span class="o">&gt;</span>
+</pre></div><h2 id="ViewModification">View Modification</h2>
+<p>
+In the custom application, the customer can choose to change the property of a control in a view delivered in the standard application.
+The view name together with the control id uniquely determines the control in the standard application.<br />
+Below is an example that explains how a view modification works.<br />
+The below section describes the view called <i>Sub3.view.xml</i> in the delivered standard application.
+</p>
+<div class="code"><pre><span class="o">&lt;</span><span class="nl">mvc:</span>View xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span> <span class="nl">xmlns:</span>mvc<span class="o">=</span><span class="s">"sap.ui.core.mvc"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span>TextView text<span class="o">=</span><span class="s">"SAP View 'Sub3' - the text after this one is hidden by customizing: "</span><span class="o">&gt;&lt;/</span>TextView<span class="o">&gt;</span>
+    <span class="o">&lt;</span>TextView id<span class="o">=</span><span class="s">"someCustomizableTextControl"</span> text<span class="o">=</span><span class="s">"This text is made invisible by customization"</span><span class="o">&gt;&lt;/</span>TextView<span class="o">&gt;</span>  
+<span class="o">&lt;/</span><span class="nl">mvc:</span>View<span class="o">&gt;</span>
+</pre></div><p>
+The below section describes the customizing that identifies the control "someCustomizableTextControl" whose "visible" property will be set to false.
+</p>
+<div class="code"><pre><span class="nl">customizing:</span> <span class="o">{</span>  
+    <span class="s">"sap.ui.viewModifications"</span><span class="o">:</span> <span class="o">{</span>
+        <span class="s">"samples.components.ext.sap.Sub3"</span><span class="o">:</span> <span class="o">{</span>
+            <span class="s">"someCustomizableTextControl"</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s">"visible"</span><span class="o">:</span> <span class="kc">false</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div><h2 id="ViewReplacement">View Replacement</h2>
+<p>
+In case the provided Extension Points are not sufficient, then the custom application can replace with a new view instead of a view in the delivered standard application. <br />
+Below is an example that explains how a view replacement works. <br />
+The below section describes the view called <i>Sub1.view.xml</i> in the delivered standard application.
+</p>
+<div class="code"><pre><span class="o">&lt;</span><span class="nl">mvc:</span>View xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span> <span class="nl">xmlns:</span>mvc<span class="o">=</span><span class="s">"sap.ui.core.mvc"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span>TextView text<span class="o">=</span><span class="s">"SAP View 'Sub1' - this one should have been replaced by the customer View"</span><span class="o">&gt;&lt;/</span>TextView<span class="o">&gt;</span>  
+<span class="o">&lt;/</span><span class="nl">mvc:</span>View<span class="o">&gt;</span>
+</pre></div><p>
+The below section describes the customizing that connects the custom view that is a replacement for the view in standard delivered application<br />
+</p>
+<div class="code"><pre><span class="nl">customizing:</span> <span class="o">{</span>
+    <span class="o">.....</span><span class="na">some</span> more content
+    <span class="s">"sap.ui.viewReplacements"</span><span class="o">:</span> <span class="o">{</span>
+        <span class="s">"samples.components.ext.sap.Sub1"</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nl">viewName:</span> <span class="s">"samples.components.ext.customer.CustomSub1"</span><span class="o">,</span>
+            <span class="nl">type:</span> <span class="s">"XML"</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+    <span class="o">.....</span><span class="na">some</span> more content
+</pre></div><p>
+The below section describes the view called <i>CustomSub1.view.xml</i> in the custom application.
+</p>
+<div class="code"><pre><span class="o">&lt;</span><span class="nl">mvc:</span>View xmlns<span class="o">=</span><span class="s">"sap.ui.commons"</span> <span class="nl">xmlns:</span>mvc<span class="o">=</span><span class="s">"sap.ui.core.mvc"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span>TextView text<span class="o">=</span><span class="s">"Custom View 'Sub1' - this one replaces the original SAP View 'Sub1'"</span><span class="o">&gt;&lt;/</span>TextView<span class="o">&gt;</span>    
+<span class="o">&lt;/</span><span class="nl">mvc:</span>View<span class="o">&gt;</span>
+</pre></div><h2 id="ControllerExtension">Controller Extension</h2>
+<p>
+In case the custom application wants to extend or overwrite the functionality of the base controller, the custom application can merge the controller delivered in the standard application with a new controller. NOTE: this concept is not using inheritance, but merging on JavaScript object level.<br />
+Methods in the new custom Controller will override any methods with the same name in the original standard Controller. The exception to this rule are the Controller lifecycle methods: onInit, onExit, onBeforeRendering, onAfterRendering. These methods of the custom controller will be called <i>in addition</i> to the standard lifecycle methods, either after (onInit, onAfterRendering) or before (onExit, onBeforeRendering) these standard Controller methods.<br />
+Below is an example of the how controller replacement works.
+</p>
+<p>
+The below section describes the controller <i>Main.controller.js</i> in the delivered standard application.
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"samples.components.ext.sap.Main"</span><span class="o">,</span> <span class="o">{</span>
+    onInit <span class="o">:</span> function <span class="o">()</span> <span class="o">{</span>
+        console<span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="s">"samples.components.ext.sap.Main - onInit"</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="nl">doSomething:</span> function<span class="o">()</span> <span class="o">{</span>
+        alert<span class="o">(</span><span class="s">"this is an original standard action"</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="nl">doSomeStandardAction:</span> function<span class="o">()</span> <span class="o">{</span>
+        alert<span class="o">(</span><span class="s">"this is another original standard action"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+The below section describes the customizing that connects the custom controller that is a replacement for the controller in standard delivered application.
+</p>
+<div class="code"><pre><span class="nl">customizing:</span> <span class="o">{</span>  
+    <span class="s">"sap.ui.controllerExtensions"</span><span class="o">:</span> <span class="o">{</span>
+        <span class="s">"samples.components.ext.sap.Main"</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nl">controllerName:</span> <span class="s">"samples.components.ext.customer.CustomMain"</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+    <span class="o">.....</span><span class="na">some</span> more content
+</pre></div><p>
+The below section describes the Controller called <i>CustomMain.controller.js</i> in the custom application.
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"samples.components.ext.customer.CustomMain"</span><span class="o">,</span> <span class="o">{</span>
+    onInit <span class="o">:</span> function <span class="o">()</span> <span class="o">{</span>
+        console<span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="s">"samples.components.ext.customer.CustomMain - onInit"</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="nl">doSomething:</span> function<span class="o">()</span> <span class="o">{</span>
+        alert<span class="o">(</span><span class="s">"this is a customer action"</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="nl">doSomeCustomAction:</span> function<span class="o">()</span> <span class="o">{</span>
+        alert<span class="o">(</span><span class="s">"this is another customer action"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+As a result of this configuration, whenever the Controller "samples.components.ext.sap.Main" is used, the "samples.components.ext.customer.CustomMain" Controller functions will be merged in, so after initialization the log will contain the following messages:
+</p>
+<pre class="wiki">samples.components.ext.sap.Main - onInit
+samples.components.ext.customer.CustomMain - onInit
+</pre><p>
+The "doSomething" method in the custom Controller will overwrite the "doSomething" method in the standard Controller, so when invoked, the text "this is a customer action" will appear in an alert popup.
+</p>
+<p>
+The "doSomeStandardAction" will not be overridden, but remain available without change, as there is no method with the same name in the custom Controller.
+</p>
+<p>
+The "doSomeCustomAction" will be available in addition, e.g. for use in a View Extension.
+</p>
+<p>
+Such Controller extensions will be applied to all Controllers with the specified name within the customized Component, regardless of how the Controller is instantiated (explicitly or as the Controller belonging to a View).
+</p>
+<h3 id="Use-case:ExplicitlyprovidinghooksintheoriginalController">Use-case: Explicitly providing hooks in the original Controller</h3>
+<p>
+While Controller extensions <i>can</i> override any method (which is a powerful but fragile feature), applications can also provide specific extension points in the Controller code which then can be documented and be kept stable, so extensions plugging into those hooks are more robust across application updates.
+</p>
+<p>
+The process for this is:
+</p>
+<ul><li>The application identifies a "strategic" location in the Controller code where customers likely want to plug in and execute some custom code
+</li><li>The application defines a (so far unused) function name reserved for this extension, documents the function as well as any arguments the function may receive or return
+</li><li>The application adds some lines of code (see below) which checks whether the function has been implemented, and if so, it calls the function (sanity checks for any return value would be good)
+</li><li>The customer can then choose to configure a Controller extension as described above, implementing exactly this one function
+</li><li>The UI5 runtime will merge the custom Controller extension into the original application Controller, so the function now exists and is executed, as long as customizing is enabled
+</li></ul><p>
+Example:<br />
+Once a certain data object <tt>oSomeData</tt> is received from the server, the application wants to give customers the choice to access and modify this data object. The extension function shall have the name <tt>onDataReceived</tt> and will get a reference to the data object as argument.
+</p>
+<p>
+Original Controller code:
+</p>
+<div class="code"><pre>   <span class="c1">// ...data object oSomeData has been received, possibly from an Ajax response...
+</span>   <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">onDataReceived</span><span class="o">)</span> <span class="o">{</span>         <span class="c1">// check whether any extension has implemented the hook...
+</span>      <span class="k">this</span><span class="o">.</span><span class="na">onDataReceived</span><span class="o">(</span>oSomeData<span class="o">);</span> <span class="c1">// ...and call it
+</span>   <span class="o">}</span>
+   <span class="c1">// ...continue working with the (now possibly modified) data...
+</span></pre></div><p>
+Custom Controller extension:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"customer.xy.Sub2ControllerExtension"</span><span class="o">,</span> <span class="o">{</span>
+   <span class="nl">onDataReceived:</span> function<span class="o">(</span>oData<span class="o">){</span> <span class="c1">// oSomeData will be passed in
+</span>      <span class="k">if</span> <span class="o">(</span>oData <span class="o">&amp;&amp;</span> oData<span class="o">.</span><span class="na">status</span> <span class="o">===</span> <span class="s">"important"</span><span class="o">)</span> <span class="o">{</span>
+         oData<span class="o">.</span><span class="na">message</span> <span class="o">=</span> oData<span class="o">.</span><span class="na">message</span> <span class="o">+</span> <span class="s">"!!!"</span><span class="o">;</span> <span class="c1">// modify some part of the data object, adding exclamation marks to a message text
+</span>      <span class="o">}</span>
+   <span class="o">}</span> <span class="c1">// no need to return anything as in this example the original object is modified
+</span><span class="o">});</span>
+</pre></div><p>
+Note that this only works for <strong>one</strong> extension layer (as the most specific/last extension overrides any other hook implementations). To allow multi-layer extensions it is recommended that middle-layer extensions provide and document their own hook functions.
+</p>
+<p>
+Also note thaat this only works for "flat", non-inherited Controllers defined with the "sap.ui.controller(&hellip;)" function as Extension Controllers (not with typed Controllers).
+</p>
+<h3 id="ControllerReplacement">Controller Replacement</h3>
+<p>
+A custom (replacement) View can either use the original Controller of the replaced View (by setting its name as <tt>controllerName</tt>) or use and extend the original Controller as described in the above section or specify the name of an entirely new Controller. <br />
+This means a Controller can be replaced entirely by just specifying a new Controller name in a replacement View and implementing this Controller.
+</p>
+<h2 id="i18nResourceTextCustomization">i18n Resource Text Customization</h2>
+<p>
+The <tt>sap.ui.model.resource.ResourceModel</tt> can be enhanced with custom resource bundles. To achieve this, the <tt>ResourceBundle</tt> provides the possibility to enhance it with other bundles:
+</p>
+<div class="code"><pre>var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">resource</span><span class="o">.</span><span class="na">ResourceModel</span><span class="o">({</span><span class="nl">bundleUrl:</span><span class="s">"./testdata/messages.properties"</span><span class="o">});</span>
+oModel<span class="o">.</span><span class="na">enhance</span><span class="o">({</span><span class="nl">bundleUrl:</span><span class="s">"./testdata/messages_custom.properties"</span><span class="o">});</span>
+</pre></div><p>
+When the <tt>ResourceModel</tt> has been extended it tries to resolve the i18n texts from the custom bundle first and if it has not been found there it tries to lookup the i18n text in the original bundle.
+</p>
+<p>
+<i>These additional resource bundles are not part of the customizing configuration but can be added from within a <a class="wiki" href="Customization.html#ControllerExtension">Controller Extension</a>.</i>
+</p>
+<h2 id="Limitations">Limitations</h2>
+<ul><li>View Modifiation (with <tt>&lt;core:ExtensionPoint /&gt;</tt>) and Control property modification are supported only for XML type of views
+</li><li>Control property modification is only possible for the "visible" property and only for controls which have a given ID (one which is specified in the XMLView)
+</li></ul><h2 id="Caveatsregardingstabilityacrossapplicationupgrades">Caveats regarding stability across application upgrades</h2>
+<p>
+This approach to offer modification-free extensions and customizing allows shipping new versions of the application without overwriting any customer modifications. So customer modifications <i>can</i> "survive" an application upgrade. However, there are obviously limits to the degree of compatibility which can be guaranteed.<br />
+If a View is replaced by a custom View, but the original View is no longer used, the custom View will of course also no longer be used. Or if a custom Controller extension accesses a field in the original View, it has to be able to cope with the possibility that the field may no longer exist (or have a different type) in an upgraded version of the application - or it will break.
+</p>
+<p>
+There are many possible reasons for modifications to not be applied any longer or even for breaking the upgraded version of an application. There can hardly be an exhaustive list of possible issues, but here are some examples:
+</p>
+<ul><li>View Modifications (hiding of Controls)
+<ul><li>&hellip;will no longer be applied if the original Control is no longer used or has a different (or not a given) ID
+</li><li>&hellip;will no longer be applied if the original View name is changed or the View is no longer used
+</li><li>&hellip;will never lead to a crash but be silently ignored, though
+</li></ul></li></ul><ul><li>View extensions (added content in <a class="missing wiki">ExtensionPoints?</a>)
+<ul><li>&hellip;will no longer be applied if the extension point is removed or renamed or in an area/container which is invisible under certain conditions
+</li><li>&hellip;will no longer be applied if the View name is changed or the extension point is moved to a different View
+</li><li>&hellip;may "look weird", have a broken layout/display or not really fit the new environment if the Controls around the extension point have changed or the extension point has been moved to a different environment inside the same View
+</li><li>&hellip;may break the application if the updated application requires the extension to be of a certain Control type
+</li><li>&hellip;may break the application if custom code relies on the presence of the extensions 
+</li></ul></li></ul><ul><li>View Replacements
+<ul><li>&hellip;will no longer be applied if the original View name is changed or the View is no longer used
+</li><li>&hellip;should rather not lead to a crash as long as no other custom code relies on the View to be present
+</li></ul></li></ul><ul><li>Controller Extensions 
+<ul><li>&hellip;can lead to crashes when the extension code accesses parts of the original application which are changed (removed, different type, different ID,&hellip;)
+</li><li>&hellip;can lead to crashes when the extension code makes assumptions about the application which are no longer valid after an update
+</li><li>&hellip;can lead to crashes when original code is overwritten which is required for the application to run properly
+</li><li>&hellip;will no longer be applied if the Controller name is changed
+</li></ul></li></ul><ul><li>Other extension types have similar caveats
+</li></ul><p>
+In addition all content changes (additions, removals, structure changes) may affect CSS and JS code which relies of the position of certain elements in the DOM.
+</p>
+<p>
+Partly these caveats are compatibility requirements to applications, partly they are suggestions for customizing development how to create more robust extensions.
+</p>
+<h2 id="Supportability">Supportability</h2>
+<p>
+If a customized application does not run properly, all customizations can be disabled by providing a configuration.
+In support situations this can be done by setting a breakpoint early in sap-ui-core.js and then executing the following code in the console:
+</p>
+<div class="code"><pre>window<span class="o">[</span><span class="s">"sap-ui-config"</span><span class="o">]</span> <span class="o">=</span> window<span class="o">[</span><span class="s">"sap-ui-config"</span><span class="o">]</span> <span class="o">||{};</span>
+window<span class="o">[</span><span class="s">"sap-ui-config"</span><span class="o">][</span><span class="s">"xx-disableCustomizing"</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</pre></div><p>
+For security reasons this setting is not possible using a URL parameter.
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

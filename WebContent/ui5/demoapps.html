@@ -1,0 +1,59 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>SAPUI5 SDK - Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.demokit"
+				>
+		</script>
+		<style>
+			body {
+				box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+			}
+		</style>
+		<script>
+			function resolve(oNode, sBaseUrl, sLibUrl) {
+				if(oNode.links && oNode.links.length > 0){
+					for(var i=0; i<oNode.links.length; i++){
+						oNode.links[i].ref = sBaseUrl + (oNode.links[i].resolve === "lib" ? sLibUrl : "") + oNode.links[i].ref;
+					}
+				}
+				return oNode;
+			};
+		
+			var sBaseUrl = "";
+			sap.ui.demokit._loadAllLibInfo(sBaseUrl, "_getDocuIndex", function(aLibs, oDocIndicies){
+				var oData = {categories: []};
+				
+				if(aLibs){
+					for(var i=0; i<aLibs.length; i++){
+						var oDemo = oDocIndicies[aLibs[i]].demo;
+						if(oDemo){
+							if(!jQuery.isArray(oDemo)){
+								oDemo = [oDemo];
+							}
+							for(var j=0; j<oDemo.length; j++){
+								oData.categories.push(resolve(oDemo[j], sBaseUrl, oDocIndicies[aLibs[i]].libraryUrl));
+							}
+						}
+					}
+				}
+				
+				jQuery.sap.require("sap.ui.demokit.IndexLayoutPage");
+				sap.ui.demokit.IndexLayoutPage(oData, "_blank", sBaseUrl, true);
+			}); 
+		</script>
+	</head>
+
+	<body class="sapUiDemokitBody sapUiBody" role="application">
+	<h1>Demo Applications</h1>
+	</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/CustomHTML – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="CustomHTML">Custom HTML</h1>
+<p>
+</p><p>
+</p>
+<p>
+UI5 is open UI technology that allows you to easily incorporate custom HTML. This section of the best practice list the available options
+and provides guidance when to use what.
+</p>
+<p>
+<br />
+</p>
+<h2 id="Options">Options</h2>
+<h3 id="HTMLinXMLViews">HTML in XML Views</h3>
+<p>
+Within XML views you can easily incorporate XHTML which are converted 1:1 to HTML.
+</p>
+<p>
+Pro/Con
+</p>
+<ul><li><img src="attention.png" style="vertical-align: bottom" alt="&lt;!&gt;" /> Only for static HTML without databinding
+</li></ul><p>
+Learn More
+</p>
+<ul><li><a class="wiki" href="MVC.html#UsageofNativeHTMLinXMLViews">Documentation</a>
+</li></ul><h3 id="HTMLinHTMLViews">HTML in HTML Views</h3>
+<p>
+Naturally an HTML view allows you to include custom HTML.
+</p>
+<p>
+Pro/Con
+</p>
+<ul><li><img src="attention.png" style="vertical-align: bottom" alt="&lt;!&gt;" /> Only for static HTML without databinding
+</li><li><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /> If you want to use custom HTML inside a view this view type feels like a natural choice
+</li></ul><p>
+Learn More
+</p>
+<ul><li><a class="wiki" href="MVC.html#HTMLViewDefinition">Documentation</a>
+</li></ul><h3 id="NotepadControls">Notepad Controls</h3>
+<p>
+With notepad controls you have a very good way to create reusable controls in a fast and structured way. This also provides you with the chance to use UI5 controls inside of your custom coding. We would recommended this way to bring in custom HTML, since it is good readable code and errors in the coding hardly have an impact on existing controls.   
+</p>
+<p>
+Sometimes it makes sense to inherit from an existing UI5 control. This is also possible with notepad controls and you can extend or change the existing coding. When you inherit controls you have to take care how to handle the inherited renderer and you really should know what you are doing. If you overwrite methods without calling the base method the control might not work anymore. Therefore check the existing methods and if you need to extend them, make sure you call the base method, too.   
+</p>
+<p>
+Pro/Con
+</p>
+<ul><li><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /> Code encapsulated and reusable
+</li><li><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /> Rerendering can be optimized 
+</li><li><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /> Works in XML and HTML views
+</li><li><img src="attention.png" style="vertical-align: bottom" alt="&lt;!&gt;" /> Some more effort   
+</li></ul><p>
+Learn More
+</p>
+<ul><li><a class="wiki" href="OnTheFlyControlDefinition.html">Documentation</a>
+</li><li><a class="wiki" href="List.html#NotepadListItemContentControl">Building List Items with Notepad Controls</a>
+</li><li><a class="wiki" href="List.html#NotepadListItemControl">Building List Items with Notepad Controls (incl. Inheritance)</a>
+</li></ul><h3 id="HTMLControl">HTML Control</h3>
+<p>
+An easy way to show simple content, is adding an HTML control to your app. Either write directly HTML or if you are using a model and databinding integrate it between the HTML by using a formatter. Remember that all changes to the model will rerender the control.
+This way of writing HTML makes sense, if you want to present some simple things, which aren't changed during runtime and you do not want to reuse it later. 
+</p>
+<p>
+Pro/Con
+</p>
+<ul><li><img src="attention.png" style="vertical-align: bottom" alt="&lt;!&gt;" /> Code not encapsulated and reusable
+</li><li><img src="attention.png" style="vertical-align: bottom" alt="&lt;!&gt;" /> Always rerenders completely on data changes
+</li><li><img src="attention.png" style="vertical-align: bottom" alt="&lt;!&gt;" /> Does not work in XML and HTML views
+</li><li><img src="checkmark.png" style="vertical-align: bottom" alt="(./)" /> Less effort  
+</li></ul><p>
+Learn More
+</p>
+<ul><li><a class="ext-link" href="../api/symbols/sap.ui.core.HTML.html" title="symbols/sap.ui.core.HTML.html in Merged JSDoc"><span class="icon"> </span>Documentation</a>
+</li><li><a class="wiki" href="List.html#HTMLControl">Building List Items with HTML Controls</a>
+</li></ul><h2 id="LoosingThemeability">Loosing Themeability</h2>
+<p>
+The UI5 controls and their CSS are based on 'theme parameters' which allow to use the 'Theme Designer' to very easily brand an application with a customer specific color scheme. Todays web standards do not support CSS parameter replacement at runtime. As such the theme parameters have to be replaced with the real values during the build process of the UI5 controls.
+</p>
+<p>
+<img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /> This implies that at the current stage the usage of theme parameters is not available for custom html. Custom HTML which is build with the above options cannot be themed in the Theme Designer. 
+</p>
+<p>
+Learn More
+</p>
+<ul><li><a class="wiki" href="RTConcepts.html#Theming">Theming Documentation</a>
+</li><li><a class="wiki" href="ThemeDesigner.html">Theme Designer Documentation</a>
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

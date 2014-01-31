@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/PlatformAttribute – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="PlatformattributeonMobile">Platform attribute on Mobile</h1>
+<p>
+When running on mobile devices, a platform attribute <tt>data-sap-ui-os</tt> is added to the HTML tag. This attribute provides information of the current platform and the corresponding version. As an example, if one is running on an IPad3, the value of this attribute would be "iOS5.1". 
+Currently, SAPUI5 Mobile only supports iOS, Android, Windows Phone 8 and Blackberry 10.
+On top of that, a platform-dependent CSS class is also added to the HTML tag of the page so that control/application developers can create platform-dependent styling for their controls or applications.
+</p>
+<h2 id="Technicaldetails">Technical details</h2>
+<h3 id="Whendoesthishappen">When does this happen?</h3>
+<p>
+On load of the SAPUI5 bootstrap script file, a check is performed to see if the application is running on a mobile platform, and if so, the attribute and CSS class are put to the HTML tag.
+</p>
+<h3 id="Possiblevalues">Possible values</h3>
+<p>
+The value of the platform attribute is constructed with the following connotation: <i>Operation System + version</i>. e.g. iOS6.0, Android4.1.1, bb10.0.9.2372, winphone8.0, etc.
+</p>
+<p>
+Operation System has 4 possible values:
+</p>
+<ul><li>iOS (Apple devices)
+</li><li>Android (Android devices)
+</li><li>bb (BlackBerry)
+</li><li>winphone (Windows Phone)
+</li></ul><p>
+As seen from the example above, version are numbers separated by dots.
+</p>
+<p>
+For the CSS class, the 4 possible values are: 
+</p>
+<ul><li>sap-ios (Apple devices) 
+</li><li>sap-android (Android devices)
+</li><li>sap-bb (BlackBerry)
+</li><li>sap-winphone (Windows Phone)
+</li></ul><p>
+ 
+</p>
+<h3 id="HowtousetheplatformattributeCSSclass">How to use the platform attribute/CSS class</h3>
+<p>
+As an example, assuming you want to provide a different font for Android devices, you can specify your font by directly using the CSS class "sap-android".
+</p>
+<pre class="wiki">
+.sap-android{
+	font-family: Roboto;
+}
+</pre><p>
+Now you want to specify a different font when running on Android 2.x, in order to do that, you can write the following CSS
+</p>
+<pre class="wiki">
+html[data-sap-ui-os^='Android2'] .sap-android{
+	font-family: "Droid Sans";
+}
+</pre>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/CompatibilityRules – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="CompatibilityRules">Compatibility Rules</h1>
+<p>
+This page provides an overview what compatibility means with regards to SAPUI5 development (application and control development).
+</p>
+<p>
+SAPUI5 plans to be a "Release Independent Component" (RIC). One important constraint for such a RIC is that it must be as simple as possible to upgrade to a newer version. This makes compatibility rules so important.
+</p>
+<h2 id="VersioningScheme">Versioning Scheme</h2>
+<p>
+UI5 uses a 3 number version identifier inspired by the <a class="ext-link" href="http://semver.org"><span class="icon"> </span>semantic versioning specification</a>, for example <strong>1.4.3</strong>.
+</p>
+<p>
+The left most number is the <strong>major version</strong> number (here 1), the middle one is called <strong>minor version</strong> number (here 4) and the last number is the <strong>patch version</strong> number (here 3). New SAPUI5 releases are described by a major and minor version number. The patch version number is only used to identify patches within a release.
+</p>
+<h2 id="APIEvolution">API Evolution</h2>
+<h3 id="DefinitionofAPI">Definition of 'API'</h3>
+<p>
+If not mentioned differently in the following paragraphs, <strong>API</strong> means <strong>public API</strong> (functions, classes, namespaces, controls with their declared properties, aggregations, &hellip;). The solely definition of the SAPUI5 public API is the <a class="ext-link" href="../api/index.html" title="index.html in Merged JSDoc"><span class="icon"> </span>API Reference Documentation (aka JSDoc)</a>. If any feature (class, method, property, &hellip;) is not mentioned in the JSDoc, it must be assumed <strong>not to be part of the API</strong>. If in doubt, get in contact with SAP.
+</p>
+<p>
+A release with a new major version is called a <strong>Major release</strong> and can introduce new APIs but it also can make incompatible changes to existing APIs. If so, the <a class="wiki" href="ReleaseNotes.html">release notes</a> will describe these incompatibilities. 
+</p>
+<p>
+A <strong>Minor release</strong> (where only the minor version but not the major version differs) can introduce new APIs, but must not contain incompatible changes to APIs introduced by the same major release line. 
+</p>
+<p>
+<strong>Patch releases</strong> must only fix implementations, but must not introduce new features nor must they do incompatible API changes. 
+</p>
+<p>
+Exceptions from the above rules are possible, but only in rare, very urgent cases (e.g. security issues) and they have to be documented in the <a class="wiki" href="ReleaseNotes.html">release notes</a>.
+</p>
+<h3 id="Compatiblechanges">Compatible changes</h3>
+<ul><li>Adding new libraries, controls, classes, properties, functions, namespaces, to the API &hellip;
+</li><li>Moving properties up in the inheritance hierarchy (generalize them)
+</li><li>Changing the logging behavior (adding, removing log output, modifying the content of existing log output), logging is not part of the API
+</li><li>Adding new values to enumeration types (this means for developers: when dealing with enum properties, always be prepared to accept new values, e.g. by implementing a "default" or "otherwise" path when reacting on enum values)
+</li><li>Modifications to the markup / style (HTML/CSS) of controls
+</li></ul><h3 id="Incompatiblechanges">Incompatible changes</h3>
+<p>
+These changes might only occur in major version as described above:
+</p>
+<ul><li>Removing an API (library, namespace, function, property, control, events, &hellip;)
+</li><li>Renaming an API (library, namespace, function, property, control, events, &hellip;)
+</li><li>Removing support for URL parameters
+</li><li>Removing support for configuration entries
+</li><li>Reducing the visibility of an API (doesn't break JavaScript applications, but changes the contract)
+</li><li>Removing or reordering parameters in an API signature
+</li><li>Reducing the accepted value range (e.g. parameter of a function)
+</li><li>Broadening the value range of a return value (or property). <strong>Except:</strong> Enumerations
+</li><li>Moving JavaScript artifacts (namespaces, functions, classes) between modules
+</li><li>Replacing asserts by precondition checks
+</li><li>Moving properties etc. down in the inheritance hierarchy
+</li><li>Changing the name of enum values
+</li><li>Changing defaults (properties, function parameters)
+</li><li>Renaming / removement of files
+</li></ul><h3 id="Deprecation">Deprecation</h3>
+<ul><li>Whenever possible, instead of doing incompatible changes, SAPUI5 will mark the old artifacts as deprecated and (if applicable) new ones created 
+</li><li>As with Java, deprecation documentation (in the <a class="ext-link" href="../api/index.html" title="index.html in Merged JSDoc"><span class="icon"> </span>API Reference</a> and maybe a log entry in the implementation) should explain why and when something has been deprecated and provide hints how to achieve the same functionality without deprecated functionality.
+</li></ul><h3 id="ExperimentalAPIs">Experimental APIs</h3>
+<p>
+Some new functionality / controls are documented as being in an <strong>experimental development state</strong>. Such features are still under development and changes to their API are very likely (even incompatible changes in minor releases). They are included in public releases to collect feedback from early adopters. Consumers of such APIs must understand that their respective code might be broken (repeatedly) when upgrading to new SAPUI5 releases and they must be willing to adapt to such changes.
+</p>
+<h2 id="ThirdPartyOpenSourceLibraries">Third Party Open Source Libraries</h2>
+<p>
+SAPUI5 contains and uses several third party open source libraries (e.g. <i>jQuery</i> just to mention one). These libraries can also be used by applications and/or custom control libraries, but <strong>the SAPUI5 compatibility policy</strong> described within this document <strong>does not apply to these third party libraries</strong>.
+</p>
+<p>
+Consumers that want to use the contained third party open source libraries can do so when respecting the following restrictions: 
+</p>
+<ul><li>SAPUI5 decides which version(s) and modules of the used libraries is / are provided.
+</li><li>SAPUI5 can upgrade to higher version(s) of the used libraries even within a micro release.
+</li><li>For important reasons (e.g. security) SAPUI5 can stop providing a library.
+</li><li>The third party libraries are provided "as is". Extensions, adaptations and support are not done by SAPUI5.
+</li></ul><p>
+For closed source libraries, a usage beyond the use of the corresponding SAPUI5 controls is not allowed.
+</p>
+<h2 id="ExceptionsImportanttoknow">Exceptions / Important to know</h2>
+<p>
+<strong>Not</strong> part of the public API are all functions, etc. which are not declared as public in the JSDoc. Additionally not part of the API is the rendered HTML and the CSS of the controls. This means in particular that the following scenarios can lead to problems (also when switching minor or micro version). The support for such problems by SAPUI5 can only be "limited" and adaptation of non-SAPUI5 coding might be necessary. JavaScript makes it easy to modify code that one isn't the owner of e.g. enrich prototypes of foreign classes, add properties/functions to existing objects. This should not be forbidden, but the consequences (risk of conflicts when SAPUI5 is enhanced) must be clear.
+</p>
+<ul><li>Manipulation of HTML / CSS (e.g. via jQuery, <a class="ext-link" href="../api/symbols/sap.ui.core.Control.html#addStyleClass" title="symbols/sap.ui.core.Control.html#addStyleClass in Merged JSDoc"><span class="icon"> </span>Control.addStyleClass</a> or directly via CSS).
+</li><li>Using or overriding non-public functions, etc.
+</li><li>Creation of new controls (e.g. "Notepad-Controls") based on existing ones (inheritance) or subclassing in general &rarr; new classes also depend on private functionality of the super classes,  collision of generated functions for properties, aggregations are possible
+</li><li>Pixel perfect compatibility not guaranteed for SAPUI5 owned controls. Therefore also not guaranteed for controls inheriting from SAPUI5 controls.
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Components/Configuration – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="ConfigurationforComponents">Configuration for Components</h1>
+<h2 id="Purpose">Purpose</h2>
+<p>
+The configuration can be used to define static configuration for components. The configuration is available on the component metadata and can be accessed without creating component instances. The format of the configuration is JSON.
+</p>
+<h2 id="Example">Example</h2>
+<p>
+A very simple example of the component configuration can be found here:
+<a class="ext-link" href="../../test-resources/sap/ui/core/ComponentConfig.html"><span class="icon"> </span>http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample/test-resources/sap/ui/core/ComponentConfig.html</a>
+</p>
+<h2 id="HowtoUse">How to Use</h2>
+<p>
+In the following the definition and usage of the configuration is explained.
+</p>
+<h3 id="DefiningConfiguration">Defining Configuration</h3>
+<p>
+The configuration is defined as part of the component metadata. Basically the configuration could be defined in an arbitrary way. The following coding explains how to define the configuration:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">UIComponent</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"sap.samples.Component"</span><span class="o">,</span> <span class="o">{</span>
+
+    metadata <span class="o">:</span> <span class="o">{</span>
+        version <span class="o">:</span> <span class="s">"1.0"</span><span class="o">,</span>
+        <span class="nl">config:</span> <span class="o">{</span>
+            
+            <span class="s">"sap.samples.config1"</span><span class="o">:</span> <span class="o">{</span>
+                
+                <span class="s">"Key1-1"</span><span class="o">:</span> <span class="s">"Value1-1"</span><span class="o">,</span>
+                <span class="s">"Key1-2"</span><span class="o">:</span> <span class="s">"value1-2"</span>
+                
+            <span class="o">},</span>
+            
+            <span class="s">"sap.samples.config2"</span><span class="o">:</span> <span class="o">{</span>
+                
+                <span class="s">"Key3-1"</span><span class="o">:</span> <span class="s">"Value3-1"</span><span class="o">,</span>
+                <span class="s">"Key3-2"</span><span class="o">:</span> <span class="s">"Value3-2"</span>
+                
+            <span class="o">}</span>
+            
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><h3 id="AccessingConfiguration">Accessing Configuration</h3>
+<p>
+The configuration can be accessed without creating an instance of the component. You only need to require component
+</p>
+<div class="code"><pre>jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">require</span><span class="o">(</span><span class="s">"sap.samples.Component"</span><span class="o">);</span>
+var oConfig <span class="o">=</span> sap<span class="o">.</span><span class="na">samples</span><span class="o">.</span><span class="na">Component</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getConfig</span><span class="o">();</span>
+</pre></div><p>
+Component instances can access their configuration like this:
+</p>
+<div class="code"><pre>
+  <span class="o">[...]</span>
+
+  <span class="nl">init:</span> function<span class="o">()</span> <span class="o">{</span>
+    var oConfig <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getConfig</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="o">[...]</span>
+
+</pre></div><h3 id="ExtendingConfiguration">Extending Configuration</h3>
+<p>
+By extending a component and defining additional configuration in the extending component the configuration finally gets merged with the original component, e.g.: 
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">samples</span><span class="o">.</span><span class="na">Component</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"customer.Component"</span><span class="o">,</span> <span class="o">{</span>
+
+    metadata <span class="o">:</span> <span class="o">{</span>
+        version <span class="o">:</span> <span class="s">"1.0"</span><span class="o">,</span>
+        <span class="nl">config:</span> <span class="o">{</span>
+            
+            <span class="s">"sap.samples.config1"</span><span class="o">:</span> <span class="o">{</span>
+
+                <span class="s">"Key1-3"</span><span class="o">:</span> <span class="s">"Value1-3"</span>
+
+            <span class="o">},</span>
+            
+            <span class="s">"customer.config1"</span><span class="o">:</span> <span class="o">{</span>
+                
+                <span class="s">"Key1-1"</span><span class="o">:</span> <span class="s">"Value1-1"</span>
+                
+            <span class="o">}</span>
+            
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+The merged configuration would look like this:
+</p>
+<div class="code"><pre>var oConfig <span class="o">=</span> <span class="o">{</span>
+    <span class="s">"sap.samples.config1"</span><span class="o">:</span> <span class="o">{</span>
+        <span class="s">"Key1-1"</span><span class="o">:</span> <span class="s">"Value1-1"</span><span class="o">,</span>
+        <span class="s">"Key1-2"</span><span class="o">:</span> <span class="s">"value1-2"</span><span class="o">,</span>
+        <span class="s">"Key1-3"</span><span class="o">:</span> <span class="s">"Value1-3"</span>
+    <span class="o">},</span>
+    <span class="s">"sap.samples.config2"</span><span class="o">:</span> <span class="o">{</span>
+        <span class="s">"Key3-1"</span><span class="o">:</span> <span class="s">"Value3-1"</span><span class="o">,</span>
+        <span class="s">"Key3-2"</span><span class="o">:</span> <span class="s">"Value3-2"</span>
+    <span class="o">},</span>
+    <span class="s">"customer.config1"</span><span class="o">:</span> <span class="o">{</span>
+        <span class="s">"Key1-1"</span><span class="o">:</span> <span class="s">"Value1-1"</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+</pre></div>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

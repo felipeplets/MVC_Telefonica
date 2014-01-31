@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.Toolbar</title>
+
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<style type="text/css">
+
+</style>
+
+<script>
+
+	// initialize application first
+	jQuery.sap.require("sap.m.MessageToast");
+	jQuery.sap.require("sap.m.ToolbarDesign");
+	var app = new sap.m.App();
+
+	var page = new sap.m.Page({
+		title : "Toolbar",
+		enableScrolling : true,
+		content : [
+			new sap.m.Toolbar({
+				design : sap.m.ToolbarDesign.Transparent,
+				content : [
+					new sap.m.Label({
+						text : "Items (5)"
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						icon: "sap-icon://drop-down-list",
+						press : function() {
+							sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
+						}
+					}),
+					new sap.m.Button({
+						icon: "sap-icon://person-placeholder",
+						press : function() {
+							sap.m.MessageToast.show("Table personalization popup will be shown on press.");
+						}
+					})
+				]
+			}),
+			new sap.m.Toolbar({
+				active : true,
+				design : sap.m.ToolbarDesign.Info,
+				content : [
+					new sap.m.Label({
+						text : "The quick brown fox jumps over the lazy dog."
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.ui.core.Icon({
+						src : "sap-icon://add-filter"
+					})
+				]
+			}).attachPress(function() {
+				sap.m.MessageToast.show("InfoBar Pressed!");
+			}),
+		]
+	});
+
+
+	app.addPage(page).placeAt("body");
+
+
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

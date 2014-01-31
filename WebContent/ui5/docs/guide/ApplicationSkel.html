@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/GettingStarted/ApplicationSkel – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="WritinganAdvancedSAPUI5Application">Writing an Advanced SAPUI5 Application</h1>
+<p>
+Via this procedure, you develop a Web application that uses the UI5 framework. You create the basic entities which are the UI5 application project as well as the UI5 application itself which consists - from the design-time and wizard approach - of the skeleton containing view(s) and controller.
+</p>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li>You have installed the <i>SAPUI5 Application Development</i> feature in your Eclipse installation.
+</li></ul><h2 id="UsingtheApplicationWizard">Using the Application Wizard</h2>
+<p>
+1. Open your Eclipse IDE where you have installed SAPUI5 tools.
+</p>
+<p>
+2. Create a UI5 application project by triggering the corresponding wizard entry via <i>File</i> &rarr; <i>New</i> &rarr; <i>Other</i> &rarr; <i>SAPUI5 Application Development</i> &rarr; <i>Application Project</i>.
+</p>
+<p>
+3. Make the required entries in the <a class="wiki" href="CreateApp.html">application project wizard</a>, keep <i>Desktop</i> and <i>Create an Initial View</i> selected, and go to the wizard screen for view type definitions.
+</p>
+<p>
+4. Choose one of the following view types: <i><a class="wiki" href="MVC.html#ViewTypes">JSview, XMLview, JSONview, HTMLview</a></i>.
+</p>
+<p>
+5. Finish the wizard.
+</p>
+<p>
+As a result, the following application parts are created:
+</p>
+<ul><li>A view file of the chosen type
+</li><li>A controller file of type JS
+</li><li>An index.html file containing references for the libraries sap.ui.core and sap.ui.commons, the used theme where the default theme is sap_goldreflection, as well as information for the script type and the script id. In a second script block, the index file refers to project name, view type and name; a content default for placing the controls on the UI later on; and the ARIA application role.
+</li></ul><h2 id="TypeandContentoftheViewFiles">Type and Content of the View Files</h2>
+<p>
+The view file is named <tt>viewname.view.viewtype.</tt> It contains a getter method for the function which returns the view, as well as a method for content creation. Depending on the chosen view type, the generated view file looks as following:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsview</span><span class="o">(</span><span class="s">"myproject.myview"</span><span class="o">,</span> <span class="o">{</span>
+      getControllerName <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+         <span class="k">return</span> <span class="s">"myproject.myview"</span><span class="o">;</span>
+      <span class="o">},</span>
+      createContent <span class="o">:</span> function<span class="o">(</span>oController<span class="o">)</span> <span class="o">{</span>
+      <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span> <span class="na">xmlns:mvc=</span><span class="s">"sap.ui.core.mvc"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span>
+           <span class="na">controllerName=</span><span class="s">"myproject2.myview2"</span> <span class="na">xmlns:html=</span><span class="s">"http://www.w3.org/1999/xhtml"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/core:View&gt;</span>
+</pre></div><div class="code"><pre><span class="o">{</span>
+  <span class="s">"Type"</span><span class="o">:</span><span class="s">"sap.ui.core.mvc.JSONView"</span><span class="o">,</span>
+  <span class="s">"controllerName"</span><span class="o">:</span><span class="s">"myproject3.myview3"</span><span class="o">,</span>
+  <span class="s">"content"</span><span class="o">:[{</span>
+  <span class="o">}]</span>
+<span class="o">}</span>
+</pre></div><h2 id="TheControllerFile">The Controller File</h2>
+<p>
+The controller file is of same type and content for each view type. The onInit function method is called when the controller is instantiated and the controls have been created. The method can be used for event handler bindings, other one-time initializations, and view modification (before the first rendering). The onBeforeRendering method is invoked before the view is re-rendered. onAfterRendering is used for post-rendering manipulations of the HTML, for example. onExit is used to free resources, for example.
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span> <span class="s">"myproject.myview"</span> <span class="o">,{</span>
+
+<span class="c1">// onInit: function(){
+//
+//},
+</span>
+<span class="c1">// onBeforeRendering: function(){
+//
+//},
+</span>
+<span class="c1">// onAfterRendering: function(){
+//
+//},
+</span>
+<span class="c1">// onExit: function(){
+//
+//}
+</span><span class="o">});</span>
+</pre></div><h2 id="index.html">index.html</h2>
+<div class="code"><pre><span class="cp">&lt;!DOCTYPE HTML&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+       <span class="nt">&lt;head&gt;</span>
+              <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge"</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"Content-Type"</span> <span class="na">content=</span><span class="s">"text/html;charset=UTF-8"</span><span class="nt">/&gt;</span>
+
+              <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"resources/sap-ui-core.js"</span>
+                      <span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span>
+                      <span class="na">data-sap-ui-libs=</span><span class="s">"sap.ui.commons"</span>
+                      <span class="na">data-sap-ui-theme=</span><span class="s">"sap_goldreflection"</span> <span class="nt">&gt;</span>
+              <span class="nt">&lt;/script&gt;</span>
+              <span class="c">&lt;!-- add sap.ui.table,sap.ui.ux3 and/or other libraries to 'data-sap-ui-libs' if required --&gt;</span>
+
+              <span class="nt">&lt;script&gt;</span>
+                     <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">localResources</span><span class="p">(</span><span class="s2">"myproject"</span><span class="p">);</span>
+                     <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">view</span><span class="p">({</span><span class="nx">id</span><span class="o">:</span><span class="s2">"idmyview1"</span><span class="p">,</span> <span class="nx">viewName</span><span class="o">:</span><span class="s2">"myproject.myview"</span><span class="p">,</span> 
+                                             <span class="nx">type</span><span class="o">:</span><span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">core</span><span class="p">.</span><span class="nx">mvc</span><span class="p">.</span><span class="nx">ViewType</span><span class="p">.</span><span class="nx">JS</span><span class="p">});</span>
+                     <span class="nx">view</span><span class="p">.</span><span class="nx">placeAt</span><span class="p">(</span><span class="s2">"content"</span><span class="p">);</span>
+              <span class="nt">&lt;/script&gt;</span>
+
+       <span class="nt">&lt;/head&gt;</span>
+       <span class="nt">&lt;body</span> <span class="na">class=</span><span class="s">"sapUiBody"</span> <span class="na">role=</span><span class="s">"application"</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"content"</span><span class="nt">&gt;&lt;/div&gt;</span>
+       <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div><h2 id="NextSteps">Next Steps</h2>
+<ul><li>Read more details about <a class="wiki" href="CreateApp.html">Creating an Application Project</a> and <a class="wiki" href="CreateView.html">Creating a View</a>
+</li><li>Try out <a class="wiki" href="CodeCompletion.html">Code Completion</a>, <a class="wiki" href="Templates.html">Templates</a> and <a class="wiki" href="Snippets.html">Snippets</a>
+</li><li><a class="wiki" href="TestingInEclipse.html">Testing the SAPUI5 Application</a>
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/troubleshootingguide/debuggingjsforabapdevs – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="BrowserdebuggingforABAPdevelopers-Waitthisisnotmyworkbench">Browser debugging for ABAP developers - Wait, this is not my workbench!</h1>
+<p>
+The first thing you need to know when coming from ABAP development is probably that when debugging UI5, you do not debug from within your IDE.
+So if you are using e.g. Eclipse, breakpoints you set within Eclipse will not stop your script when it is executed with in your browser (except for explicit "debugger;" statements in your code, that is), because the latter has no knowledge of your IDE and does not communicate directly with it.<br />
+Instead, you’ll have to use the debugging tool of the respective browser.<br />
+Every modern browser has such debugging capabilities.
+For Firefox, you will have to install the "Firebug" extension first, which you can find here:<br />
+<a class="ext-link" href="https://addons.mozilla.org/de/firefox/addon/firebug/"><span class="icon"> </span>Download Firebug</a><br />
+<br />
+For a more extensive tutorial on debugging in browser tools, we suggest also reading a basic tutorial like e.g. 
+<a class="ext-link" href="https://developers.google.com/chrome-developer-tools/docs/javascript-debugging"><span class="icon"> </span>JavaScript Debugging in Chrome</a>
+<br />
+<br />
+This article attempts to just give you a brief overview over the basic debugging functions available in both your ABAP debugger and most browser debugging tools.
+</p>
+<h2 id="ABAPdebuggervs.Browserdebugger">ABAP debugger vs. Browser debugger</h2>
+<p>
+In this section, I will use the debugging tools of Chrome for comparison. Not for any particular reason, just because it is the browser I usually start developing with.<br />
+Note that you will have to test your application on <span class="underline">all</span> browsers officially supported by SAP, because unfortunately, the different vendors have implemented some things differently in their browsers. IE in any version is known to behave different from Firefox, Chrome and Safari in many ways.
+<br />
+Now let's have a look at some basic debugging features and try to locate them within the browser.
+<br />
+In most browsers you can simply start the debugger by hitting the F12 key or use the browser menu.<br />
+<br />
+Assuming your application is up and running on your webserver, be it a local tomcat or some remote server, you will at first need to locate the lines of code you would like to inspect and set breakpoints at.
+<br />
+A freshly opened application in the Chrome debugger will look like this:<br />
+</p>
+<p>
+<br />
+<img src="jsdebugger.jpg" /><br />
+<br />
+</p>
+<p>
+The tools will not immediately jump to the executed javascript code, but show you on the Default tab "Elements" the tree of the HTML elements present in the DOM. 
+To see the javascript code within application and to set a breakpoint there, you'll need to switch to the "Sources" tab.
+From there, you can open any of the included source file. Most probably you'll have to click to open the sources tree (see screenshot below) when you start the tools for the first time. <br />
+<br />
+<img src="opennavigator.jpg" />
+<br />
+<br /><br />
+</p>
+<p>
+Assuming you would like to set a breakpoint within the html page, you would have to open it from the sources tree to see the actual content. Once you have done so, you get to a view that at least resembles what you usually see in the ABAP debugger:<br /><br />
+</p>
+<p>
+You probably know this view that comes up when you execute and debug an application from the workbench:<br />
+<br />
+</p>
+<p>
+<img src="abapdebugger.jpg" /><br />
+<br />
+And this is what you get in Chrome:<br /><br />
+</p>
+<p>
+<img src="jsdebugger2.jpg" />.<br /><br />
+<br />
+The callstack is only visible here when the code execution is on hold.
+<br />
+<br />
+<strong>NOTE:</strong> There is no forward navigation within javascript here. You cannot doubleclick on any method and jump right into it. You'll either have to jump into it <span class="underline">while</span> it is being executed <span class="underline">or</span> you need to open the file containing the method and look for it, there.<br />
+<br />
+<strong>HINT:</strong> If you are not sure which file exactly a piece of code is located, Firefox offers you to search through several files included in your page at once. This option is unfortunately missing in Chrome.<br />
+<br />
+</p>
+<h3 id="Settingbreakpoints">Setting breakpoints</h3>
+<p>
+There are several ways to set breakpoints in your browser debugger. One method that it has in common with the ABAP debugger is to just left-click once on the line number where you would like to break.
+Clicking again will remove the breakpoint, while a right click on an existing breakpoint will allow you to temporarily disable it or also edit it.
+If you right-click on a line where no breakpoint exists, yet, you can also insert a conditional breakpoint.<br />
+<br />
+Another option is to set breakpoints on certain events, or event listeners, in the right half of the debugging tools. I am not going into further details on this, here - if you're interested, just go ahead and read e.g. the Google tutorial mentioned above, where all of this is explained.<br />
+<br />
+<strong>NOTE:</strong> 
+Once you have set your breakpoint, in most cases you'll have to reload the page to re-execute the code and make it stop at the desired line.<br />
+<strong>In IE, you will also have to hit the &quot;Start Debugging&quot; button in the developer tools before your breakpoints are activated'''
+<br />
+</strong></p>
+<h3 id="AddingVariablestoWatch">Adding Variables to Watch</h3>
+<p>
+In the browser debugger, you cannot double-click on a variable to add it to the watch. (If you double-click a variable, it'll just select the word in the code line).
+To add a variable to the list of watched variables, you can either right-click on the variable in the code line and choose "add to watch" from the context menu.
+Or you can click on the tiny + Button at the top of the watched list and then type the variable name into the new line, like you add it to the table displayed in the right half of the ABAP debugger.
+</p>
+<p>
+<strong>NOTE:</strong> Modifying variables does <strong>not</strong> work from here. See below how to do this.
+<br />
+<br />
+</p>
+<h3 id="ModifyingVariables">Modifying Variables</h3>
+<p>
+Let's say you have added a breakpoint somewhere in your code and the script execution has halted there. You now see that there is a variable which apparently has the wrong value, and you want to try if the code would work properly if this value was right. 
+<br />
+To modify the variable's value from this point, there is no way around opening the console (by hitting the ESC key, for instance) and setting the value there, manually, by typing in javascript code. 
+That means you'll have to type something like<br />
+myvar = 'mynewvalue';<br />
+In Chrome, you will then just have to hit Enter, whereas in Firefox you'll need to press the "Execute"-Button below the console.
+<strong>NOTE:</strong> As much as I like Chrome, it unfortunately has some limitations when manipulating variable values, that is, with "local" variables the trick won't work.<br />
+<br />
+</p>
+<h3 id="Steppingthroughexecutedcode">Stepping through executed code</h3>
+<p>
+In ABAP, a yellow arrow indicates which line of code is currently executed. In Chrome, it is a red arrow, and the code line is highlighted.<br />
+<br />
+</p>
+<p>
+Comparison between F-Keys that will step through code in ABAP and JavaScript:<br />
+<br />
+</p>
+<table class="wiki">
+<tr><td><strong>Function</strong></td><td><strong>ABAP</strong></td><td><strong>Javascript</strong>
+</td></tr><tr><td>Step-by-step execution, also steps <strong>into</strong> functions and loops</td><td>F5</td><td>F11
+</td></tr><tr><td>Step-by-step execution, steps <strong>over</strong> functions</td><td>F6</td><td>F10
+</td></tr><tr><td>Skips the rest of the current function and steps out to the last cursor position</td><td>F7</td><td>SHIFT + F11
+</td></tr><tr><td>Resume Execution</td><td>F8</td><td>F8 (F5 in IE)
+</td></tr></table>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

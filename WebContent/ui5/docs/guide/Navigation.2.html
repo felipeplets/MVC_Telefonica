@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/Navigation – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="Navigation">Navigation</h1>
+<p>
+</p><p>
+</p>
+<p>
+The navigation is one of the most difficult topics in implementing mobile applications. This chapter of the best practice explains in detail how to put all the pieces together.
+</p>
+<h2 id="NavigationEvents">Navigation Events</h2>
+<h3 id="Introduction">Introduction</h3>
+<p>
+This section is primarily meant for SAPUI5 Mobile - in particular for applications which use the <a class="ext-link" href="../api/symbols/sap.m.App.html" title="symbols/sap.m.App.html in Merged JSDoc"><span class="icon"> </span>sap.m.App</a> / <a class="ext-link" href="../api/symbols/sap.m.NavContainer.html" title="symbols/sap.m.NavContainer.html in Merged JSDoc"><span class="icon"> </span>sap.m.NavContainer</a> control which handles navigation between pages - but the same convention can also be used for any SAPUI5 application where views trigger a parent to display different views.
+</p>
+<p>
+The individual pages shall be decoupled from each other. When lazy loading pages from the server you never know if the desired page has already been loaded. To achieve this the <a class="ext-link" href="../api/symbols/sap.ui.core.EventBus.html" title="symbols/sap.ui.core.EventBus.html in Merged JSDoc"><span class="icon"> </span>sap.ui.core.EventBus</a> is used. The pages publishes events that request a change in navigation. The app controller subscribes to these events and manages the sap.m.App control which lies the app view.
+</p>
+<p>
+<img src="navigation.png.1" />
+</p>
+<h3 id="StandardSituations">Standard Situations</h3>
+<p>
+The most typical situation is that one page wants to navigate to another page. This is done by firing a <i>to</i> event on the channel <i>nav</i>. The data object passed for the event contains a single parameter storing the <i>id</i> of the target page.
+</p>
+<div class="code"><pre><span class="c1">// navigate to product page
+</span>var bus <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">getEventBus</span><span class="o">();</span>
+bus<span class="o">.</span><span class="na">publish</span><span class="o">(</span><span class="s">"nav"</span><span class="o">,</span> <span class="s">"to"</span><span class="o">,</span> <span class="o">{</span>
+  id <span class="o">:</span> <span class="s">"Product"</span>
+<span class="o">});</span>
+</pre></div><p>
+When navigating to another page you might have to pass information. E.g. when showing the detail page of an object the detail page needs to know which object shall be shown. The following code samples shows how to achieve this. In addition to the <i>id</i> parameter a <i>data</i> object is passed which contains the <i>context</i>. The app controller then passes the <i>data</i> to the app control which makes it available in the <i>onBeforeShow</i> event of the target page.
+</p>
+<div class="code"><pre><span class="c1">// navigate to product page including the current databinding context
+</span>var bus <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">getEventBus</span><span class="o">();</span>
+bus<span class="o">.</span><span class="na">publish</span><span class="o">(</span><span class="s">"nav"</span><span class="o">,</span> <span class="s">"to"</span><span class="o">,</span> <span class="o">{</span>
+  id <span class="o">:</span> <span class="s">"Product"</span><span class="o">,</span>
+  data <span class="o">:</span> <span class="o">{</span>
+    context <span class="o">:</span> evt<span class="o">.</span><span class="na">getSource</span><span class="o">().</span><span class="na">getBindingContext</span><span class="o">()</span> 
+  <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><div class="code"><pre><span class="c1">// Receiving the onBeforeShow event in the target page
+</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsview</span><span class="o">(</span><span class="s">"view.Product"</span><span class="o">,</span> <span class="o">{</span>
+    <span class="o">...</span>
+    onBeforeShow <span class="o">:</span> function<span class="o">(</span>evt<span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">getController</span><span class="o">().</span><span class="na">onBeforeShow</span><span class="o">(</span>evt<span class="o">);</span>
+    <span class="o">},</span>
+    <span class="o">...</span>
+</pre></div><div class="code"><pre><span class="c1">// Handling the event in the target's page controller
+</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"view.Product"</span><span class="o">,</span> <span class="o">{</span>
+    <span class="o">...</span>
+    onBeforeShow <span class="o">:</span> function<span class="o">(</span>evt<span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span>evt<span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">context</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">getView</span><span class="o">().</span><span class="na">setBindingContext</span><span class="o">(</span>evt<span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">context</span><span class="o">);</span>
+        <span class="o">}</span> 
+    <span class="o">},</span>
+    <span class="o">...</span>
+</pre></div><p>
+If a page wants to navigate back to the previous page it fires a <i>back</i> event on the <i>nav</i> channel:
+</p>
+<div class="code"><pre><span class="c1">// navigate back to previous page
+</span>var bus <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">getEventBus</span><span class="o">();</span>
+bus<span class="o">.</span><span class="na">publish</span><span class="o">(</span><span class="s">"nav"</span><span class="o">,</span> <span class="s">"back"</span><span class="o">);</span>
+</pre></div><p>
+If a page wants to navigate back to the start page of the application it fires a <i>back</i> event on the <i>nav</i> channel and sets the <i>home</i> flag to true:
+</p>
+<div class="code"><pre><span class="c1">// navigate back all the way to the home page
+</span>var bus <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">getEventBus</span><span class="o">();</span>
+bus<span class="o">.</span><span class="na">publish</span><span class="o">(</span><span class="s">"nav"</span><span class="o">,</span> <span class="s">"back"</span><span class="o">,</span> <span class="o">{</span>
+  <span class="nl">home:</span> <span class="kc">true</span>
+<span class="o">});</span>
+</pre></div><p>
+Before a page opens a dialog - which shall be closed on using the physical back button of a mobile device - a 'virtual' navigation needs to be triggered. This allows to close the dialog on navigating back later but is not available for forward navigation.
+</p>
+<div class="code"><pre><span class="c1">// add virtual state before opening a dialog
+</span>var bus <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">getEventBus</span><span class="o">();</span>
+bus<span class="o">.</span><span class="na">publish</span><span class="o">(</span><span class="s">"nav"</span><span class="o">,</span> <span class="s">"virtual"</span><span class="o">);</span>
+sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">MessageBox</span><span class="o">.</span><span class="na">show</span><span class="o">(...);</span>
+</pre></div><h3 id="Overview">Overview</h3>
+<p>
+This is an overview of all allowed combinations of events and parameters:
+</p>
+<table class="wiki">
+<tr><td> <strong>Channel</strong> </td><td> <strong>Event</strong> </td><td> <strong>Parameters</strong> </td><td> <strong>Behaviour</strong> 
+</td></tr><tr><td> nav </td><td> to </td><td> id (string) </td><td> Navigate to the target page 
+</td></tr><tr><td> nav </td><td> to </td><td> id (string), data (object) </td><td> Navigate to the target page and pass additional data 
+</td></tr><tr><td> nav </td><td> back </td><td> </td><td> Navigate back to the previous page 
+</td></tr><tr><td> nav </td><td> back </td><td> step (int) </td><td> Navigate back multiple pages at the same time 
+</td></tr><tr><td> nav </td><td> back </td><td> home (boolean) </td><td> Navigate back all the way to the very first page 
+</td></tr><tr><td> nav </td><td> virtual </td><td>  </td><td> Navigate to a virtual state 
+</td></tr></table>
+<p>
+If you follow the above conventions, you can copy the App.controller.js from the <a class="missing wiki">Navigation Demo App?</a> and use it as a start point for your own application.
+</p>
+<p>
+<br />
+</p>
+<h2 id="HandlingtheBrowserHistory">Handling the Browser History</h2>
+<p>
+Some of the mobile devices like Android and Windows phones have a physical back button which triggers for both web and hybrid apps a back navigation of the browser history. <a class="wiki" href="Navigation.1.html">Learn More about this ...</a>
+</p>
+<p>
+As such the only way to deal with this is to listen to history changes and trigger the appropriate navigation. The app controller uses the <a class="ext-link" href="../api/symbols/jQuery.sap.history.html" title="symbols/jQuery.sap.history.html in Merged JSDoc"><span class="icon"> </span>jQuery history plugin</a> which provides a more convenient API and additional features. 
+</p>
+<p>
+<img src="historyPlugin.png" />  
+</p>
+<p>
+All interaction with the browser history is encapsulated in the App controller as this is some of the more ugly code. None of the pages directly interacts with the history. Depending on the navigation events the app controllers performs the relevant modifications.
+</p>
+<p>
+This code sample shows how the app controller registers to history changes:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"view.App"</span><span class="o">,</span> <span class="o">{</span>
+
+    onInit <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+        
+        jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">history</span><span class="o">({</span>
+            <span class="nl">routes:</span> <span class="o">[{</span> 
+                <span class="c1">// This handler is executed when you navigate back to the history state on the path "page"
+</span>                path <span class="o">:</span> <span class="s">"page"</span><span class="o">,</span> <span class="nl">handler:</span> jQuery<span class="o">.</span><span class="na">proxy</span><span class="o">(</span>historyPageHandler<span class="o">,</span> <span class="k">this</span><span class="o">)</span> 
+            <span class="o">}],</span>
+            <span class="c1">// The default handler is executed when you navigate back to the history state with an empty hash
+</span>            <span class="nl">defaultHandler:</span> jQuery<span class="o">.</span><span class="na">proxy</span><span class="o">(</span>historyDefaultHandler<span class="o">,</span> <span class="k">this</span><span class="o">)</span>
+        <span class="o">});</span>     <span class="o">...</span> 
+</pre></div><p>
+This code sample shows how the app controller adds history tokens when navigating to a new page:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"view.App"</span><span class="o">,</span> <span class="o">{</span>
+
+    <span class="o">...</span>
+    
+    navTo <span class="o">:</span> function<span class="o">(</span>id<span class="o">,</span> writeHistory<span class="o">,</span> navType<span class="o">,</span> data<span class="o">)</span> <span class="o">{</span>
+        
+        <span class="o">...</span>
+        
+        <span class="c1">// write history
+</span>        <span class="k">if</span> <span class="o">(</span>writeHistory <span class="o">===</span> undefined <span class="o">||</span> writeHistory<span class="o">)</span> <span class="o">{</span>
+            jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">history</span><span class="o">.</span><span class="na">addHistory</span><span class="o">(</span><span class="s">"page"</span><span class="o">,</span> <span class="o">{</span><span class="nl">id:</span> id<span class="o">},</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="o">}</span>
+</pre></div><h2 id="HandlingPopups">Handling Popups</h2>
+<p>
+Special attention is required for handling popups in navigation. We need to consider these types:
+</p>
+<ul><li><a class="ext-link" href="../api/symbols/sap.m.Dialog.html" title="symbols/sap.m.Dialog.html in Merged JSDoc"><span class="icon"> </span>sap.m.Dialog</a>
+</li><li><a class="ext-link" href="../api/symbols/sap.m.BusyDialog.html" title="symbols/sap.m.BusyDialog.html in Merged JSDoc"><span class="icon"> </span>sap.m.BusyDialog</a>
+</li><li><a class="ext-link" href="../api/symbols/sap.m.Popover.html" title="symbols/sap.m.Popover.html in Merged JSDoc"><span class="icon"> </span>sap.m.Popover</a>
+</li><li><a class="ext-link" href="../api/symbols/sap.m.MessageToast.html" title="symbols/sap.m.MessageToast.html in Merged JSDoc"><span class="icon"> </span>sap.m.MessageToast</a>
+</li><li><a class="ext-link" href="../api/symbols/sap.m.ActionSheet.html" title="symbols/sap.m.ActionSheet.html in Merged JSDoc"><span class="icon"> </span>sap.m.ActionSheet</a> which is more a convenience API that creates dialogs or popovers depending on the device
+</li></ul><p>
+Mobile interaction design requires the following behavior for backward navigation:
+</p>
+<ul><li>If a <strong>(Busy)Dialog</strong> is open it shall be closed BUT the current page stays in place. All dialogs are modal and as such are navigation relevant steps.
+</li><li>If a <strong>Popover</strong> or <strong>MessageToast</strong> is open it shall be closed AND the previous page shall be shown. These popovers are not modal and as such not an own step in navigation.
+</li></ul><p>
+Luckily the closing of popups can be managed generically in the app controller. When popups are opened they automatically register themselves in the <a class="ext-link" href="../api/symbols/sap.m.InstanceManager.html" title="symbols/sap.m.InstanceManager.html in Merged JSDoc"><span class="icon"> </span>sap.m.InstanceManager</a>. This allows the app controller to easily check for open popups on navigating back and closing them. Thus the page developer has no need to close popups if backward navigation is triggered from the browser history.
+</p>
+<p>
+<img src="instanceManager.png" />
+</p>
+<p>
+This is the central code in the app controller that is executed on backward navigation:
+</p>
+<div class="code"><pre>    <span class="o">...</span>
+    <span class="k">if</span><span class="o">(</span>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">InstanceManager</span><span class="o">.</span><span class="na">hasOpenDialog</span><span class="o">()){</span>
+        <span class="c1">// close open dialogs 
+</span>        sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">InstanceManager</span><span class="o">.</span><span class="na">closeAllDialogs</span><span class="o">();</span>
+        jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"navBack - closed dialog(s)"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">InstanceManager</span><span class="o">.</span><span class="na">hasOpenPopover</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// close open popovers and message toasts
+</span>        sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">InstanceManager</span><span class="o">.</span><span class="na">closeAllPopovers</span><span class="o">();</span>
+        jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"navBack - closed popover(s)"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+</pre></div><p>
+<img src="alert.png" style="vertical-align: bottom" alt="/!\" /> While the page developer can ignore the closing of popups he has <strong>some obligations when working with dialogs</strong>:
+</p>
+<ul><li>(I) When opening the dialog a virtual  navigation must be fired
+</li><li>(II) When closing the dialog by taping on the buttons a back navigation must be fired. If the dialog was closed by the browser history this has already happended and must NOT be done again.
+</li></ul><div class="code"><pre><span class="c1">// (I) add virtual state before opening a dialog
+</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">getEventBus</span><span class="o">().</span><span class="na">publish</span><span class="o">(</span><span class="s">"nav"</span><span class="o">,</span> <span class="s">"virtual"</span><span class="o">);</span>
+
+<span class="c1">// show confirmation dialog
+</span>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">MessageBox</span><span class="o">.</span><span class="na">show</span><span class="o">(</span>
+    <span class="s">"Do you really want to delete this object?"</span><span class="o">,</span> 
+    sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">MessageBox</span><span class="o">.</span><span class="na">Icon</span><span class="o">.</span><span class="na">QUESTION</span><span class="o">,</span> 
+    <span class="s">"Confirmation"</span><span class="o">,</span>  
+    <span class="o">[</span>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">MessageBox</span><span class="o">.</span><span class="na">Action</span><span class="o">.</span><span class="na">CANCEL</span><span class="o">,</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">MessageBox</span><span class="o">.</span><span class="na">Action</span><span class="o">.</span><span class="na">DELETE</span><span class="o">],</span>
+    jQuery<span class="o">.</span><span class="na">proxy</span><span class="o">(</span>function<span class="o">(</span>oAction<span class="o">)</span> <span class="o">{</span>
+        
+        <span class="c1">// (II) remove virtual state if dialog not closed by history
+</span>        <span class="k">if</span> <span class="o">(</span>oAction<span class="o">)</span> <span class="o">{</span>
+            sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">getEventBus</span><span class="o">().</span><span class="na">publish</span><span class="o">(</span><span class="s">"nav"</span><span class="o">,</span> <span class="s">"back"</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="c1">// really delete the object
+</span>        <span class="k">if</span> <span class="o">(</span>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">MessageBox</span><span class="o">.</span><span class="na">Action</span><span class="o">.</span><span class="na">DELETE</span> <span class="o">===</span> oAction<span class="o">)</span> <span class="o">{</span>
+            <span class="o">...</span>
+        <span class="o">}</span>
+    <span class="o">},</span> <span class="k">this</span><span class="o">)</span>
+<span class="o">);</span>
+</pre></div><p>
+<img src="alert.png" style="vertical-align: bottom" alt="/!\" /> Even though you can configure a Busy Dialog to be shown without cancel button the user can always cancel the Busy Dialog with a device back button. As such you always need to handle the <i>close</i> event and abort or ignore the triggered operation.
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

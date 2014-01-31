@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/SecurityGuide – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="SAPUI5SecurityInformation">SAPUI5 Security Information</h1>
+<h2 id="Introduction">Introduction</h2>
+<h3 id="SecurityWithSAPUI5">Security With SAPUI5</h3>
+<p>
+This guide covers security aspects of the usage of SAPUI5. It is targeted to SAPUI5 application and control developers as well as to system administrators running applications based on SAPUI5.
+</p>
+<p>
+It is important to understand that SAPUI5 is a clientside JavaScript library, so while the library itself is designed and tested to be secure, it can not ensure the application to be secure. Unlike Web Dynpro, where the application is built against an abstract programming model and the framework handles all the HTML rendering, JavaScript code and communication with the browser, in SAPUI5 the application controls the HTML output, it provides own JavaScript code which is executed on the client and it handles client/server communication. 
+</p>
+<p>
+While this brings a lot of freedom and possibilities for the application, it comes with a lot of responsibility with regards to security. Application developers need to understand the security threats and actively prohibit exploitation. Also the correct configuration of the HTTP server which is used is important.
+</p>
+<p>
+This also means common security mechanisms, which are taken for granted, like User Authentication, Session Handling, Authorization Handling or Encryption are not part of SAPUI5 and need to be handled by the server side framework and/or custom code of the application.
+</p>
+<h3 id="WhyIsSecurityNecessary">Why Is Security Necessary?</h3>
+<p>
+With the increasing use of distributed systems and the Internet for managing business data, the demands on security are also on the rise. When using a distributed system, you need to be sure that your data and processes support your business needs without allowing unauthorized access to critical information. Protection of the user’s personal data must be guaranteed and legal regulations regarding this must be complied with. User errors, negligence, or attempted manipulation on your system should not result in loss of information or processing time. These demands on security apply likewise to SAPUI5 . To assist you in securing SAPUI5, we provide this Security Guide.
+</p>
+<h3 id="AboutthisDocument">About this Document</h3>
+<p>
+The security guide comprises the following main sections:
+</p>
+<ul><li><a class="wiki" href="SecurityGuide.html#before">Before You Start</a> Links to general security guides
+</li><li><a class="wiki" href="SecurityGuide.html#arch">Architectural Overview</a> How SAPUI5 is embedded and interfacing with the application
+</li><li><a class="wiki" href="SecurityGuide.html#browser">Browser Security</a> Client related security aspects
+</li><li><a class="wiki" href="SecurityGuide.html#transport">Transport Security</a> Security of data transport between client and server
+</li><li><a class="wiki" href="SecurityGuide.html#server">Server Security</a> Serverside security considerations with SAPUI5
+</li><li><a class="wiki" href="SecurityGuide.html#libs">Third Party Libraries</a> jQuery and datajs are part of SAPUI5
+</li><li><a class="wiki" href="SecurityGuide.html#secure">Secure Programming Guide</a> What needs to be done in the application
+</li><li><a class="wiki" href="SecurityGuide.html#UI5Rep">Using the SAPUI5 Repository based on BSP Repository</a>
+</li></ul><h2 id="before">Before You Start</h2>
+<p>
+SAPUI5 is not bound to any server implementation or serverside programming language, so can be used with Netweaver ABAP, Java, HANA XSEngine or any standard web server. Therefore, the corresponding Security Guides also apply to SAPUI5. 
+</p>
+<h3 id="FundamentalSecurityGuides">Fundamental Security Guides</h3>
+<p>
+Please also refer to the global and other security guides of involved technologies and platforms.
+</p>
+<h3 id="AdditionalInformation">Additional Information</h3>
+<p>
+For more information about specific topics, see the Quick Links as shown in the table below.
+</p>
+<table class="wiki">
+<tr><td>Content</td><td>Quick Link on the SAP Service Marketplace or SDN
+</td></tr><tr><td>Security</td><td><a class="ext-link" href="http://sdn.sap.com/irj/sdn/security"><span class="icon"> </span>http://sdn.sap.com/irj/sdn/security</a>
+</td></tr><tr><td>Security Guides</td><td><a class="ext-link" href="http://service.sap.com/securityguide"><span class="icon"> </span>http://service.sap.com/securityguide</a>
+</td></tr><tr><td>Related SAP Notes</td><td><a class="ext-link" href="http://service.sap.com/notes"><span class="icon"> </span>http://service.sap.com/notes</a>
+</td></tr><tr><td></td><td><a class="ext-link" href="http://service.sap.com/securitynotes"><span class="icon"> </span>http://service.sap.com/securitynotes</a>
+</td></tr><tr><td>Released platforms</td><td><a class="ext-link" href="http://service.sap.com/pam"><span class="icon"> </span>http://service.sap.com/pam</a>
+</td></tr><tr><td>Network security</td><td><a class="ext-link" href="http://service.sap.com/securityguide"><span class="icon"> </span>http://service.sap.com/securityguide</a>
+</td></tr><tr><td>SAP Solution Manager</td><td><a class="ext-link" href="http://service.sap.com/solutionmanager"><span class="icon"> </span>http://service.sap.com/solutionmanager</a>
+</td></tr><tr><td>SAP NetWeaver</td><td><a class="ext-link" href="http://sdn.sap.com/irj/sdn/netweaver"><span class="icon"> </span>http://sdn.sap.com/irj/sdn/netweaver</a>
+</td></tr></table>
+<h2 id="arch">Architectural Overview</h2>
+<p>
+SAPUI5 is a JavaScript library based on jQuery. It is embedded in the application using a script-tag and triggers additional requests for on-demand-loading of JavaScript classes, stylesheets and other resources. For Java and ABAP a special resource handler is offered, which provides extended capabilities, and is used for all SAPUI5 internal requests. 
+</p>
+<p>
+The application usually has a serverside part and a clientside part. The serverside part can be based on any web framework, the clientside part is a web application, which is utilizing SAPUI5 for its user interface.
+</p>
+<p>
+<img src="sapui5-architecture.png" alt="SAPUI5 Architecture" title="SAPUI5 Architecture" />
+</p>
+<h2 id="DataProtectionandPrivacy">Data Protection and Privacy</h2>
+<p>
+SAPUI5 does not store or provide access to any person-related data. If an application built with SAPUI5 deals with person-related data, it has to take care of the data protection rules of the target countries of the application. This includes usage of proper authentication, authorization and encryption (e.g. SSO and usage of https), as well properly securing and logging access to person-related data. For more inforamtion regarding data protection and privacy, please see the security guide of your server side framework.
+</p>
+<h2 id="browser">Browser Security</h2>
+<p>
+First of all, the browser is an untrusted client by design. The server can not rely on any information sent from the browser, as a malicious user can use a JavaScript debugger to tamper with the client code or a proxy server like fiddler to modify request data. All input validation on the client is just for convenience, the server always has to validate all the data coming from the client again.
+</p>
+<p>
+The browser also offers some possible attack vectors, especially Cross-Site-Scripting (XSS), which has to be taken care of by the application.
+</p>
+<h3 id="Cross-Site-Scripting">Cross-Site-Scripting</h3>
+<p>
+ 
+Cross-Site-Scripting is the most prominent security issue of web applications within the last years and also the mosts dangerous one, as it allows so many ways of exploitation. Once malicious code is running within your browser, it can be used to steal your session cookies, to trigger requests within the current session, or even to exploit a known browser vulnerability to do native code execution.
+</p>
+<p>
+For SAPUI5 applications XSS vulnerabilities can exist on different levels:
+</p>
+<ul><li>Within the HTML page or custom data transports sent to the browser from the server
+</li><li>Within the JavaScript Code of the application, which is processing server responses
+</li><li>Within the HTML renderers of SAPUI5 controls
+</li></ul><p>
+SAPUI5 can only prevent cross site scripting in the processing and rendering of controls. For that purpose there is input validation on all typed Element properties and output encoding done in the renderer class of Controls (see Secure Programming Guide for Control Developers). Please be aware that there are exceptions to this, for controls which are especially built to include arbitrary HTML (like sap.ui.core.HTML).
+</p>
+<p>
+Application is responsible for proper output encoding of all content embedded into the HTML page itself, as well as for encoding of JSON or XML data sent to the client and secure processing of this data. Of course the application also has to take care of security of custom controls provided by the application.
+</p>
+<h3 id="html5">HTML5</h3>
+<p>
+HTML5 offers a lot of new functionality which also brings a lot of potential new security issues. This just an overview of some of the new features and possible security issues when they are used. 
+   
+</p>
+<h4 id="LocalStorage">Local Storage</h4>
+<p>
+All browsers are now offering a local storage API. This API can be used to store a limited amount of data on the browser. Access to this data is limited to JavaScript code running from the same domain as it has been stored. SAPUI5 offers helper functions to access the local storage on different browsers.
+</p>
+<p>
+The local storage of browsers is not a secure storage, so while it can be used for static data, like enumerations, applications must not store any user or application data within the local storage.
+</p>
+<p>
+By default SAPUI5 is not using the local storage, but it can be enabled for the history-capability of Dropdown- and ComboBoxes for uncritical data.
+</p>
+<h4 id="WEBGL">WEBGL</h4>
+<p>
+While more and more browsers are supporting WEBGL by default, WEBGL allows accessing the graphics API of the computer on a very low level, which may also lead to low level exploits. This is the main reason Internet Explorer has no support for WebGL at all, Microsoft recently stated, that they are not going to support WebGL as they think it can not be implemented in a secure way.
+</p>
+<p>
+SAPUI5 is currently not using WEBGL.
+</p>
+<h4 id="WebSockets">WebSockets</h4>
+<p>
+While WebSockets offer great new possibilities for the client/server communication of web applications, there have been many security issues rising while the first implementations were done by the browser vendors. Standardization of WebSockets has reached a stable state with RFC 6455 and is now implemented beginning with Chrome 16, Firefox 11 and Internet Explorer 10. Even if the browser implementations themselfes prove to be secure, using Web Sockets may require additional security measures on the client.
+</p>
+<p>
+SAPUI5 is currently not using WebSockets.
+</p>
+<h4 id="postMessageonMessage">postMessage/onMessage</h4>
+<p>
+This is another great feature in the HTML5 area, which can lead to massive security issues, when not used correctly. postMessage allows inter-window-communication between windows from different domains. So basically this opens a hole in the same origin policy currently implemented in the browser. As soon you are subscribing to the onMessage event, you can receive messages from any other browser window, the application is responsible to check the originating domain and only to process messages which have been sent by trusted domains.
+</p>
+<p>
+SAPUI5 is utilizing postMessage for its debugging and tracing functionality.
+   
+</p>
+<h2 id="transport">Transport Security</h2>
+<p>
+Of course the best security  on the client and server doesn't help, if the data transport between client and server can be read, intercepted or even modified by an attacker. Per default HTTP communication is stateless and unencrypted, which makes it necessary to configure it in a way that it is using encrypted connections and to add session handling on top using either cookies or URL rewriting.
+</p>
+<h3 id="Encryption">Encryption</h3>
+<p>
+Sending the HTTP protocol over a SSL secured connection is not only standardized, but also required for SAP applications. 
+</p>
+<p>
+SAPUI5 fully supports usage of HTTPS, but there are some restrictions regarding the CDN version of SAPUI5 when HTTPS is used. It is recommended to enable or at least to test SSL connections in an early stage of application development, as usually switching to HTTPS causing some issues. First of all, when the application is started using HTTPS, the SAPUI5 library also has to be loaded from an HTTPS server. Second Internet Explorer 8 and 9 have some additional restrictions regarding cross origin requests with HTTPS, which are related to the security zone concept.
+</p>
+<h3 id="Sessionsecurity">Session security</h3>
+<p>
+Even if the data transport is secured using SSL, there are possibilities to hijack such a secure connection and sending malicious requests from the client. Cross site request forgery and session fixation are two of the prominent examples of this class of attacks.
+</p>
+<p>
+SAPUI5 does only provide XSRF prevention for the data which is sent to the server by SAPUI5. Currently this only happens in the OData Model, where a XSRF token is read from the server and used for subsequent write requests.
+</p>
+<p>
+Application is responsible for using XSRF header or other mechanisms to prevent XSRF for all other server communication triggered by the application.
+</p>
+<h2 id="server">Server Security</h2>
+<p>
+   
+SAPUI5 only ships a small serverside part, to support loading of resources by the client framework. Usage of the resource handlers is not mandatory, SAPUI5 also offers a static version of the libraries, which can be used with an arbitrary HTTP server.
+</p>
+<h3 id="CrossOriginResourceSharing">Cross Origin Resource Sharing</h3>
+<p>
+Usually the XMLHttpRequest for security reasons does only allow accessing resources from the same domain as the originating document. As their are a lot of web based services available today, starting with RSS or Atom feeds, WebServices or OData services, there was a need to be able to also access data sources from different domains within the browser, which was adressed with the CORS (Cross Origin Resource Sharing) standard. This allows the server to set special headers on their responses, which are telling the XMLHttpRequest object, whether it is allowed to process the requested data or not.
+</p>
+<p>
+This CORS capability also plays an important role in SAPUI5 based applications. In case the application itself and the data visualized are coming from different servers, the CORS header has to be configured correctly on the data providing server, to allow the application server domain to access the data.
+</p>
+<p>
+SAPUI5 is using CORS header on its CDN based library, to be able to load additional scripts, styles and resources from the CDN server. 
+</p>
+<p>
+ 
+</p>
+<h3 id="ResourceHandlerJava">Resource Handler (Java)</h3>
+<p>
+The Resource Handler for Java provides some configuration options (context parameters in the web.xml). It is possible to enable CORS, configuring the cache control and activating a development mode. Details about the configuration options can be found here: <a class="wiki" href="ResourceHandling.html">Resource Handling</a>.
+</p>
+<p>
+In case of productive usage of the Resource Handler you must not have the development mode activated. You have to remove the configuration option <tt>com.sap.ui5.resource.DEV_MODE</tt> in the web.xml.
+</p>
+<h3 id="ResourceHandlerABAP">Resource Handler (ABAP)</h3>
+<p>
+The Resource Handler for ABAP is not configurable. It is used to serve the resources from the mime repository.
+</p>
+<h3 id="ResourceHandlerforApplicationResourcesABAPNW7.X">Resource Handler for Application Resources (ABAP, NW 7.X)</h3>
+<p>
+The Resource Handler for Application Resources for ABAP, NW 7.X is not configurable. It is used to serve the resources from the SAPUI5 Repository based on BSP Repository, see also <a class="wiki" href="SecurityGuide.html#UI5AppsOnABAP">Executing SAPUI5 Applications from the SAPUI5 Repository</a>
+</p>
+<h3 id="ProxyServletJava">Proxy Servlet (Java)</h3>
+<p>
+SAPUI5 is providing a <tt>SimpleProxyServlet</tt>. This proxy servlet can be used on a local server only for local requests to access data from other domains. This is useful to avoid cross domain issues when fetching data from another domain for testing purposes. Also for the SAPUI5 tools this is required since the local testing needs to access data from the remote ABAP server. Due to security reasons this proxy servlet is limited to localhost usage only and cannot be used by requests from other domains. 
+</p>
+<h2 id="libs">Third-Party Libraries</h2>
+<h3 id="LibrariesshippedwithSAPUI5">Libraries shipped with SAPUI5</h3>
+<p>
+SAPUI5 ships with a handful of third party libraries. jQuery is mandatory as SAPUI5 is based on it and datajs is needed in case OData services should be used.
+</p>
+<h4 id="jQuery">jQuery</h4>
+<p>
+jQuery does not have any security related documentation on their site, but they are known to be aware of security and usually reacting quickly in case security issues are found within their library. 
+</p>
+<p>
+SAPUI5 is including jQuery in different versions together with their own libraries, so also has the possibility to add custom security fixes to jQuery, if necessary.
+</p>
+<h4 id="datajs">datajs</h4>
+<p>
+datajs does not have any security related documentation on their site.
+</p>
+<p>
+SAPUI5 is including the datajs library and can add custom security fixes, if necessary.
+</p>
+<h3 id="Librariesincludedbytheapplication">Libraries included by the application</h3>
+<p>
+Applications based on SAPUI5 are allowed from a technical point of view to include arbitrary custom libraries within their application. Of course SAPUI5 can not give any statement about the security of third party libraries and can not ensure security of third party libraries. The application has full responsibility for doing an security assessment of third party libraries before using them and for embedding and using them in a secure manner.
+</p>
+<h2 id="secure">Secure Programming Guide</h2>
+<h3 id="InputValidation">Input Validation</h3>
+<p>
+Application point of view: Input validaton of user input, must be done on the server, optional on the client, can be achieved using two way data binding and model types. The application can create custom types by extending the <a class="missing wiki">SimpleType?</a> class. This is explained in more detail in the databinding documentation.
+</p>
+<ul><li><tt>oInput.bindValue("/path", new sap.ui.model.type.Float())</tt> Ensures only a Float value can be entered, otherwise a ParseError will be thrown
+</li><li><tt>oInput.bindValue("/path", new sap.ui.model.type.String({}, {maxLength: 20}))</tt> Ensures that maximal 20 characters can be entered, otherwise a ValidationError will be thrown
+</li></ul><p>
+Control point of view: Input validation of control properties, so integer proeprties only accept integers, enumeration properties only accept an existing enumeration value. While this sounds obivous, in JavaScript it is not. The type system of JavaScript doesn't do type validation on assignment. 
+</p>
+<p>
+Try to avoid string properties whenever possible. SAPUI5 offers special types like CSSSize or URL for control properties, which should be used when applicable. If there is a fixed set of possible values, please create an enumeration.
+</p>
+<h3 id="OutputEncoding">Output Encoding</h3>
+<p>
+All data sent from the server must be properly output encoded according to the context they are contained in. For more information please see the XSS Secure Programming Guide.
+        
+Content which is created on the client side, either for display within the browser or for data transport, needs to be properly output encoded with the encoding methods provided by SAPUI5. There are methods for encoding HTML, XML, JavaScript, CSS and URI components.
+</p>
+<p>
+When developing custom controls, the following two methods should be used within the control renderer for HTML encoding:
+</p>
+<ul><li><tt>RenderManager.writeEscaped(sString)</tt> Encodes the given string and writes it to the HTML output as content
+</li><li><tt>RenderManager.writeAttributeEscaped(sString, sString)</tt> Encodes the given string and writes it to the HTML output as an attribute
+</li></ul><p>
+The encoding library does encode according to the XSS Secure Programming Guide and should be used whenever encoding is needed by the application. It offers the following API:
+</p>
+<ul><li><tt>jQuery.sap.encodeCSS(sString)</tt> Encode the string for inclusion into CSS string literals or identifiers
+</li><li><tt>jQuery.sap.encodeHTML(sString)</tt> Encode the string for inclusion into HTML content/attribute
+</li><li><tt>jQuery.sap.encodeJS(sString)</tt> Encode the string for inclusion into a JS string literal
+</li><li><tt>jQuery.sap.encodeURL(sString)</tt> Encode the string for inclusion into an URL parameter
+</li><li><tt>jQuery.sap.encodeXML(sString)</tt> Encode the string for inclusion into XML content/attribute
+</li></ul><p>
+All controls from SAPUI5 libraries properly encode their data, except for HTML-control and XMLView. The latter two are explicitely built to display arbitrary HTML content. If applications use these two controls AND provide unsecure HTML content to them, they have to check/validate the content on their own. Note that using an XMLView with application controlled, secure HTML content together with standard UI5 controls (other than HTML and XMLView) containing potentially unsecure data, is also safe. Only untrusted HTML content is critical. 
+</p>
+<p>
+SAPUI5 includes the CAJA HTML sanitizer, which is used by the HTML control and the <a class="missing wiki">RichTextEdit?</a>.
+</p>
+<h3 id="URLValidation">URL Validation</h3>
+<p>
+URL validation should take place on the server side when possible. In case URLs are entered on the client side or are loaded from an external service, SAPUI5 offers an URL validator, which can be used to whether a URL is well formed and properly encoded. It also contains a configurable white liste to restrict URLs to certain protocols or certain hosts. Initially, the white list only checks for the protocols <tt>http</tt>,<tt>https</tt> and <tt>ftp</tt> but nothing else. Applications should define their own whitelist. 
+</p>
+<p>
+SAPUI5 is using URL validation for outgoing requests (e.g. links). SAPUI5 offers the following API for URL validation within the application.
+</p>
+<ul><li><tt>jQuery.sap.getUrlWhitelist()</tt> Gets the whitelist for URL validation
+</li><li><tt>jQuery.sap.addUrlWhitelist(protocol, host, port, path)</tt> Adds a whitelist entry for URL valiadtion
+</li><li><tt>jQuery.sap.removeUrlWhitelist(iIndex)</tt> Removes a whitelist entry for URL validation
+</li><li><tt>jQuery.sap.validateUrl(sUrl)</tt> Validates an URL.
+</li><li><tt>jQuery.sap.clearUrlWhitelist()</tt> clears the whitelist for URL valiadtion 
+</li></ul><h3 id="CacheSettings">Cache Settings</h3>
+<p>
+The application has to take care, that caching of data is disabled, by setting appropriate HTTP Headers on the server side.
+</p>
+<p>
+Static resources from SAPUI5 or from the application are not security relevant and are excluded from this rule, so they can safely be cached on the client. 
+</p>
+<h3 id="UserManagementAuthentication">User Management / Authentication</h3>
+<p>
+SAPUI5 doesn't provide any authorization or user management. An application which implements such facilities based on SAPUI5 has to make sure that
+SSL is enabled to prevent cleartext passwords sent over the wire. Applications must not store any logon information on the client.
+</p>
+<h3 id="LocalStorage1">Local Storage</h3>
+<p>
+The local storage of browsers is not a secure storage, so while it can be used for static data, like enumerations, applications must not store any user or application data within the local storage.
+</p>
+<p>
+The following API is offered by SAPUI5 to access the local storage
+</p>
+<ul><li><tt>jQuery.sap.storage.get(sId)</tt> Retrieves the state string stored in the session under the key sStateStorageKeyPrefix + sId
+</li><li><tt>jQuery.sap.storage.getType()</tt> Returns the type of the storage.
+</li><li><tt>jQuery.sap.storage.put(sId, sStateToStore)</tt> Stores the passed state string in the session, under the key sStateStorageKeyPrefix + sId
+</li><li><tt>jQuery.sap.storage.remove(sId)</tt> Deletes the state string stored in the session under the key sStateStorageKeyPrefix + sId
+</li><li><tt>jQuery.sap.storage.clear()</tt> Deletes all the entries saved in the session. CAUTION: This method should be called only in very particular situations, when a global erasing of data is required. Given that the method deletes the data saved under any ID, it should not be called when managing data for specific controls. 
+</li></ul><h2 id="UI5Rep">Using the SAPUI5 Repository based on BSP Repository</h2>
+<h3 id="UsingtheSAPUI5RepositoryTeamProvider">Using the SAPUI5 Repository Team Provider</h3>
+<p>
+The SAPUI5 Repository Team Provider connected against a NW 7.31 ABAP system with UI-AddOn or a NW 7.40 (from SP1) can be used to synchronize SAPUI5 application resources between Eclipse and the SAPUI5 Repository on the ABAP system.
+</p>
+<p>
+For usage of the SAPUI5 Repository Team Provider, also see the Security Guide for ABAP Development Tools which is part of the ABAP Development User Guide and the SAP NetWeaver Security Guide.
+</p>
+<h4 id="NeededAuthorizationObjects">Needed Authorization Objects</h4>
+<table class="wiki">
+<tr><td><strong>Authorization Object</strong></td><td><strong>Description</strong>
+</td></tr><tr><td>S_DEVELOP</td><td>The authorization object S_DEVELOP is needed to create, update and delete SAPUI5 applications in the SAPUI5 Repository.
+</td></tr><tr><td>S_ICF_ADM</td><td>The authorization object S_ICF_ADM is needed to create the SAPUI5 application specific ICF node under <i>/sap/bc/ui5_ui5/</i>.
+</td></tr><tr><td>S_TCODE </td><td> The authorization object S_TCODE is needed to create the SAPUI5 application specific ICF node under <i>/sap/bc/ui5_ui5/</i>. 
+</td></tr><tr><td>S_TRANSPRT</td><td>The authorization object S_TRANSPRT is used to create new transport request or new task.
+</td></tr><tr><td> S_CTS_ADMI </td><td> The authorization object S_CTS_ADMI is needed to transport SAPUI5 applications. 
+</td></tr><tr><td> S_CTS_SADM </td><td> The authorization object S_CTS_SADM is needed to transport SAPUI5 applications. 
+</td></tr><tr><td>S_ADT_RES</td><td>The authorization object S_ADT_RES is used for the communication between Eclipse and the ABAP Backend via the SAPUI5 Repository Team Provider.
+</td></tr><tr><td>S_RFC</td><td>The authorization object S_RFC is used for the communication between Eclipse and the ABAP Backend via the SAPUI5 Repository Team Provider.
+</td></tr></table>
+<p>
+For more information about authority checks and working with authorization objects, see the following: <i>SAP NetWeaver 7.0x Security Guides (Complete)</i> on SAP Service Marketplace at <a class="ext-link" href="http://service.sap.com/securityguide"><span class="icon"> </span>http://service.sap.com/securityguide</a>
+</p>
+<h4 id="DeliveredVirusScanProfile">Delivered Virus Scan Profile</h4>
+<p>
+<p>
+When uploading files to the SAPUI5 Repository, you can perform a virus scan. 
+</p>
+<p>
+As of SAP NetWeaver 7.00 <br />
+with UI AddOn, SAP delivers the following virus scan profile for ABAP within the UI AddOn (from 7.40 SP1 on the virus scan profile is already part of the software component <tt>SAP_UI</tt>):
+</p>
+<ul><li>/UI5/UI5_INFRA_APP/REP_DT_PUT
+</li></ul><p>
+This profile is used by the SAPUI5 Repository API to store files in the SAPUI5 Repository based on BSP Repository.<br />
+For example: Upload of a local file using SAPUI5 Repository API /UI5/CL_UI5_REP_DT, method /UI5/IF_UI5_REP_DT~PUT_FILE from 7.00 on, or the SAPUI5 Team Repository Provider in 7.31 or 7.40.
+</p>
+<p>
+The profile is deactivated when delivered. To activate it, first create at least one basis profile and save it as the default profile. You can then activate one of the delivered profiles. By default, it links to a reference profile, which is the default profile.
+For more information, see SAP Help Portal: 
+</p>
+<ul><li><a class="ext-link" href="http://help.sap.com/saphelp_nw70/helpdata/en/b8/e6e540c1848131e10000000a1550b0/frameset.htm"><span class="icon"> </span>ABAP-Specific Configuration of the Virus Scan Interface (7.00)</a> 
+</li><li><a class="ext-link" href="http://help.sap.com/saphelp_nw73/helpdata/en/4d/f581e1472d41c4e10000000a42189c/frameset.htm"><span class="icon"> </span>ABAP-Specific Configuration of the Virus Scan Interface (7.31)</a>
+</li></ul>
+</p>
+<h3 id="UI5AppsOnABAP">Executing SAPUI5 Applications from the SAPUI5 Repository</h3>
+<p>
+The SAPUI5 Application can be executed from the NW 7.X ABAP System by retrieving the SAPUI5 Application Resources from the SAPUI5 Repository based on BSP Repository with the help of an ICF Handler.
+</p>
+<h4 id="DeliveredICFNodes">Delivered ICF Nodes</h4>
+<p>
+For the execution of SAPUI5 Applications from the SAPUI5 Repository, SAP delivers ICF node <i>/sap/bc/ui5_ui5/</i>. For every SAPUI5 applications an ICF node below that exists.
+</p>
+<p>
+Note that all services delivered by SAP (such as the <i>/sap/bc/ui5_ui5/</i> service for executing SAPUI5 Applications) are initially inactive. Also each new service that you create has status inactive. Before you work with the ICF, you must activate the services you require.
+</p>
+<p>
+For more information, see also <a class="ext-link" href="http://help.sap.com/saphelp_nw70ehp3/helpdata/en/f3/f8193c99f5a765e10000000a11402f/frameset.htm"><span class="icon"> </span>Activating and Deactivating ICF Services (7.00 EhP3)</a> and SAP Library for SAP NetWeaver on SAP Help Portal at <a class="ext-link" href="http://help.sap.com"><span class="icon"> </span>http://help.sap.com</a> <i>SAP NetWeaver &rarr; SAP NetWeaver Library &rarr; SAP NetWeaver by Key Capability &rarr; Application Platform by Key Capability &rarr; Connectivity &rarr; Components of SAP Communication Technology &rarr; Communication between ABAP and Non-ABAP Technologies &rarr; Internet Communication Framework &rarr; Development &rarr; Activating and Deactivating ICF Services</i>.<br />For more information about ICF security, see SAP NetWeaver Security Guide on SAP Service Marketplace at <a class="ext-link" href="http://service.sap.com/securityguide"><span class="icon"> </span>http://service.sap.com/securityguide</a> <i>SAP NetWeaver 7.0x Security Guides (Complete) &rarr; SAP NetWeaver 7.0x Security Guides (Online Version)  &rarr; Security Guides for Connectivity and Interoperability Technologies  &rarr; RFC/ICF Security Guide</i>
+</p>
+<h4 id="NeededAuthorizationObjects1">Needed Authorization Objects</h4>
+<p>
+No specific authorization objects are needed to execute SAPUI5 Applications from the SAPUI5 Repository.
+</p>
+<p>
+As for ICF service nodes in general, authorization for specific ICF service nodes can be restricted, see also <a class="ext-link" href="http://help.sap.com/saphelp_nw70ehp3/helpdata/en/48/d18402f6c96745e10000000a421937/frameset.htm"><span class="icon"> </span>Defining Service Data (7.00 EhP3)</a> or SAP Library for SAP NetWeaver on SAP Help Portal at <a class="ext-link" href="http://help.sap.com"><span class="icon"> </span>http://help.sap.com</a> <i>SAP NetWeaver &rarr; SAP NetWeaver Library &rarr; SAP NetWeaver by Key Capability &rarr; Application Platform by Key Capability &rarr; Connectivity &rarr; Components of SAP Communication Technology &rarr; Communication between ABAP and Non-ABAP Technologies &rarr; Internet Communication Framework &rarr; Development &rarr; Server-Side Development &rarr; Creating and Configuring ICF Services &rarr; Create Service &rarr; Defining Service Data</i> and <a class="ext-link" href="http://help.sap.com/saphelp_nw70ehp3/helpdata/en/48/9671360eec3987e10000000a421937/frameset.htm"><span class="icon"> </span>Authorization Object S_ICF (7.00 EhP3)</a> or SAP Library for SAP NetWeaver on SAP Help Portal at <a class="ext-link" href="http://help.sap.com"><span class="icon"> </span>http://help.sap.com</a> <i>SAP NetWeaver &rarr; SAP NetWeaver Library &rarr; SAP NetWeaver by Key Capability &rarr; Application Platform by Key Capability &rarr; Connectivity &rarr; Components of SAP Communication Technology &rarr; Communication between ABAP and Non-ABAP Technologies &rarr; Internet Communication Framework &rarr; ICF Administration &rarr; Server Function Administration &rarr; Authorizations &rarr; Authorization Object S_ICF</i>.
+</p>
+<h3 id="TrackingcodingchangesandtextchangesintheSAPUI5Repository">Tracking coding changes and text changes in the SAPUI5 Repository</h3>
+<p>
+Code changes can be traced by using the usual ABAP version control of the corresponding resource file. A new version is created when a new transport is written.<br />
+Text changes can be traced by using the "Table History" transcation(SCU3), the relevant tables for UI5 texts are /UI5/TREP_TEXT and /UI5/TREP_TEXT_T for the translated text. Table logging has to be activated in the system for this functionality.
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

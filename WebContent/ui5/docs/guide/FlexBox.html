@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/FlexBox – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="LayoutingwithFlexBox">Layouting with FlexBox</h1>
+<p>
+Today's user interfaces often have to adapt to different screen sizes. Building user interfaces in a way so that a single layout reliably fits the available screen real estate has been challenging. The FlexBox control allows for developing layouts which adjust to the available space, thus, avoiding unused space or overflow. FlexBoxes can be nested to create more complex layouts.
+</p>
+<p>
+The two main uses of a FlexBox control are:
+</p>
+<ul><li><strong>two-dimensional layouting</strong>
+</li><li><strong>flexible layouts</strong>
+</li></ul><p>
+We will look into each of these below. But first let's start with a few basics.
+</p>
+<h2 id="Gettingstarted">Getting started</h2>
+<p>
+To use a flexible box layout simply create a FlexBox control and add any kind of controls to it, either by using the <i>addItem</i> method (option 1) or the <i>items</i> aggregration of a configuration object (option 2).
+</p>
+<p>
+Option 1
+</p>
+<div class="code"><pre>var oMyFlexbox <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">FlexBox</span><span class="o">();</span>
+oMyFlexbox<span class="o">.</span><span class="na">addItem</span><span class="o">(</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Button 1"</span><span class="o">})</span> <span class="o">);</span>
+oMyFlexbox<span class="o">.</span><span class="na">addItem</span><span class="o">(</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Button 2"</span><span class="o">})</span> <span class="o">);</span>
+</pre></div><p>
+Option 2
+</p>
+<div class="code"><pre>var oMyFlexbox <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">FlexBox</span><span class="o">({</span>
+  <span class="nl">items:</span> <span class="o">[</span>
+    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Button 1"</span><span class="o">}),</span>
+    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Button 2"</span><span class="o">})</span>
+  <span class="o">]</span>
+<span class="o">});</span>
+</pre></div><p>
+Used inside of a page in a mobile app (necessary code not shown here), the result would be something like this:
+</p>
+<p>
+<img src="buttons.png" alt="Buttons" title="Buttons" />
+</p>
+<h3 id="Layoutproperties">Layout properties</h3>
+<p>
+Some properties that affect the layout need to be set on the FlexBox control. Others can be attached to the controls placed inside the FlexBox via the layoutData aggregation.
+</p>
+<p>
+For instance, the layout direction is set on the FlexBox:
+</p>
+<div class="code"><pre>var oMyFlexbox <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">FlexBox</span><span class="o">({</span>
+  <span class="nl">items:</span> <span class="o">[</span>
+    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Button 1"</span><span class="o">}),</span>
+    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Button 2"</span><span class="o">})</span>
+  <span class="o">],</span>
+  <span class="nl">direction:</span> <span class="s">"Column"</span>
+<span class="o">});</span>
+</pre></div><p>
+<img src="buttons_vertical.png" alt="Buttons vertically laid out" title="Buttons vertically laid out" />
+</p>
+<p>
+The order, on the other hand, is attached to the button inside a FlexItemData object:
+</p>
+<div class="code"><pre>var oMyFlexbox <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">FlexBox</span><span class="o">({</span>
+  <span class="nl">items:</span> <span class="o">[</span>
+    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+      <span class="nl">text:</span> <span class="s">"Button 1"</span><span class="o">,</span>
+      <span class="nl">layoutData:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">FlexItemData</span><span class="o">({</span><span class="nl">order:</span> <span class="mi">2</span><span class="o">})</span>
+    <span class="o">}),</span>
+    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Button 2"</span><span class="o">})</span>
+  <span class="o">]</span>
+<span class="o">});</span>
+</pre></div><p>
+<img src="buttons_ordered.png" alt="Buttons in different order" title="Buttons in different order" />
+</p>
+<p>
+Please note that the FlexBox control is just a wrapper around the flexible box layout properties in CSS. The control renderer sets the CSS properties (including prefixed versions where necessary) on the appropriate HTML elements. The actual layouting is done by the browser.
+</p>
+<p>
+The controls that you place inside the FlexBox are each wrapped in a DIV or LI element (depending on the renderType property). All of the elements are placed inside another DIV or UL container (again depending on the renderType). The outermost element represents the so-called <i>flex container</i> while its child elements are <i>flex items</i>. The HTML structure resulting from all of the examples above is something like this:
+</p>
+<div class="document">
+<p>&lt;div class=&quot;sapMFlexBox&quot;&gt;</p>
+<blockquote>
+<p>&lt;div class=&quot;sapMFlexItem&quot;&gt;</p>
+<blockquote>
+&lt;button id=&quot;__button1&quot;&gt;Button 1&lt;/button&gt;</blockquote>
+<p>&lt;/div&gt;</p>
+<p>&lt;div class=&quot;sapMFlexItem&quot;&gt;</p>
+<blockquote>
+&lt;button id=&quot;__button2&quot;&gt;Button 2&lt;/button&gt;</blockquote>
+<p>&lt;/div&gt;</p>
+</blockquote>
+<p>&lt;/div&gt;</p>
+</div>
+<p>
+Please note that the layoutData properties that you can attach to a control are applied to its wrapper element (the one with the class <i>sapMFlexItem</i>). This is due to browsers currently only supporting these properties on certain elements like DIVs.
+</p>
+<p>
+For convenience, there are two additional controls (<strong>HBox</strong> and <strong>VBox</strong>) which are FlexBoxes that are fixed to layout their children horizontally or vertically respectively.
+</p>
+<h2 id="Importantflexibleboxlayoutconcepts">Important flexible box layout concepts</h2>
+<h3 id="Mainaxisandcrossaxis">Main axis and cross axis</h3>
+<p>
+A flexible box layout has a direction in which child elements are laid out. The default direction is <strong>Row</strong> and rows are laid out horizontally in reading direction. This defines the <strong>main axis</strong>. The <strong>cross axis</strong> in this case is vertical.
+</p>
+<p>
+The layout direction property can be changed to <strong>Column</strong> resulting in a vertical main axis and a horizontal cross axis. This is important when we come to the align properties.
+</p>
+<p>
+SIDE NOTE: If browsers were to support vertical text flows, the direction of a row could then also be vertical. For the time being this is not an issue and can be ignored.
+</p>
+<p>
+In addition to <i>Row</i> and <i>Column</i> the flex direction can be set to <strong>RowReverse</strong> and <strong>ColumnReverse</strong> which will reverse the layout direction.
+</p>
+<h3 id="Two-dimensionalAlignment">Two-dimensional Alignment</h3>
+<p>
+In a flexible box layout you can determine where the flex items will be aligned. Two properties are determining the alignment: <strong>justifyContent</strong> and <strong>alignItems</strong>. The first one, justifyContent, sets the alignment along the main axis while alignItems acts on the cross axis.
+</p>
+<p>
+Both of these properties accept the values <strong>Start</strong>, <strong>Center</strong> and <strong>End</strong>. This gives you nine possible combinations. For example, <i>justifyContent = End</i> and <i>alignItems: Start</i> would place the items in the upper right corner of a horizonzal FlexBox. If you set the direction property to <i>Column</i>, the main axis would be vertical. With the same values for the alignment as above the items would be in the lower left.
+</p>
+<p>
+By reversing the main axis with <i>direction = ColumnReverse</i>, you would make the layout start from the bottom. Which would make <i>justifyContent = End</i> refer to the top of the FlexBox. This can be a bit confusing. Just take it step by step.
+</p>
+<p>
+For <i>justifyContent</i> there's an additional value: <i><a class="missing wiki">SpaceBetween?</a></i>. This setting will place the first and the last item at the extremes of the main axis. Any other items will be distributed evenly between these two.
+</p>
+<p>
+There are also additional values for <i>alignItems</i>: <i>Baseline</i> and <i>Stretch</i>. <i>Baseline</i> is a bit special. It will take the first line of text of each flex item and align their baselines. This can be useful if the font sizes differ.
+</p>
+<p>
+Setting <i>alignItems</i> to <i>Stretch</i> will make the flex items take up the whole space along the cross axis of the FlexBox. This is very useful if all items should have the same size regardless of the amount of content.
+</p>
+<h3 id="Flexibility">Flexibility</h3>
+<p>
+If you want to let the browser handle the distribution of elements so that they always fill the available space along the main axis, you can set a flexibility factor on the flex items.
+</p>
+<p>
+The property to control the flexibility is called <strong>growFactor</strong> which is set on a flex item object via <i>FlexItemData</i> on the <i>layoutData</i> aggregation. The flex layout algorithm will first determine the "natural" width of the flex items. If there is remaining space, this space will then be distributed among the flex items according to their relative <i>growFactor</i>.
+</p>
+<p>
+So if a horizonzal flex container is 300px wide and it contains two elements which would normally each be 100px wide, then 100px would be remaining. Suppose both flex items have a <i>growFactor</i> of 1, they would both get 50px extra, making them 150px wide.
+</p>
+<p>
+If the items had <i>growFactor</i>s of 3 and 1 respectively, the first item would get 75px (&frac34; of 100px) of the remaining space while the second one would receive 25px (&frac14; of 100px). So the first item would be 175px wide, the second 125px.
+</p>
+<p>
+A <i>growFactor</i> of 0 (the default) will make an item inflexible.
+</p>
+<p>
+It's important to note that <strong>the flex algorithm distributes the remaining space not the whole space in the FlexBox</strong>. Therefore, the resulting widths of the items will not necessarily be proportional to the <i>growFactor</i>s (which might be expected).
+</p>
+<p>
+It is possible to achieve a proportional width according to the growFactor. <strong>The trick is to set the width of all items to 0 via CSS.</strong> The sum of the "natural" widths of all items is then also 0. The remaining space, however, now equals the full space of the FlexBox. This space is then distributed based on the <i>growFactor</i>.
+</p>
+<p>
+For the example above (<i>growFactor</i> 3/1), setting the the width of the flex items to 0 via CSS will result in the first item being 225px (&frac34; of 300px) wide and the second 75px (&frac14; of 300px).
+</p>
+<p>
+<strong>IMPORTANT:</strong> Once you set a <i>growFactor</i> on any item, the flex layout algorithm will ignore the <i>justifyContent</i> property of the FlexBox since the items will take up all available space anyway. There would be no difference between the different values.
+</p>
+<p>
+For more examples of FlexBox usage, please take a look at the <a class="ext-link" href="../../test-resources/sap/m/demokit/flexbox/index.html"><span class="icon"> </span>Demo App</a>.
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/BackEndConnection – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="ConnectingtotheBackEnd">Connecting to the Back End</h1>
+<p>
+</p><p>
+</p>
+<p>
+Very few HTML applications can be useful until connected to a back end server that delivers data. Though any text-based data source in almost any common format can be used within a SAP UI5 application, use oData or SAP oData based data sources whenever possible.
+</p>
+<p>
+It is very important that you understand the basic principles of REST and oData. If you are not familiar with these concepts, block at least two hours in your calendar and read some introductory materials first, for example <a class="ext-link" href="http://www.infoq.com/articles/rest-introduction"><span class="icon"> </span>A Brief Introduction to REST</a>, <a class="ext-link" href="http://www.odata.org/"><span class="icon"> </span>oData</a>, and <a class="ext-link" href="http://www.odata.org/media/30002/OData%20URL%20Conventions.html"><span class="icon"> </span>oData URL Conventions</a>, before you continue. This will save you a lot of efforts in the future. Though the concepts are very simple, one cannot work with server data without having at least a very basic understanding of them.
+</p>
+<h2 id="WhentoLoadData">When to Load Data</h2>
+<p>
+The rule of thumb: models for globally available data should be instantiated in <tt>Application.js</tt>. If some data source is used in a single view, the corresponding model should be created in the controller of that particular view. 
+</p>
+<p>
+Load data in <tt>init</tt> if you know that it should be immediately available. Load auxiliary and rarely used data only when needed. 
+</p>
+<h2 id="UnderstandingHTTPProxy">Understanding HTTP Proxy</h2>
+<p>
+Very often we have a situation when an application loaded from a HTTP server needs data from another server address. For example, an application can be loaded from an ABAP application server but request data from a SAP Gateway server that may have a different (HTTP protocol/host name/port number) combination. However, modern browsers do not allow such cross-origin requests according to the <a class="ext-link" href="http://en.wikipedia.org/wiki/Same_origin_policy"><span class="icon"> </span>Same Origin Policy</a>.
+</p>
+<p>
+Therefore, an HTML application has to request data only from its application server. The application server is responsible to dispatch these requests to data sources and return data back to application via so called reverse proxy. If an SAP application is developed and deployed as part of  <a class="ext-link" href="http://help.sap.com/saphelp_uiaddon10/helpdata/en/C2/061B99A3764BC0A607D96A418D6F43/frameset.htm"><span class="icon"> </span>User Interface Add-On 1.0 for SAP NetWeaver</a>, the <a class="ext-link" href="http://help.sap.com/saphelp_uiaddon10/helpdata/en/48/8fe37933114e6fe10000000a421937/frameset.htm"><span class="icon"> </span>SAP Web Dispatcher</a> must be properly configured on the server for that purpose. You should know the system landscape and request your system administrator to configure the SAP Web Dispatcher correspondingly. 
+</p>
+<p>
+Other server systems that host a SAP UI5 application should provide their own reverse proxy or means of Cross-Origin Resource Sharing. In any case, proper access to data sources should be configured on a server side each time when an HTML application requests data from different than this server data sources.
+</p>
+<p>
+Read also: <a class="ext-link" href="http://wiki.sdn.sap.com/wiki/display/BSP/Using+Proxies"><span class="icon"> </span>Using Proxies</a>, <a class="ext-link" href="https://websmp130.sap-ag.de/sap(bD1lbiZjPTAwMQ==)/bc/bsp/spn/sapnotes/index2.htm?numm=833960"><span class="icon"> </span>Note 833960: Protecting SAP Landscapes using Application Gateways or Reverse Proxies</a>
+</p>
+<p>
+If you need some intermediate means to test a real data connection until the proxy infrastructure is arranged on a server, SAPUI5 library provides a proxy servlet that can be accessed from the application code using a special URL: 
+</p>
+<div class="code"><pre>  var sServiceUrl <span class="o">=</span> <span class="s">"/uilib-sample/proxy/http/services.odata.org/OData/OData.svc/"</span><span class="o">;</span>
+  var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">odata</span><span class="o">.</span><span class="na">ODataModel</span><span class="o">(</span>sServiceUrl<span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</pre></div><p>
+<strong>Note:</strong> this proxy is for internal use only and does work only when started from your local computer (local Tomcat server). Never try to use it for productive purposes!
+</p>
+<h2 id="Authentication">Authentication</h2>
+<p>
+In most cases, a typical SAP UI5 application has to deal with a business case that require restricted access to data with user authentication. SAP SSO (Single Sign On) is a general recommendation for such a case. See <a class="ext-link" href="http://help.sap.com/saphelp_uiaddon10/helpdata/en/55/3961c7310d48e1864e6be1605797ea/frameset.htm"><span class="icon"> </span>SAP NetWeaver Gateway Authentication and Single Sign-On</a> and <a class="ext-link" href="http://help.sap.com/saphelp_uiaddon10/helpdata/en/b9/142abe60d448dc932460988573bf4e/content.htm"><span class="icon"> </span>Web Application Scenario</a>
+</p>
+<p>
+<strong>Important:</strong> Do not use basic authentication. Do not hard-code user/password, even for test purposes. Create a public test service on the server instead. Do not create your own logon screens. Learn how to deal with logon and authentication from the very beginning. Request your system administrator to correctly arrange SSO logon both to the application and gateway servers.
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

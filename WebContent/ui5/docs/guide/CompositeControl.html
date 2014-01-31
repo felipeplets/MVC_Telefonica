@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/CompositeControl – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="CreatingaCompositeControl">Creating a Composite Control</h1>
+<h2 id="Idea">Idea</h2>
+<p>
+A <strong>composite control</strong> is a control whose implementation is reusing other existing controls. For the application developer (aka. user of the composite control) it is a <strong>black box</strong> which cannot be distinguished from a "native" (i.e. non-composite) control. For the control developer (aka. the author of the composite control) the technique of composition is just a means of saving time and effort in her implementation by reusing existing controls. Because of the black box nature, it is well possible to later on change the implementation and avoid composition (or vice versa!). This will be a fully compatible change for any existing usage of that control.
+</p>
+<h2 id="WordOfWarning">Word Of Warning</h2>
+<p>
+If you do not intend to re-use it in several places, a composite control may not be your best choice! Composite controls are best suited for (massive) re-use and in case you need a public API which shields the application developer from its inner workings. If these are not your requirements, consider to use other techniques of factoring out common parts within your application. One example might be to simply write a function returning the root of some control tree, as in the following example:
+</p>
+<div class="code"><pre>    <span class="c1">//Creates a MatrixLayout
+</span>    function <span class="nf">createMatrixLayout</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">MatrixLayout</span><span class="o">().</span><span class="na">createRow</span><span class="o">(</span>
+          <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">MatrixLayoutCell</span><span class="o">({</span>
+            backgroundDesign <span class="o">:</span> <span class="s">"Header"</span><span class="o">,</span> 
+            content <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>design <span class="o">:</span> <span class="s">"Bold"</span><span class="o">,</span> text <span class="o">:</span> <span class="s">"Row 1"</span><span class="o">})</span>
+        <span class="o">})).</span><span class="na">createRow</span><span class="o">(</span>
+          <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">MatrixLayoutCell</span><span class="o">({</span>
+            content <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>text <span class="o">:</span> <span class="s">"Row 2"</span><span class="o">})</span>
+        <span class="o">}));</span>
+    <span class="o">}</span>
+</pre></div><h2 id="SimpleExample:SearchField">Simple Example: Search Field</h2>
+<p>
+Creating a composite control is quite simple. You start to create it like any other control by crafting its API incl. properties, events, aggregations etc. You choose the base type as either element or control, as usual.<br />
+Let's consider a simple example first, a combination of a text field with a button, which we will call a "search field". To the outside world, it offers an editable value and can fire a search event.<br />
+<img src="SearchField.png" alt="Screenshot of &#34;SearchField&#34; composite" title="Screenshot of &#34;SearchField&#34; composite" />
+</p>
+<h3 id="API">API</h3>
+<p>
+For composites, like for any other control you develop, you have the choice whether you describe them via UI5 metamodel files using the UI5 control development tools or whether you just use our JavaScript control definition API for that purpose (see <a class="wiki" href="OnTheFlyControlDefinition.html">On The Fly Controls</a> for details).
+</p>
+<p>
+The first XML snippet shows a metamodel file for the search field while the second one shows the same as JavaScript code.
+</p>
+<pre class="wiki">&lt;?xml version="1.0" ?&gt;
+&lt;control xmlns="http://www.sap.com/sap.ui.library.xsd" &gt;
+  &lt;name&gt;SearchField&lt;/name&gt;
+  &lt;baseType&gt;sap.ui.core/Control&lt;/baseType&gt;
+  &lt;properties&gt;
+    &lt;property name="value" type="string" defaultValue=""&gt;
+      &lt;documentation&gt;The search field's value, editable by the end user.&lt;/documentation&gt;
+    &lt;/property&gt;
+  &lt;/properties&gt;
+  &lt;aggregations&gt;
+    &lt;aggregation name="_tf" cardinality="0..1" type="sap.ui.commons/TextField" visibility="hidden"&gt;
+      &lt;documentation&gt;Internal aggregation to hold the inner TextField.&lt;/documentation&gt;
+    &lt;/aggregation&gt;
+    &lt;aggregation name="_btn" cardinality="0..1" type="sap.ui.commons/Button" visibility="hidden"&gt;
+      &lt;documentation&gt;Internal aggregation to hold the inner Button.&lt;/documentation&gt;
+    &lt;/aggregation&gt;
+  &lt;/aggregations&gt;
+  &lt;events&gt;
+    &lt;event name="search"&gt;
+      &lt;documentation&gt;Event fired when the end user activates the search, e.g. by pressing the search field's button.&lt;/documentation&gt;
+    &lt;/event&gt;
+  &lt;/events&gt;
+&lt;/control&gt;
+</pre><p>
+Same control definition as JavaScript API call:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">Control</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"SearchField"</span><span class="o">,</span> <span class="o">{</span>
+  metadata <span class="o">:</span> <span class="o">{</span>
+    properties <span class="o">:</span> <span class="o">{</span>
+       <span class="s">"value"</span> <span class="o">:</span> <span class="s">"string"</span>
+    <span class="o">},</span>
+    <span class="nl">aggregations:</span> <span class="o">{</span>
+       <span class="s">"_tf"</span> <span class="o">:</span> <span class="o">{</span>type <span class="o">:</span> <span class="s">"sap.ui.commons.TextField"</span><span class="o">,</span> multiple <span class="o">:</span> <span class="kc">false</span><span class="o">,</span> <span class="nl">visibility:</span> <span class="s">"hidden"</span><span class="o">},</span>
+       <span class="s">"_btn"</span> <span class="o">:</span> <span class="o">{</span>type <span class="o">:</span> <span class="s">"sap.ui.commons.Button"</span><span class="o">,</span> multiple <span class="o">:</span> <span class="kc">false</span><span class="o">,</span> <span class="nl">visibility:</span> <span class="s">"hidden"</span><span class="o">}</span>
+    <span class="o">},</span>
+    <span class="nl">events:</span> <span class="o">{</span>
+       <span class="s">"search"</span> <span class="o">:</span> <span class="o">{}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+As you might have noticed 2 aggregation with <tt>visibility="hidden"</tt> are defined above which are used to hold the inner controls. Aggregations are used to define a parent-child relationship between a parent control and its children (controls or elements). The knowledge about this relationship is for example relevant for the SAPUI5 Core to dispactch events properly or to cleanup the children when the parent is destroyed. Hidden aggregations are control internal and especially for this purpose to register the inner controls within the control hierarchy without make them public available. Because hidden aggregations are only used internally within a composite control for hidden aggregations no typed accessor functions are generated, they are not cloned and databinding is not enabled.
+</p>
+<h3 id="Behavior">Behavior</h3>
+<p>
+In the control's implementation, aka. its behavior, you need to write code for the initialization and clean-up hooks. You also write glue code for properties and events.
+</p>
+<h4 id="Init">Init</h4>
+<p>
+In the <tt>init</tt> function you create the composite's parts and store references to them. We strongly recommend to not give those parts an ID according to some naming scheme, but rather let the framework compute the IDs automatically. This reduces the chance that a composite's parts are accessed via <tt>sap.ui.getCore().byId(...)</tt> from outside.
+</p>
+<p>
+Please note that during the <tt>init</tt> function, settings of the composite only have their default values. If the application developer has provided some values to the constructor, these values will only be set later on. It is therefore crucial for the correct behavior of your composite control that you implement one of the synchronization mechanisms described below.
+</p>
+<div class="code"><pre><span class="cm">/**
+ * Initialization hook... creating composite parts
+ */</span>
+SearchField<span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">init</span> <span class="o">=</span> function<span class="o">(){</span>
+  var that <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">setAggregation</span><span class="o">(</span><span class="s">"_tf"</span><span class="o">,</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">({</span>
+    <span class="nl">change:</span> function<span class="o">(</span>oEvent<span class="o">){</span>
+      that<span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"newValue"</span><span class="o">),</span> <span class="kc">true</span> <span class="cm">/*no re-rendering needed, change originates in HTML*/</span><span class="o">);</span> <span class="c1">//see section Properties for explanation
+</span>    <span class="o">}</span>
+  <span class="o">}));</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">setAggregation</span><span class="o">(</span><span class="s">"_btn"</span><span class="o">,</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+    <span class="nl">text:</span> <span class="s">"Search"</span><span class="o">,</span>
+    <span class="nl">press:</span> function<span class="o">(){</span>
+      that<span class="o">.</span><span class="na">fireSearch</span><span class="o">();</span>
+    <span class="o">}</span>
+  <span class="o">}));</span>
+<span class="o">};</span>
+</pre></div><h4 id="Exit">Exit</h4>
+<p>
+In the <tt>exit</tt> function can be used to cleanup your control when it is destroyed. You do not need to destroy the inner controls here. This is done automatically by the framework because the inner controls are kept in hidden aggregations.
+</p>
+<div class="code"><pre><span class="cm">/**
+ * Clean-up hook... destroying composite parts.
+ */</span>
+SearchField<span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">exit</span> <span class="o">=</span> function<span class="o">()</span> <span class="o">{</span>
+  <span class="c1">//nothing to do here
+</span><span class="o">};</span>
+</pre></div><h4 id="Properties">Properties</h4>
+<p>
+Usually, changes to settings in the API of a composite control must be reflected in its parts. In the following example, we propagate the <tt>value</tt> property to the text field part. To do so, we override the generated setter for that property. Take care to include the proper implementation which generically sets a property inside the <tt>Element</tt> base class (else you would have to override the getter also).
+</p>
+<p>
+Note how the text field's <tt>change</tt> event is used to update the composite's <tt>value</tt> property (see <tt>init</tt> function). Because the change originated in the HTML input field, no re-rendering is needed. This is expressed by the <tt>setProperty</tt> call's 3rd parameter. This trick is applicable whenever a property change does not require a re-rendering on the level of this control. Note that changing the text field part's value will trigger a re-rendering of the text field!
+</p>
+<div class="code"><pre><span class="cm">/**
+ * Propagate value to text field.
+ */</span>
+SearchField<span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">setValue</span> <span class="o">=</span> function<span class="o">(</span>sValue<span class="o">){</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> sValue<span class="o">,</span> <span class="kc">true</span> <span class="cm">/*no re-rendering of whole search field needed*/</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">getAggregation</span><span class="o">(</span><span class="s">"_tf"</span><span class="o">).</span><span class="na">setValue</span><span class="o">(</span>sValue<span class="o">);</span> <span class="c1">// Note: this triggers re-rendering of text field!
+</span><span class="o">};</span>
+</pre></div><p>
+In many real life composites, propagating the API settings to the parts is not as straight forward as in the example above. If intercepting the changes by overriding the setters
+is not sufficient or too complicated, an alternative approach might be to implement a single <tt>updateAllParts</tt> method and call it at the begin of the renderer of the composite control.
+</p>
+<h3 id="Renderer">Renderer</h3>
+<p>
+In the renderer implementation, you may want to use some markup for layouting. But at the heart of it, you simply delegate (via the render manager) to the composite parts' renderers. This is where you really benefit from re-using other controls with non-trivial renderers.
+</p>
+<p>
+If you have chosen the <tt>updateAllParts</tt> approach to keep the composite API settings and the settings of the parts in sync, then you must not forget to call <tt>updateAllParts</tt> before the real rendering starts.
+</p>
+<div class="code"><pre>SearchFieldRenderer<span class="o">.</span><span class="na">render</span> <span class="o">=</span> function<span class="o">(</span>oRenderManager<span class="o">,</span> oSearchField<span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// oSearchField.updateAllParts(); // called depending on your 'sync' approach
+</span>  oRenderManager<span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"&lt;div"</span><span class="o">);</span> 
+  oRenderManager<span class="o">.</span><span class="na">writeControlData</span><span class="o">(</span>oSearchField<span class="o">);</span>
+  oRenderManager<span class="o">.</span><span class="na">addClass</span><span class="o">(</span><span class="s">"SearchField"</span><span class="o">);</span> 
+  oRenderManager<span class="o">.</span><span class="na">writeClasses</span><span class="o">();</span>
+  oRenderManager<span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"&gt;"</span><span class="o">);</span>
+  oRenderManager<span class="o">.</span><span class="na">renderControl</span><span class="o">(</span>oSearchField<span class="o">.</span><span class="na">getAggregation</span><span class="o">(</span><span class="s">"_tf"</span><span class="o">));</span>
+  oRenderManager<span class="o">.</span><span class="na">renderControl</span><span class="o">(</span>oSearchField<span class="o">.</span><span class="na">getAggregation</span><span class="o">(</span><span class="s">"_btn"</span><span class="o">));</span>
+  oRenderManager<span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="s">"&lt;/div&gt;"</span><span class="o">);</span>
+<span class="o">};</span>
+</pre></div>
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/SaveScreenSpace – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="SaveScreenSpaceonPhones">Save Screen Space on Phones</h1>
+<p>
+The <tt>sap_bluecrystal</tt> theme provides common look and feel for SAPUI5 applications running both on desktop and mobile browsers. However, due to limited screen size of smartphones, some adjustments are needed in application code to provide optimal usability in all possible device sizes.
+</p>
+<h3 id="UsePullToRefreshonmobilehideitondesktop">Use PullToRefresh on mobile, hide it on desktop</h3>
+<p>
+<a class="ext-link" href="../api/symbols/sap.m.PullToRefresh.html" title="symbols/sap.m.PullToRefresh.html in Merged JSDoc"><span class="icon"> </span>sap.m.PullToRefresh</a> control is very useful on mobile devices because it does not take screen space when not used. However, it is a static control on desktop without pull capability. If the information about last refresh time is not needed, we recommend to hide PullToRefresh on desktop completely and use a <a class="ext-link" href="../api/symbols/sap.m.SearchField.html" title="symbols/sap.m.SearchField.html in Merged JSDoc"><span class="icon"> </span>SearchField</a> with <tt>showRefreshButton</tt> enabled instead.
+</p>
+<p>
+In the following code example the <tt>PullToRefresh</tt> control is visible on touch enabled devices only, and the <tt>SearchField</tt> control replaces its functionality on desktop browsers with the parameter <tt>showRefreshButton</tt>:
+</p>
+<div class="code"><pre><span class="nt">&lt;Page</span>
+  <span class="na">id=</span><span class="s">"page"</span>
+  <span class="na">title=</span><span class="s">"{i18n&gt;HOME_TITLE}"</span>
+  <span class="na">showFooter=</span><span class="s">"{device&gt;/isNoPhone}"</span> <span class="nt">&gt;</span>
+  <span class="nt">&lt;headerContent&gt;</span>
+    <span class="c">&lt;!-- place header content here --&gt;</span>
+  <span class="nt">&lt;/headerContent&gt;</span>
+  <span class="nt">&lt;subHeader&gt;</span>
+    <span class="nt">&lt;Bar</span> <span class="na">id=</span><span class="s">"searchBar"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;contentLeft&gt;</span>
+        <span class="nt">&lt;SearchField</span>
+           <span class="na">id=</span><span class="s">"searchField"</span>
+           <span class="na">showRefreshButton=</span><span class="s">"{device&gt;/isNoTouch}"</span>
+           <span class="na">placeholder=</span><span class="s">"{i18n&gt;HOME_SEARCH_PLACEHOLDER}"</span>
+           <span class="na">search=</span><span class="s">"handleSearch"</span>
+           <span class="na">tooltip=</span><span class="s">"{i18n&gt;HOME_SEARCH_TOOLTIP}"</span><span class="nt">&gt;</span>
+         <span class="nt">&lt;/SearchField&gt;</span>
+       <span class="nt">&lt;/contentLeft&gt;</span>
+     <span class="nt">&lt;/Bar&gt;</span>
+  <span class="nt">&lt;/subHeader&gt;</span>
+  <span class="nt">&lt;content&gt;</span>
+    <span class="nt">&lt;PullToRefresh</span>
+      <span class="na">id=</span><span class="s">"pullToRefresh"</span>
+      <span class="na">visible=</span><span class="s">"{device&gt;/isTouch}"</span> 
+      <span class="na">refresh=</span><span class="s">"handleRefresh"</span> <span class="nt">/&gt;</span>
+    <span class="c">&lt;!-- place the list with search results here --&gt;</span>
+</pre></div><h3 id="MoveSearchFieldfromheadertoscrollableareaonphones">Move SearchField from header to scrollable area on phones</h3>
+<p>
+To save extra space, move the SearchField control from the sub-header area of the page to its scrollable content area between the PullToRefresh control and the result list:
+</p>
+<p>
+Example:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"view.Home"</span><span class="o">,</span> <span class="o">{</span>
+
+  onInit <span class="o">:</span> function <span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// move the search bar under the PullToRefresh control on touch devices
+</span>    <span class="k">if</span> <span class="o">(</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">Device</span><span class="o">.</span><span class="na">support</span><span class="o">.</span><span class="na">touch</span><span class="o">)</span> <span class="o">{</span>
+      var bar <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getView</span><span class="o">().</span><span class="na">byId</span><span class="o">(</span><span class="s">"searchBar"</span><span class="o">);</span>
+      var page <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getView</span><span class="o">().</span><span class="na">byId</span><span class="o">(</span><span class="s">"page"</span><span class="o">);</span>
+      page<span class="o">.</span><span class="na">insertAggregation</span><span class="o">(</span><span class="s">"content"</span><span class="o">,</span> bar<span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+  <span class="o">...</span>
+</pre></div><p>
+You can see this in work running the <a class="ext-link" href="../../test-resources/sap/m/demokit/cart/index.html"><span class="icon"> </span>Shopping Cart Application</a> demo on a desktop and a tablet browser.
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

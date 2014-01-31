@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/Tools/TestingInEclipse – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="TestingtheSAPUI5ApplicationinEclipse">Testing the SAPUI5 Application in Eclipse</h1>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li>You have installed the <i>SAPUI5 Application Development</i> feature in your Eclipse installation.
+</li><li>You have created a <i>SAPUI5 Application</i> using the <i>SAPUI5 Application Development Tools</i>, see <a class="wiki" href="CreateApp.html">Creating a SAPUI5 Application Project</a>.
+</li></ul><p>
+ 
+There are two possibilities for testing the application locally in Eclipse:
+</p>
+<ul><li><a class="wiki" href="TestingInEclipse.html#AppPreview">SAPUI5 Application Preview</a>
+</li><li><a class="wiki" href="TestingInEclipse.html#JavaServer">Using a Java Web Server</a>
+</li></ul><p>
+If you have created a <i>SAPUI5 Application</i> for <i>Mobile Target Device</i>, see <a class="wiki" href="CreateApp.html">Creating a SAPUI5 Application Project</a>, such an application can only run within a WebKit browser, see <a class="wiki" href="Mobile.html">SAPUI5 Mobile Library</a> and <a class="wiki" href="BrowserSupport.html#SAPUI5forMobile">supported browsers</a>. But you can use the mentioned possibilities for testing the application locally in Eclipse and copy and paste the url into a WebKit browser.
+</p>
+<p>
+If your application has to access resources on a backend system (OData), you have to <a class="wiki" href="TestingInEclipse.html#Backend">enable the backend access for local testing</a>. <br />
+If you deploy the SAPUI5 Application project on the ABAP Server then you have a possibility to <a class="wiki" href="UI5BSPRepository.html#TaskTest">test the application on the ABAP Server</a>. 
+</p>
+<h2 id="AppPreview">Testing Using SAPUI5 Application Preview</h2>
+<p>
+To test the new application with the Application Preview on an embedded Jetty server, right-click the HTML file or the project node and choose <i>Run As &rarr; Web App Preview</i>. Everything is configured automatically.
+</p>
+<h3 id="Refresh">Refresh</h3>
+<p>
+After changing a file of your SAPUI5 application project, you can refresh the SAPUI5 preview by choosing the <i>Refresh</i> button on the left in the preview editor.
+</p>
+<h3 id="OpeninExternalBrowser">Open in External Browser</h3>
+<p>
+To check the files of your SAPUI5 application project in an external browser (IE/FF), choose <i>Open in external browser</i> on the right in the preview editor. This opens the external browser which is specified in the Eclipse preferences under <i>General &rarr; Web Browser</i> (usually this is the default browser of your PC). You can also copy the URL from the text field of the editor to an external browser (this is useful for external browsers other than the default browser).
+</p>
+<p>
+<img src="preview.png" height="400px" />
+</p>
+<h2 id="JavaServer">Testing Using a Java Web Server(e.g. Apache Tomcat)</h2>
+<p>
+Ensure that the corresponding Server Adapter Eclipse Plugin is installed. 
+</p>
+<p>
+You can find instructions for setting up Tomcat <a class="wiki" href="DetailsTomcat.html">here</a>.
+</p>
+<p>
+To test the new application, right-click the new project, choose <i>Run as … &gt; Run on Server</i>, select a server (for example, Apache Tomcat), and choose <i>Finish</i>.
+</p>
+<h2 id="UI5LibraryLocationUsedforTesting">UI5 Library Location Used for Testing</h2>
+<p>
+If the UI5 bootstrap tag contains <tt>src="resources/sap-ui-core.js"</tt>, the UI5 runtime libraries from the Eclipse plugin are used.
+</p>
+<p>
+If you like to test your UI5 application in Eclipse against a different UI5 Library location (e.g. on the ABAP server when running in the SAP NetWeaver UI AddOn scenario), you can configure the ResourceServlet. For that, open the <tt>web.xml</tt> file located in the <tt>&lt;WebContent folder name&gt;/WEB-INF</tt> folder and configure the parameter <tt>com.sap.ui5.resource.REMOTE_LOCATION</tt> and  <tt>com.sap.ui5.resource.PREFER_REMOTE_LOCATION</tt> of the ResourceServlet where the placeholders {protocol}, {host name}, {port number}, {path to UI5 library} are to be exchanged by the real protocol, host name, port number and path to the UI5 library, see also <a class="wiki" href="ResourceHandling.html#TunnelingaRemoteLocation">Tunneling a Remote Location</a>: 
+</p>
+<div class="code"><pre>  <span class="nt">&lt;servlet&gt;</span>
+    <span class="nt">&lt;display-name&gt;</span>ResourceServlet<span class="nt">&lt;/display-name&gt;</span>
+    <span class="nt">&lt;servlet-name&gt;</span>ResourceServlet<span class="nt">&lt;/servlet-name&gt;</span>
+    <span class="nt">&lt;servlet-class&gt;</span>com.sap.ui5.resource.ResourceServlet<span class="nt">&lt;/servlet-class&gt;</span>
+  <span class="nt">&lt;/servlet&gt;</span>
+  ...
+  <span class="c">&lt;!-- force to use the remote location --&gt;</span>  
+  <span class="nt">&lt;context-param&gt;</span>
+    <span class="nt">&lt;param-name&gt;</span>com.sap.ui5.resource.PREFER_REMOTE_LOCATION<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>true<span class="nt">&lt;/param-value&gt;</span>
+  <span class="nt">&lt;/context-param&gt;</span>
+  <span class="c">&lt;!-- add the remote location for the UI5 libraries --&gt;</span>  
+  <span class="nt">&lt;context-param&gt;</span>
+    <span class="nt">&lt;param-name&gt;</span>com.sap.ui5.resource.REMOTE_LOCATION<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>{protocol}://{host name}:{port number}/{path to UI5 library}<span class="nt">&lt;/param-value&gt;</span>
+  <span class="nt">&lt;/context-param&gt;</span>
+</pre></div><p>
+In case of issues when accessing HTTPS-systems see <a class="wiki" href="TestingInEclipse.html#https">Accessing HTTPS-Systems</a>.
+</p>
+<h2 id="Backend">Enabling Backend Access for local testing</h2>
+<p>
+If you are testing locally in your Java Eclipse environment, a proxy is needed to access an OData service in the ABAP system. For the purpose of local testing the SAPUI5 Application project uses a SimpleProxyServlet (usage of this is restricted to localhost and only intended for testing purposes and not for productive use). In case of issues when accessing HTTPS-systems see <a class="wiki" href="TestingInEclipse.html#https">Accessing HTTPS-Systems</a>.<br />
+Such a proxy is not needed if you run the application from the ABAP system and access an OData service in the same system.
+</p>
+<p>
+Ideally, all OData service URLs should be in one file to make the exchange easier - either in the <tt>index.html</tt>, or in one separate .js file which needs to be included. You can use a helper function <tt>getServiceUrl</tt> to use the service url with 'proxy' if running locally in Eclipse or the service url without 'proxy' when running on the server, see the following code example:
+</p>
+<div class="code"><pre><span class="o">&lt;</span>script<span class="o">&gt;</span>
+<span class="c1">//One place for defining service URLs - either in the index.html file, 
+//or in one separate .js file which needs to be included.
+//The application is responsible for exchanging the URLs before checking in and 
+//after checking out to SAPUI5 Repository;
+//or using a helper function getServiceUrl for which also the application 
+//is responsible.
+</span>
+<span class="c1">//var serviceUrl = "/mypath/myservice";       //url when running on the ABAP system
+//var serviceUrl = "proxy/mypath/myservice";  //url when running locally in Eclipse
+</span>
+var serviceUrl <span class="o">=</span> getServiceUrl<span class="o">(</span><span class="s">"/mypath/myservice"</span><span class="o">);</span>
+
+function <span class="nf">getServiceUrl</span><span class="o">(</span>sServiceUrl<span class="o">)</span> <span class="o">{</span>
+  <span class="c1">//for local testing prefix with proxy
+</span>  <span class="c1">//if you and your team use a special host name or IP like 127.0.0.1 for localhost please adapt the if statement below 
+</span>  <span class="k">if</span> <span class="o">(</span>window<span class="o">.</span><span class="na">location</span><span class="o">.</span><span class="na">hostname</span> <span class="o">==</span> <span class="s">"localhost"</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="s">"proxy"</span> <span class="o">+</span> sServiceUrl<span class="o">;</span>
+  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="k">return</span> sServiceUrl<span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span>script<span class="o">&gt;</span>
+</pre></div><p>
+As parameter for the <tt>getServiceUrl</tt> helper method, use the URL of the OData service document without <i>{protocol}://{host name}:{port number}</i>:<br />
+Like: <i>/mypath/myservice</i>
+</p>
+<table border="0">
+<tr>
+<td style="padding:0px;vertical-align:top">
+<img src="step.gif" alt="Action Required">
+</td>
+<td>
+<div style="margin-left:10px;padding-left:20px;padding-top:5px;padding-bottom:5px;border-left:6px solid #bbb;background-color:transparent" >
+Place this script tag <b>before</b> the script in which the view is called (<i>sap.ui.view</i>).
+</div>
+</td>
+</tr>
+</table>
+<h3 id="SimpleProxyConfiguration">Simple Proxy Configuration</h3>
+<p>
+Be aware that due to security reasons the SimpleProxyServlet is <strong>restricted to local testing purposes only</strong>. It can only be used for local host scenarios (accessing Gateway services to avoid cross-domain issues) and will not work when deployed on an application server. For productive use, refer to a mature proxy servlet.
+</p>
+<h4 id="Intranet">Intranet Servers</h4>
+<p>
+The SimpleProxyServlet allows proxy requests to an arbitrary server in the intranet.<br />
+The proxy URL that is used in the coding looks like this: <i>proxy/&lt;service url&gt;</i>.
+</p>
+<p>
+For that, open the <tt>web.xml</tt> file located in the <tt>&lt;WebContent folder name&gt;/WEB-INF</tt> folder and configure the parameter <tt>com.sap.ui5.proxy.REMOTE_LOCATION</tt> of the SimpleProxyServlet where the placeholders {protocol}, {host name}, {port number} are to be exchanged by the real protocol, host name and port number: 
+</p>
+<div class="code"><pre>  <span class="nt">&lt;servlet&gt;</span>
+    <span class="nt">&lt;servlet-name&gt;</span>SimpleProxyServlet<span class="nt">&lt;/servlet-name&gt;</span>
+    <span class="nt">&lt;servlet-class&gt;</span>com.sap.ui5.proxy.SimpleProxyServlet<span class="nt">&lt;/servlet-class&gt;</span>
+  <span class="nt">&lt;/servlet&gt;</span>
+  <span class="nt">&lt;servlet-mapping&gt;</span>
+    <span class="nt">&lt;servlet-name&gt;</span>SimpleProxyServlet<span class="nt">&lt;/servlet-name&gt;</span>
+    <span class="nt">&lt;url-pattern&gt;</span>/proxy/*<span class="nt">&lt;/url-pattern&gt;</span>
+  <span class="nt">&lt;/servlet-mapping&gt;</span>
+  <span class="nt">&lt;context-param&gt;</span>
+    <span class="nt">&lt;param-name&gt;</span>com.sap.ui5.proxy.REMOTE_LOCATION<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>{protocol}://{host name}:{port number}<span class="nt">&lt;/param-value&gt;</span>
+  <span class="nt">&lt;/context-param&gt;</span>
+</pre></div><h4 id="InternetServers">Internet Servers</h4>
+<p>
+The SimpleProxyServlet can be configured for proxy requests to internet servers in the same way as for <a class="wiki" href="TestingInEclipse.html#Intranet">Intranet Servers</a>. Additionally, proxy settings might be necessary.<br />
+As the SimpleProxyServlet automatically uses the proxy settings from your Eclipse this can be configured in Eclipse under <i>Window &rarr; Preferences</i>, and select the <i>General &rarr; Network Connections</i>. Here you can specify the proxy entries and the proxy bypass.<br />
+For example: set <i>Active Provider</i> to Manual, <i>Schema</i>=HTTP, <i>Host</i>=proxy, <i>Port</i>=8080 under proxy entries and localhost, *.sap.corp as <i>Host</i> under proxy bypass.
+</p>
+<h3 id="SimpleProxyServlet-RestrictionregardingDELETErequests">Simple Proxy Servlet - Restriction regarding DELETE requests</h3>
+<p>
+The simple proxy servlet does not currently support the sending of HTTP DELETE requests with content. This is due to restrictions of the Java SE functionality that is used. If an HTTP DELETE request with content is sent, an HTTP 500 result status is sent with the description: "The HttpUrlConnection used by the SimpleProxyServlet doesn't allow to send content with the HTTP method DELETE. Due to spec having content for DELETE methods is possible but the default implementation of the HttpUrlConnection doesn't allow this!"
+</p>
+<p>
+For practical purposes, this restriction should have only minor effects. This is because:
+</p>
+<ol><li>When applying a REST-like programming style, an HTTP DELETE request would use the URL to transmit which objects should be deleted, but not the content. 
+</li><li>When building your own protocol that uses the content of the HTTP request, you typically use HTTP POST.
+</li></ol><h2 id="https">Accessing HTTPS-Systems</h2>
+<p>
+For accessing HTTPS-systems via the ResourceServlet or the SimpleProxyServlet it might be necessary to import the root certificate into the Java keystore.
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

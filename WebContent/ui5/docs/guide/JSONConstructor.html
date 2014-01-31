@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/RTConcepts/JSONConstructor – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="UIControlAPI:UsingJSONDatainUIControlConstructors">UI Control API: Using JSON Data in UI Control Constructors</h1>
+<p>
+This example shows the full power of SAPUI5 UI control constructors. 
+</p>
+<p>
+You can specify a unique identifier as the first argument to the constructor. If you omit it, an identifier is computed automatically by the SAPUI5 framework. Specifying an identifier is optional and allows your application to later on find the control again, e.g. for retrieving the current user input from it. Alternatively, you might keep a reference to the control in a variable. 
+</p>
+<p>
+As second value of the constructor, you can specify a JSON string with all control properties that should be set. 
+</p>
+<div class="code"><pre> var oTextField <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">(</span><span class="s">"testTextField"</span><span class="o">,</span> 
+      <span class="o">{</span>value <span class="o">:</span> <span class="s">"Hello SAPUI5"</span><span class="o">,</span> <span class="nl">tooltip:</span> <span class="s">"This is an example tooltip"</span><span class="o">,</span> <span class="nl">width:</span> <span class="s">"100px"</span><span class="o">});</span>
+</pre></div><p>
+The constructor call above is an abbreviation for the following list of statements which are alternatively supported: 
+</p>
+<div class="code"><pre>    var oTextField <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">(</span><span class="s">"testTextField"</span><span class="o">);</span> 
+    oTextField<span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="s">"Hello SAPUI5"</span><span class="o">);</span>
+    oTextField<span class="o">.</span><span class="na">setTooltip</span><span class="o">(</span><span class="s">"This is an example tooltip"</span><span class="o">);</span>
+    oTextField<span class="o">.</span><span class="na">setWidth</span><span class="o">(</span><span class="s">"100px"</span><span class="o">);</span>
+</pre></div><p>
+In summary, SAPUI5 control constructors accept the following arguments (in the order specified below): 
+</p>
+<ol><li>An optional ID of type string, which must be the first argument or omitted altogether. 
+</li><li>One JSON-like object (object literal) as parameter <tt>mSettings</tt> that can define values for any property,  aggregation, association or event
+<ul><li>If for a control a specific name is ambiguous (a property has the same name as an event), then the framework assumes property, aggregation, association, event in that order.
+</li><li>To resolve ambiguities, add an "aggregation:&#34;, &#34;association:&#34; or &#34;event:" prefix to the key in the JSON object.
+</li></ul></li></ol><p>
+Have a look into the JsDoc of the control to see which parameters are supported.  
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

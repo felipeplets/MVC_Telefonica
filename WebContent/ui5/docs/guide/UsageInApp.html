@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/DataBinding/UsageInApp – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="DataBindinginApplications">Data Binding in Applications</h1>
+<p>
+This page describes how data binding can be used in SAPUI5 Web applications. It describes how to create a model instance, how to assign it to the UI, and how the controls on the UI can be bound to the model. 
+</p>
+<h2 id="CreatingaModelInstance">Creating a Model Instance</h2>
+<p>
+The first step when using data binding is to create a model instance and to provide the data for that model. Depending on the requirements and the availability of data formats on the server side, you can either choose one of the existing model implementations or, if none of them suits your needs, <a class="wiki" href="CustomImpl.html">create a custom model implementation</a>. 
+</p>
+<p>
+The predefined models available in SAPUI5 are the <a class="wiki" href="JSONModel.html">JSONModel</a> for JSON data, the <a class="wiki" href="XMLModel.html">XMLModel</a> for XML data, the <a class="wiki" href="ResourceModel.html">ResourceModel</a> for resource bundle data,  and the <a class="wiki" href="ODataModel.html">ODataModel</a> for retrieving data from OData services. The JSONModel, XMLModel, and the ResourceModel are client-side models, so the data of the model is loaded completely and is available on the client, and operations such as sorting and filtering are executed on the client side without further server requests. The ODataModel, on the other hand, is a server-side model, so only the data that is requested by the UI is loaded from the server; any change of binding or list operations require a new request to the server.
+</p>
+<p>
+The JSONModel and the XMLModel support one-way, two-way (default), and one-time binding modes, whereas the ODataModel currently supports the one-way binding (default) and one-time binding modes. The ResourceModel only supports the one-time binding mode because it deals with static texts only. For more information, see the subchapter Binding Modes. 
+</p>
+<h2 id="AssigningtheModeltotheUI">Assigning the Model to the UI</h2>
+<p>
+Before you can bind your controls to your model instance, you have to make it known to the framework. For flexibility and modularization, you can not only define one model for your applications, but different areas in your application can have different models and even single controls can be assigned a model. It is possible to have nested models, for example, a JSONModel defined for the application and an ODataModel for a table control contained in the application.
+</p>
+<p>
+The mechanism by which a control finds the model it should bind to is to look up the parent hierarchy until it finds a control or UI area that has an assigned model. A control can only bind to one model, so if you have a container control which has a model assigned, all controls contained in this container can only see the local model of the container and are no longer able to bind to the global model.
+</p>
+<h3 id="GlobalModel">Global Model</h3>
+<p>
+It is possible to define a global model, which can be accessed by all controls from all UI areas, by using the <tt>setModel</tt> method on the SAPUI5 core object. This is useful for simple form applications or demo applications.  
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">setModel</span><span class="o">(</span>oModel<span class="o">);</span>
+</pre></div><h3 id="Control-SpecificModel">Control-Specific Model</h3>
+<p>
+It may be useful to have a special model for sections within a UI area, for example, inside a panel or for a Table control. In this case, you can use the <tt>setModel</tt> method available on any control:
+</p>
+<div class="code"><pre>var oTable <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">byId</span><span class="o">(</span><span class="s">"table"</span><span class="o">);</span>
+oTable<span class="o">.</span><span class="na">setModel</span><span class="o">(</span>oModel<span class="o">);</span>
+</pre></div><h2 id="DefiningaBindingPath">Defining a Binding Path</h2>
+<p>
+To address the different properties and lists contained in a model, you have to use a binding path. The binding path defines how a specific node in the hierarchical data tree can be found. A binding path contains a number of name tokens, which are separated using a separator char. In all models provided by the framework, the separator char is the slash "/". 
+</p>
+<p>
+A binding path can either be absolute (starting with a slash), or relative (starting with a name token). A relative binding path is resolved relative to the context of the control that is bound. A context exists either when aggregation binding is used, for each entry of the aggregation, or when the context is set explicitly on a control by using the <tt>setBindingContext</tt> method. Relative bindings that do not have a defined context are resolved relative to the model root.
+</p>
+<p>
+The syntax is specific to the model used, as explained in the specific model documentation page.
+</p>
+<h2 id="BindingControlstotheModel">Binding Controls to the Model</h2>
+<p>
+To retrieve data from the model for visualization in the UI, the controls have to be bound to the model, using a binding path as explained above. In general, the control itself, all properties of controls as well as all multiple aggregations can be bound to a model.
+</p>
+<p>
+The <a class="wiki" href="BindingElements.html">element binding</a> allows to bind Elements to a specific object in the model data, which will create a binding context and allow relative binding within the control and all of its children. This is especially helpful in master/detail scenarios.
+</p>
+<p>
+The <a class="wiki" href="BindingProperties.html">property binding</a> allows properties of the control to get automatically initialized and updated from model data. You can only bind control properties to model properties of a matching type, or you use a formatter function or datatype to convert the data as needed. 
+</p>
+<p>
+Finally the <a class="wiki" href="BindingAggregations.html">aggregation binding</a> can be used to automatically create child-controls according to model data. This can be done either by cloning a template control or by using a factory function. Aggregations can only be bound to lists defined in the model, that is, to arrays in a JSONModel or a collection in the ODataModel.
+</p>
+<h2 id="BindingModes">Binding Modes</h2>
+<p>
+A model implementation supports different binding modes. The available binding modes are:
+</p>
+<ul><li><tt>One Way</tt> &rarr; The model implementation supports one-way binding, which means from the model to the view (value changes in the model will update all corresponding bindings and the view).
+</li><li><tt>Two Way</tt> &rarr; The model implementation supports two-way binding, which means from the model to the view and from the view to the model (value changes in the model and in the view will update all corresponding bindings and the view and model, respectively).
+</li><li><tt>One Time</tt> &rarr; The model implementation supports one-time binding, which means from model to view once.
+</li></ul><p>
+The JSONModel and the XMLModel support <tt>One Way</tt>, <tt>Two Way</tt>, and <tt>One Time</tt>, and the ODataModel supports <tt>One Way</tt> and <tt>One Time</tt> binding modes:
+</p>
+<table class="wiki">
+<tr><td><strong>Model</strong></td><td><strong>One Way</strong></td><td><strong>Two Way</strong></td><td><strong>One Time</strong>
+</td></tr><tr><td><i>Resource Model</i></td><td>  -     </td><td> - </td><td> X 
+</td></tr><tr><td><i>JSON Model</i></td><td>  X     </td><td> X </td><td> X 
+</td></tr><tr><td><i>XML Model</i></td><td>  X     </td><td> X </td><td> X 
+</td></tr><tr><td><i>OData Model</i></td><td>  X     </td><td> X </td><td> X 
+</td></tr></table>
+<p>
+<br />
+The available binding modes are defined in <tt>sap.ui.model.BindingMode</tt>:<br />
+</p>
+<p>
+<a class="ext-link" href="../api/symbols/sap.ui.model.BindingMode.html" title="symbols/sap.ui.model.BindingMode.html in Merged JSDoc"><span class="icon"> </span>JS Doc: Binding Modes</a><br />
+</p>
+<h3 id="DefaultBindingModeofModels">Default Binding Mode of Models</h3>
+<p>
+When a model instance is created, the instance has a default binding mode. This means that all bindings bound to this model instance will have this binding mode as their default. 
+</p>
+<p>
+For the supported binding modes and the default binding mode for each model implementation, see the summary below:
+</p>
+<table class="wiki">
+<tr><td><strong>Model</strong></td><td><strong>Default binding mode</strong>
+</td></tr><tr><td><i>Resource Model</i></td><td> One Time 
+</td></tr><tr><td><i>JSON Model</i></td><td> Two Way 
+</td></tr><tr><td><i>XML Model</i></td><td> Two Way 
+</td></tr><tr><td><i>OData Model</i></td><td> One Way 
+</td></tr></table>
+<p>
+The default binding mode can be changed directly after model creation by calling <tt>setDefaultBindingMode</tt> on the model:
+</p>
+<div class="code"><pre>var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">();</span>
+oModel<span class="o">.</span><span class="na">setDefaultBindingMode</span><span class="o">(</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">BindingMode</span><span class="o">.</span><span class="na">OneWay</span><span class="o">);</span>
+</pre></div><p>
+In the example above, all new bindings for the model will have the one-way binding mode by default.
+Of course, you can only set supported binding modes as the default binding mode. It is possible to check if a binding mode is supported:
+</p>
+<div class="code"><pre>var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">();</span>
+<span class="k">if</span> <span class="o">(</span>oModel<span class="o">.</span><span class="na">isBindingModeSupported</span><span class="o">(</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">BindingMode</span><span class="o">.</span><span class="na">OneTime</span><span class="o">))</span> <span class="o">{</span> <span class="c1">// true
+</span>    oModel<span class="o">.</span><span class="na">setDefaultBindingMode</span><span class="o">(</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">BindingMode</span><span class="o">.</span><span class="na">OneTime</span><span class="o">);</span> 
+<span class="o">}</span>
+</pre></div><h2 id="MultimodelSupport">Multimodel Support</h2>
+<p>
+It is possible to set an additional model for an element or the core by specifying a name for the model, which identifies it: 
+</p>
+<div class="code"><pre>var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">();</span>
+<span class="c1">// define data for that model
+</span>oModel<span class="o">.</span><span class="na">setData</span><span class="o">({</span>
+            <span class="nl">test:</span> <span class="s">"Test"</span><span class="o">,</span> 
+            <span class="nl">enabled:</span> <span class="kc">true</span>
+<span class="o">});</span>
+<span class="c1">// define a name for that model
+</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">setModel</span><span class="o">(</span>oModel<span class="o">,</span> <span class="s">"myModel"</span><span class="o">);</span>
+</pre></div><p>
+You can then create property bindings for this model by calling:
+</p>
+<div class="code"><pre>oText<span class="o">.</span><span class="na">bindValue</span><span class="o">(</span><span class="s">"myModel&gt;/test"</span><span class="o">).</span> 
+</pre></div><p>
+You also can create aggregation bindings for this model by calling:
+</p>
+<div class="code"><pre>oListItem<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"text"</span><span class="o">,</span> <span class="s">"myModel&gt;text"</span><span class="o">);</span>
+oComboBox<span class="o">.</span><span class="na">bindItems</span><span class="o">(</span><span class="s">"myModel&gt;/items"</span><span class="o">,</span> oListItem<span class="o">);</span>
+</pre></div><p>
+First you specify the model name, and after the <tt>&gt;</tt> sign you specify the binding path to the values in the model that is to be bound.
+</p>
+<p>
+Note:<br />
+</p>
+<ul><li>It is possible to create a model with an identifying name without first creating a model without a name.
+</li></ul><p>
+An example can be found here:<br />
+</p>
+<p>
+<a class="ext-link" href="../../test-resources/sap/ui/core/samples/databinding/DataBindingMultiModel.html" title="demokit/test-resources/sap/ui/core/samples/databinding/DataBindingMultiModel.html in Sandbox for Applications"><span class="icon"> </span>Multimodel example with two models</a>
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/HelloWorld – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <style>
+#Result + p + p {
+   background-color: #BBB; /* background for the screenshots */
+}
+</style>
+<p>
+</p><p>
+</p>
+<h1 id="HowtocreateaMobileHelloWorldAppin23seconds">How to create a Mobile "Hello World" App in 23 seconds</h1>
+<p>
+This page explains <strong>how to create a UI5 Mobile application - from scratch within 23 seconds</strong> (with some practice&hellip;).<br />
+</p>
+<ul><li>If you are interested in exactly doing this without reading too much, you can <strong>jump right <a class="wiki" href="HelloWorld.1.html#Andhowtodoitin23seconds">down to the respective section</a></strong> on this page.<br />
+</li><li>If you prefer a solid introduction, the <a class="wiki" href="Mobile.html">SAPUI5 Mobile wiki area</a> might be better suited as starting point.
+</li></ul><p>
+<br />
+</p>
+<h2 id="Explanation">Explanation</h2>
+<p>
+This page assumes you have seen and understood the <a class="wiki" href="HelloWorld.html">SAPUI5 Hello World in 20 seconds</a> example, so you are familiar with how UI5 is loaded, how controls are instantiated and how they are added to the HTML page.<br />
+This page therefore only explains the parts specific to the creation of a mobile app.
+</p>
+<p>
+To make this clear up front: UI5 on mobile devices and on desktop browsers is pretty much the same thing. All the concepts like data binding, the MVC pattern and so on are available on mobile as well. UI5 just provides an additional control library ("sap.m") which is <i>optimized</i> for mobile devices by focusing on touch interaction, providing a mobile-style theme which makes users feel comfortable on both Android and Apple devices, and by using the most advanced features of the browsers available on modern smart phones and tablets.
+</p>
+<p>
+NOTE: as this "sap.m" mobile library is optimized for mobile browsers which are based on Webkit or alternatively for IE10, it does currently <strong>NOT run properly in other browsers</strong>, like Internet Explorer 9 and Firefox. When testing on desktop PCs, please use Chrome or Safari. <br />
+Furthermore, the mobile library only uses touch events and deduces its appearance from the platform it is running on. Hence, when testing in desktop Chrome/Safari or IE10, <strong>a URL parameter is needed</strong> which suggests to emulate touch events from the mouse events and to apply the styling for either Android, iOS, BlackBerry or Windows Phone. The URL parameter is: <tt>sap-ui-xx-fakeOS=android</tt>, <tt>sap-ui-xx-fakeOS=ios</tt>, <tt>sap-ui-xx-fakeOS=blackberry</tt> or <tt>sap-ui-xx-fakeOS=winphone</tt>, respectively. (This parameter could also be added as "data-sap-ui-xx-fakeOS" attribute to the bootstrap script tag.) Note that "winphone" simulation only works in Internet Explorer 10 and "ios"/"android"/"blackberry" only in Chrome and Safari.
+</p>
+<p>
+<br />
+</p>
+<h2 id="CreatingtheMobileApplication">Creating the Mobile Application</h2>
+<h3 id="BasicStructureofaSAPUI5Application">Basic Structure of a SAPUI5 Application</h3>
+<p>
+Just like on desktop:
+</p>
+<ul><li>HTML is the foundation of UI5 applications, so one needs an HTML file. 
+</li><li>Putting the HTML5 doctype "<tt>&lt;!DOCTYPE html&gt;</tt>" in the first line and the Internet-Explorer-specific meta tag "<tt>&lt;meta http-equiv="X-UA-Compatible" content="IE=edge" /&gt;</tt>" to the beginning(!) of the &lt;head&gt; ensures that all browsers use the latest version of their rendering engine. Internet Explorer is not really used widely on mobile devices and not supported yet by the UI5 mobile library, but this meta tag does not hurt and in doubt it makes the page more future-proof. 
+</li><li>A second meta tag "<tt>&lt;meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/&gt;</tt>" lets all browsers treat the file as UTF-8 encoded (assuming that you use this encoding when editing/saving the file)
+</li><li>In the HTML &lt;body&gt; there needs to be a place where the App HTML will go. We will just add a &lt;div&gt; element as only content to the HTML. 
+</li><li>The "<tt>sapUiBody</tt>" class should always be added to the &lt;body&gt; tag of a UI5 application to initialize font and colors for the whole page:
+<div class="code"><pre><span class="nt">&lt;body</span> <span class="na">class=</span><span class="s">"sapUiBody"</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- This is where the App will live: --&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"content"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</pre></div></li><li>As UI5 is a JavaScript UI library, the UI5 JS file needs to be loaded. The following script tag in the &lt;head&gt; does this.
+<ul><li>Make sure the URL is pointing to a UI5 installation accessible from your site.
+</li><li>Note how this is equal to writing desktop apps.
+</li><li>But also note that we are <strong>only loading the "sap.m" control library and the "sap_bluecrystal" theme</strong>:
+<div class="code"><pre>    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"http://&lt;your server with SAPUI5 installed&gt;/sapui5/resources/sap-ui-core.js"</span> 
+        <span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span>
+        <span class="na">data-sap-ui-libs=</span><span class="s">"sap.m"</span> 
+        <span class="na">data-sap-ui-theme=</span><span class="s">"sap_bluecrystal"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/script&gt;</span>
+</pre></div></li></ul></li><li>At this point, UI5 (including the Mobile controls) is loaded and ready for use.
+</li></ul><p>
+<br />
+</p>
+<h3 id="HowtosetupaSAPUI5MobileApplication">How to set up a SAPUI5 Mobile Application</h3>
+<p>
+The sap.m library provides a control called <tt>App</tt> which is meant to be the root control of a mobile application. It provides initialization of the HTML page, sets some meta tags to ensure as-native-as-possible look&amp;feel and can manage different pages and the animations between them.<br />
+Just create the control and tell it which page should be displayed first.
+</p>
+<div class="code"><pre>   <span class="c1">// create a mobile App
+</span>   <span class="c1">// it initializes the HTML page for mobile use and provides animated page handling
+</span>   var app <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">App</span><span class="o">(</span><span class="s">"myApp"</span><span class="o">,</span> <span class="o">{</span><span class="nl">initialPage:</span><span class="s">"page1"</span><span class="o">});</span> <span class="c1">// page1 should be displayed first
+</span></pre></div><p>
+Instead of using the App control, you can also use <tt>jQuery.sap.initMobile()</tt> to set up the HTML and use other full-screen controls like the <tt>sap.m.Page</tt> or <tt>sap.m.Carousel</tt> as root element of your app.
+</p>
+<p>
+<br />
+</p>
+<h3 id="AddingContentPages">Adding Content Pages</h3>
+<h4 id="AddingtheMainPage">Adding the Main Page</h4>
+<p>
+Typical mobile applications are often composed of a number of pages/views/screens between which the user can navigate. Two of them are now added to the App.
+</p>
+<p>
+<strong>IMPORTANT: while sap.m.Page controls can be used as pages, and the aggregation is called "pages", other controls could be used as well'''
+</strong></p>
+<p>
+One <tt>sap.m.Page</tt> control is created, its title is set and the content is just one Button:
+</p>
+<div class="code"><pre>  <span class="c1">// create the first page of your application
+</span>  var page1 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Page</span><span class="o">(</span><span class="s">"page1"</span><span class="o">,</span> <span class="o">{</span>
+      <span class="nl">title:</span> <span class="s">"Initial Page"</span><span class="o">,</span>
+      content <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>   <span class="c1">// content is just one Button
+</span>          text <span class="o">:</span> <span class="s">"Go to Page 2"</span><span class="o">,</span>
+          press <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+              app<span class="o">.</span><span class="na">to</span><span class="o">(</span><span class="s">"page2"</span><span class="o">);</span>   <span class="c1">// when pressed, it triggers drilldown to page 2
+</span>          <span class="o">}</span>
+      <span class="o">})</span>                
+  <span class="o">});</span>
+</pre></div><p>
+When the Button is pressed, it triggers drilldown navigation by calling <tt>app.to("page2")</tt> ("page2" is the ID of the second screen/page).<br />
+Optionally, the animation type could be given here - the default is a "slide" animation from right to left.
+</p>
+<h4 id="AddingtheSecondPage">Adding the Second Page</h4>
+<p>
+The second page is created similarly. In contrast to the main page "showNavButton" is set to "true" to get a "Back" button. And when this button is triggered, the handler takes care of calling <tt>app.back()</tt>. This causes an inverse animation leading back to the main page.
+</p>
+<div class="code"><pre>  <span class="c1">// create the second page of your application
+</span>  var page2 <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Page</span><span class="o">(</span><span class="s">"page2"</span><span class="o">,</span> <span class="o">{</span>
+      <span class="nl">title:</span> <span class="s">"Page 2"</span><span class="o">,</span>
+      <span class="nl">showNavButton:</span> <span class="kc">true</span><span class="o">,</span>       <span class="c1">// page 2 should display a back button
+</span>      <span class="nl">navButtonPress:</span> function<span class="o">(){</span> 
+          app<span class="o">.</span><span class="na">back</span><span class="o">();</span>            <span class="c1">// when pressed, the back button should navigate back up to page 1
+</span>      <span class="o">},</span>
+      <span class="nl">icon:</span> <span class="s">"http://www.sap.com/global/ui/images/global/sap-logo.png"</span><span class="o">,</span>
+      content <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Text</span><span class="o">({</span><span class="nl">text:</span><span class="s">"Hello Mobile World!"</span><span class="o">})</span>
+  <span class="o">});</span>
+</pre></div><p>
+A header icon (only visible on Android!) and some content saying "Hello Mobile World" is also given.
+</p>
+<h3 id="PlacingtheAppontotheScreen">Placing the App onto the Screen</h3>
+<p>
+Finally, the two pages are added to the App and the App is placed into the HTML, just like a UI5 desktop control. The App takes care to cover the whole screen.
+</p>
+<p>
+<br />
+</p>
+<h2 id="Andhowtodoitin23seconds">And how to do it in 23 seconds?</h2>
+<p>
+Assumption for these instructions to work exactly as described: you have a Windows Computer (other operating systems will work as well, but the instructions may differ), a current <strong>Webkit-based browser (Chrome or Safari)</strong> (the mobile library is currently not designed to run properly in Firefox or Internet Explorer) and you know where you can refer to SAPUI5 on some server. 
+</p>
+<p>
+<strong>Important:</strong> the URL in the script tag is pre-filled as "<a class="ext-link" href="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"><span class="icon"> </span>https://sapui5.hana.ondemand.com/resources/sap-ui-core.js</a>" (which was at least available at the time of writing this document). Test this URL first: if it does not work, you need to find a different installation or deploy SAPUI5 on your own server.<br />
+Also note that the version of SAPUI5 deployed on <a class="ext-link" href="https://sapui5.hana.ondemand.com/"><span class="icon"> </span>https://sapui5.hana.ondemand.com/</a> may be updated with a delay of some days or weeks after a new release of SAPUI5, even though we try to keep them in sync. This example will work nevertheless.
+</p>
+<ol><li>Right-click your desktop, select "New" &rarr; "Text Document"
+</li><li>Name the new file e.g. "mobile.html" and accept the extension change warning
+</li><li>Right-click the new file and select "Edit" (make sure it opens in Notepad or so, NOT in MS Word!)
+</li><li>Copy&amp;Paste the below HTML code and save the file (e.g. press Ctrl-S) (remember: the SAPUI5 URL may need to be adapted)
+</li><li>Drag the file to this browser window (remember: it must be Chrome or Safari!)
+</li><li>That's it. Well, that's only in a desktop browser so far, but to load it on a mobile device you'd need to put the file on a server which takes longer than a couple of seconds as long as you have not set up everything in advance.
+</li><li>But you want to play around with the app at least in your desktop browser, so add the following URL parameter to the file URL: <tt>sap-ui-xx-fakeOS=ios</tt>, so the URL should read something like: "mobile.html?sap-ui-xx-fakeOS=ios"
+<ul><li>This enables simulation of touch events on desktop PCs
+</li><li>This also enables the iPhone/iPad styling; if you want to see the Android styling, use "sap-ui-xx-fakeOS=android" instead
+</li></ul></li></ol><div class="code"><pre><span class="cp">&lt;!DOCTYPE HTML&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"Content-Type"</span> <span class="na">content=</span><span class="s">"text/html;charset=UTF-8"</span><span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;title&gt;</span>Mobile App in 23 Seconds Example<span class="nt">&lt;/title&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"</span> 
+        <span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span>
+        <span class="na">data-sap-ui-libs=</span><span class="s">"sap.m"</span> 
+        <span class="na">data-sap-ui-theme=</span><span class="s">"sap_bluecrystal"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/script&gt;</span>
+    <span class="c">&lt;!-- only load the mobile lib "sap.m" and the "sap_bluecrystal" theme --&gt;</span>
+
+
+    <span class="nt">&lt;script&gt;</span>
+ 
+      <span class="c1">// create a mobile App
+</span>      <span class="c1">// it initializes the HTML page for mobile use and provides animated page handling
+</span>      <span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nx">App</span><span class="p">(</span><span class="s2">"myApp"</span><span class="p">,</span> <span class="p">{</span><span class="nx">initialPage</span><span class="o">:</span><span class="s2">"page1"</span><span class="p">});</span> <span class="c1">// page1 should be displayed first
+</span>      
+      
+      <span class="c1">// create the first page of your application
+</span>      <span class="kd">var</span> <span class="nx">page1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nx">Page</span><span class="p">(</span><span class="s2">"page1"</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">title</span><span class="o">:</span> <span class="s2">"Initial Page"</span><span class="p">,</span>
+          <span class="nx">content</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nx">Button</span><span class="p">({</span>   <span class="c1">// content is just one Button
+</span>              <span class="nx">text</span> <span class="o">:</span> <span class="s2">"Go to Page 2"</span><span class="p">,</span>
+              <span class="nx">press</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                  <span class="nx">app</span><span class="p">.</span><span class="nx">to</span><span class="p">(</span><span class="s2">"page2"</span><span class="p">);</span>   <span class="c1">// when pressed, it triggers drilldown to page 2
+</span>              <span class="p">}</span>
+          <span class="p">})</span>                
+      <span class="p">});</span>
+      
+      
+      <span class="c1">// create the second page of your application
+</span>      <span class="kd">var</span> <span class="nx">page2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nx">Page</span><span class="p">(</span><span class="s2">"page2"</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">title</span><span class="o">:</span> <span class="s2">"Page 2"</span><span class="p">,</span>
+          <span class="nx">showNavButton</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>       <span class="c1">// page 2 should display a back button
+</span>          <span class="nx">navButtonPress</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span> 
+              <span class="nx">app</span><span class="p">.</span><span class="nx">back</span><span class="p">();</span>            <span class="c1">// when pressed, the back button should navigate back up to page 1
+</span>          <span class="p">},</span>
+          <span class="nx">icon</span><span class="o">:</span> <span class="s2">"http://www.sap.com/global/ui/images/global/sap-logo.png"</span><span class="p">,</span>
+          <span class="nx">content</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nx">Text</span><span class="p">({</span><span class="nx">text</span><span class="o">:</span><span class="s2">"Hello Mobile World!"</span><span class="p">})</span>
+      <span class="p">});</span>
+      
+      <span class="nx">app</span><span class="p">.</span><span class="nx">addPage</span><span class="p">(</span><span class="nx">page1</span><span class="p">).</span><span class="nx">addPage</span><span class="p">(</span><span class="nx">page2</span><span class="p">);</span> <span class="c1">// add both pages to the App
+</span>      
+      <span class="nx">app</span><span class="p">.</span><span class="nx">placeAt</span><span class="p">(</span><span class="s2">"content"</span><span class="p">);</span> <span class="c1">// place the App into the HTML document
+</span>       
+    <span class="nt">&lt;/script&gt;</span>
+
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body</span> <span class="na">class=</span><span class="s">"sapUiBody"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"content"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+</pre></div><p>
+<br />
+</p>
+<h2 id="Result">Result</h2>
+<p>
+If you followed the steps above you should now see the Mobile App.
+</p>
+<p>
+<img src="app.PNG" />
+</p>
+<p>
+If you click the button (and have not forgotten the "sap-ui-xx-fakeOS" URL parameter), navigation to the second page will occur.
+</p>
+<p>
+You can also launch this small application by pointing your mobile browser <a class="ext-link" href="../../content/apps/mobile/helloworld/index.html"><span class="icon"> </span>to this URL</a>. Open it in a new window or tab to make sure it does not appear inside the demokit (the URL should start with "&hellip;demokit/content&hellip;" not with "&hellip;demokit/#content&hellip;").
+</p>
+<p>
+To open the application on a real mobile device, you can also put the HTML document on a web server and load the resulting URL in your mobile browser.
+</p>
+<p>
+<br />
+</p>
+<h2 id="NextSteps">Next Steps</h2>
+<p>
+You could now&hellip;
+</p>
+<ul><li>Try different navigation animation types (e.g. add "fade" or "flip" as second parameter to the <tt>app.to("page2")</tt> call)
+</li><li>Add more pages
+</li><li>Add more content to the pages
+</li><li>Try out other mobile controls like the <tt>sap.m.Popover</tt>
+</li><li>&hellip;
+</li></ul><p>
+<br />
+</p>
+<h2 id="Why23secondsandnot2021oranyothernumberofseconds">Why 23 seconds and not 20, 21, or any other number of seconds?</h2>
+<p>
+In contrast to the other examples you need to add the URL parameter to make the App really usable on a desktop browser, so this takes a couple of seconds longer than usual&hellip; <img src="smile4.png" style="vertical-align: bottom" alt=";-)" />
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+           Tested classes: sap.ui.core.navigation.History
+         -->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.navigation.History</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.commons">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="/jsunit-testrunner/qunit/qunit-jsunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script>
+	//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals 
+	var original = module;
+	module = undefined;
+	jQuery.sap.require("sap.ui.core.routing.History");
+	
+	module = original;
+
+	sap.ui.core.routing.HashChanger.getInstance().init();
+
+	var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
+
+	module("history management", {
+		setup : function() {
+			oHashChanger.replaceHash(""); //since the initial hash will be parsed, we want it to be empty on every test
+		}
+	});
+
+	var HashChangeEvent = function(sHash) {
+		this.getParameter = function () {
+			return sHash;
+		};
+	};
+
+	test("Should record a hash change", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+		
+		//Act
+		oHashChanger.setHash("foo");
+		oHashChanger.setHash("bar");
+		
+		//Assert
+		strictEqual(sut._aHistory.length, 3, "should have 3 entries in the history");
+		strictEqual(sut._aHistory[0], "", "the first entry is the initial hash");
+		strictEqual(sut._aHistory[1], "foo");
+		strictEqual(sut._aHistory[2], "bar");
+	});
+
+	test("Should not record a hash replace", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+		
+		//Act
+		oHashChanger.setHash("foo"); // get rid of the unknown state
+		oHashChanger.replaceHash("bar"); //replace with bar
+		
+		//Assert
+		strictEqual(sut._aHistory.length, 2, "should have 1 entries in the history");
+		strictEqual(sut._aHistory[0], "", "should have the initial value first");
+		strictEqual(sut._aHistory[1], "bar", "should have the replace value");
+	});
+
+	test("Should replace an entrie in the history if replace takes place", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+		
+		//Act
+		oHashChanger.replaceHash("bar"); //replace with bar
+		
+		//Assert
+		strictEqual(sut._aHistory.length, 1, "should have 1 entries in the history");
+		strictEqual(sut._aHistory[0], "bar", "should have bar as value");
+	});
+
+	test("Should use the hashChanger in the singleton",	function() {
+		//System under Test
+		var sut = sap.ui.core.routing.History.getInstance(),
+			oHashChanged = this.spy(sut, "_hashChangedByApp"),
+			lengthBefore = sut._aHistory.length;
+
+		//Act
+		oHashChanger.setHash("foo");
+		oHashChanger.replaceHash("bar");
+
+		//Assert
+		strictEqual(sut, sap.ui.core.routing.History.getInstance(), "Should be a singleton");
+
+		strictEqual(oHashChanged.callCount, 2, "Should be called twice");
+
+		ok(oHashChanged.firstCall.calledWithExactly("foo", false), "Should register to setHash");
+		ok(oHashChanged.secondCall.calledWithExactly("bar", true), "Should register to replaceHash");
+
+		strictEqual(sut._aHistory.length, lengthBefore + 1, "should have 1 entries in the history");
+		strictEqual(sut._aHistory[lengthBefore], "bar");
+
+	});
+
+	test("Should return newPage if a page was added to the history", function() {
+		//Arrange
+		var uid = jQuery.sap.uid();
+
+		//System under Test
+		var sut = sap.ui.core.routing.History.getInstance();
+
+		//Act
+		oHashChanger.setHash(uid);
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
+	});
+
+	test("Should return Unknown if the navigation direction is still unknown", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		//Act + Assert
+		strictEqual(sut.getDirection(), undefined); //since we did not navigate yet
+		strictEqual(sut.getDirection("biz"), undefined); //since we did not navigate yet
+
+		sut._hashChange("foo");
+		strictEqual(sut.getDirection(""), sap.ui.core.routing.HistoryDirection.Unknown);
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
+
+		sut._hashChange("bar");
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
+		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown);
+
+		sut._hashChange("foo");
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown);
+		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown);
+	});
+
+	test("Should return NewEntry if the navigation direction is undefined but hashChanger triggered it", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		sut._hashSet(new HashChangeEvent("foo")); // get rid of the unknown state
+
+		//Act
+		sut._hashChange("foo");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
+	});
+
+	test("Should return Unknown if the hash changes to something unexpected", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		sut._hashSet(new HashChangeEvent("foo")); // get rid of the unknown state
+
+		//Act
+		sut._hashChange("bar");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
+	});
+
+	test("Should return undefined if the first hash is only an replacement", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		//Act
+		oHashChanger.replaceHash("foo");
+
+		//Assert
+		strictEqual(sut.getDirection(), undefined, "should be unknown");
+	});
+
+	test("Should return Backwards if the hash was replaced before", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		//Act
+		oHashChanger.setHash("foo"); // no unknown state
+		oHashChanger.replaceHash("bar"); //replace to bar
+		oHashChanger.setHash("baz"); // add a new entry
+
+		//simulate browser back
+		hasher.replaceHash("bar");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because we changed to bar");
+		strictEqual(sut.getDirection(""), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because it was the initial");
+		strictEqual(sut.getDirection("baz"), sap.ui.core.routing.HistoryDirection.Forwards, "should be forwards");
+		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
+	});
+
+	test("Should return Backwards if the hash was replaced before with the latest hash also in the history back", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		//Act
+		oHashChanger.setHash("foo"); // no unknown state
+		oHashChanger.setHash("baz"); // add a new entry that matches the backwards entrie
+		oHashChanger.replaceHash("bar"); //replace to bar
+		//TODO: IE behaves in a different way he will have the history foo - bar - baz we need browser detection for this case
+		oHashChanger.setHash("baz"); // add the same new entry again - browser history now looks like this foo - baz
+
+		//simulate browser back - use replace here so the history plugin will not think it is a new entry because the window.history.length increased
+		hasher.replaceHash("bar");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because we were going back");
+		strictEqual(sut.getDirection("foo"), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards because it was the last hash");
+		strictEqual(sut.getDirection("baz"), sap.ui.core.routing.HistoryDirection.Forwards, "should be unknown");
+	});
+
+	test("Should return NewEntry if the navigation direction is still unknown but hashChanger triggered it", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		sut._hashChange("bar"); //make the state unknown
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be Unknown");
+
+		//Act
+		oHashChanger.setHash("foo");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should be a new entry");
+	});
+
+	test("Should detect a backward navigation", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger)
+
+		//Act
+		oHashChanger.setHash("foo");
+		oHashChanger.setHash("bar");
+
+		//Simulate a backwards navigation
+		hasher.replaceHash("foo");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be a forwards navigation");
+	});
+
+	test("Should detect a forward navigation", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger)
+		
+		//Act
+		oHashChanger.setHash("foo");
+		oHashChanger.setHash("bar");
+
+		//Simulate a backwards navigation
+		hasher.replaceHash("foo");
+		//Simulate a forwards navigation
+		hasher.replaceHash("bar");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Forwards, "should be a forwards navigation");
+	});
+
+	test("Should detect unknown navigation after initialization", function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger)
+
+		sut._hashSet(new HashChangeEvent("foo")); // get rid of the unknown state
+		
+		//Act
+		sut._hashChange("foo");
+		sut._hashChange("bar");
+		sut._hashSet(new HashChangeEvent("foo")); //explicity tell the app that foo is added again
+		sut._hashChange("foo");
+		
+		//now we have a history that looks like this : foo - bar(current position) - foo
+		sut._hashChange("bar");
+		
+		//now we navigate to fee and we don't know wich direction we took...
+		sut._hashChange("foo");
+		
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be an unknown navigation");
+		strictEqual(sut._aHistory.length, 1, "history should be cleaned after unknown occured");
+		
+		//since the app did not navigate again its still unknown
+		sut._hashChange("any");
+
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be an unknown navigation");
+
+		sut._hashSet(new HashChangeEvent("thing")); // get rid of the unknown state
+		sut._hashChange("thing");
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.NewEntry, "should add a newpage again");
+
+		strictEqual(sut._aHistory.length, 2, "should have 1 entries in the history");
+		strictEqual(sut._aHistory[1], "thing");
+	});
+
+	test("Should clean up the history",	function() {
+		//System under Test
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		//Act
+		oHashChanger.setHash("foo");
+		oHashChanger.setHash("bar");
+		
+		hasher.replaceHash("foo");
+		oHashChanger.setHash("biz");
+
+		//Assert
+		strictEqual(sut._iHistoryPosition, 2, "should be at entry 2 of the history");
+		strictEqual(sut._aHistory.length, 3, "should have 3 entries in the history");
+
+		hasher.replaceHash("foo");
+
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be a forwards navigation");
+		strictEqual(sut._iHistoryPosition, 1, "should be at entry one of the history");
+		strictEqual(sut._aHistory.length, 3, "should have 2 entries in the history");
+	});
+
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for
+		sap.ui.core.navigation.History</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+
+</body>
+</html>

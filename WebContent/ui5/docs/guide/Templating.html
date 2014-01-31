@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Templating – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="HTMLTemplatinginSAPUI5">HTML Templating in SAPUI5</h1>
+<p>
+Starting with 1.15.0 SAPUI5 introduces an HTML templating concept. The default templating engine under the hood is <a class="ext-link" href="http://handlebarsjs.com/"><span class="icon"> </span>handlebars</a>. Basically you can use the standard expressions <tt>{{propertyName</tt>}} and helpers <tt>{{each propertyName</tt>}}, <tt>{{if propertyName</tt>}}, &hellip; of handlebars as well as custom helpers which are added by UI5 <tt>{{text path="/path/to/my/prop"</tt>}}, <tt>{{element text="/path/to/my/prop"</tt>}}, <tt>{{control sap-ui-type="sap.ui.commons.TextField" value="{/path/to/my/prop}"</tt>}} and a little enhancement on the block helpers like each to support usage of databinding <tt>{{#each path="/path/to/my/array"}}...{{/each</tt>}}. 
+</p>
+<h2 id="Introduction">Introduction</h2>
+<p>
+The HTML templating approach is based on handlebars. You can use the standard expressions and helpers together for the context of a template instance. Additionally UI5 introduced custom helpers for handlebars which could be used together with the UI5 models. You can then bind texts against properties in the model and the text gets updated once the property in the model changes. Additionally you can create and bind the value DOM elements incl. their DOM attributes. In case of input DOM elements like (<tt>INPUT</tt>, <tt>TEXTAREA</tt> or <tt>SELECT</tt>) UI5 establishes a two way binding which means that on change of the DOM element value the model gets updated when the value is bound against a UI5 model. Next to defining DOM elements you can also define controls in the template - similar to the <a class="wiki" href="DeclarativeSupport.html">declarative support</a> - but in handlebars helper notation.
+</p>
+<h3 id="GetStarted">Get Started</h3>
+<p>
+Two things are mandatory to get started with the templating. Define an inline template and trigger the templating framework to parse the inline template:
+</p>
+<div class="code"><pre><span class="c1">// register all available templates in the document
+</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">template</span><span class="o">();</span>
+</pre></div><div class="code"><pre>    <span class="o">&lt;</span>div id<span class="o">=</span><span class="s">"myControlTemplate"</span> data<span class="o">-</span>type<span class="o">=</span><span class="s">"text/x-handlebars-template"</span><span class="o">&gt;</span>
+    
+        <span class="o">&lt;</span>h3<span class="o">&gt;</span>Control Template <span class="o">(</span>using <span class="s">"control"</span> expression<span class="o">)&lt;/</span>h3<span class="o">&gt;</span>
+        <span class="o">{{</span>control sap<span class="o">-</span>ui<span class="o">-</span>type<span class="o">=</span><span class="s">"sap.ui.commons.Label"</span> design<span class="o">=</span><span class="s">"Bold"</span> text<span class="o">=</span><span class="s">"{/title}"</span><span class="o">}}</span>
+        <span class="o">&lt;</span>ul<span class="o">&gt;</span>
+        <span class="o">{{</span><span class="err">#</span>each path<span class="o">=</span><span class="s">"/persons"</span><span class="o">}}</span>
+            <span class="o">&lt;</span>li<span class="o">&gt;{{</span>control sap<span class="o">-</span>ui<span class="o">-</span>type<span class="o">=</span><span class="s">"sap.ui.commons.TextView"</span> text<span class="o">=</span><span class="s">"{lastName}, {firstName}"</span><span class="o">}}&lt;/</span>li<span class="o">&gt;</span>
+        <span class="o">{{/</span>each<span class="o">}}</span>
+        <span class="o">&lt;/</span>ul<span class="o">&gt;</span>
+    
+    <span class="o">&lt;/</span>div<span class="o">&gt;</span>
+</pre></div><h2 id="ExpressionsandHelpers">Expressions and Helpers</h2>
+<h3 id="PlainHandlebars">Plain Handlebars</h3>
+<p>
+The plain handlebars expressions and helpers can be used for the templating. Those expressions do not refer to UI5 models furthermore they refer to a context which is passed along when e.g. creating the instance for the template. The following example shows the usage of the plain handlebar expressions and helpers:
+</p>
+<div class="code"><pre><span class="nt">&lt;h3&gt;</span>{{title}}<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+{{#each persons}}
+    <span class="nt">&lt;li&gt;</span>{{firstName}} {{lastName}}<span class="nt">&lt;/li&gt;</span>
+{{/each}}
+<span class="nt">&lt;/ul&gt;</span>
+</pre></div><h3 id="UI5Customized">UI5 Customized</h3>
+<h4 id="text"><tt>{{text</tt>}}</h4>
+<p>
+The <tt>text</tt> helper is used to bind texts to properties of UI5 models. It will register to changes in the UI5 model and updates the template instance ones the property in the model changes. When the templating engine parses the <tt>text</tt> helper than it will be replaced with the value in the model. In the path attribute the standard UI5 databinding syntax is supported. 
+</p>
+<div class="code"><pre>{{text path="/title"}}
+</pre></div><p>
+If you need to bind properties from named models, e.g. a translatable text - you can specify this as well in the path attribute for the helper:
+</p>
+<div class="code"><pre>{{text path="i18n&gt;MY_TEXT"}}
+</pre></div><h4 id="element"><tt>{{element</tt>}}</h4>
+<p>
+The <tt>element</tt> helper is used to create single DOM elements. DOM elements can also be nested and we also support to bind DOM attributes against values of the model.
+</p>
+<div class="code"><pre>{{element tag="div" text="Hello World" data-myattr="myvalue" style="border: 1px solid black;" class="myStyleClass"}}
+</pre></div><p>
+Using data binding (with a <tt>span</tt> DOM element which is the default tag name): 
+</p>
+<div class="code"><pre>{{element text="{/title}"}}
+</pre></div><p>
+Using data binding and named models:
+</p>
+<div class="code"><pre>{{element tag="div" text="{i18n&gt;MY_TEXT}"}}
+</pre></div><p>
+Editable DOM elements for two way binding to model (binding the value of a input field against a model property):
+</p>
+<div class="code"><pre>{{element tag="input" value="{/title}"}}
+{{element tag="textarea" text="{/title}"}}
+</pre></div><p>
+The advantage of the DOM elements is that they can be updated individually once the value of a property in the model was changed. The complete template doesn't need to be re-rendered.
+</p>
+<h4 id="control"><tt>{{control</tt>}}</h4>
+<p>
+The <tt>control</tt> helper is used to create/embed UI5 controls into a template instance. It is aligned with the declarative support. The following example demonstrates how to use embed a <tt>sap.ui.commons.TextField</tt> into a template: 
+</p>
+<div class="code"><pre>{{control sap-ui-type="sap.ui.commons.TextField" value="{/title}"}}
+</pre></div><h4 id="each"><tt>{{each</tt>}}</h4>
+<p>
+The <tt>each</tt> helper can be used together with UI5 data binding by specifying the path attribute:
+</p>
+<div class="code"><pre>{{#each path="/persons"}}
+  {{element text="firstName"}}
+{{/each}}
+</pre></div><h3 id="Usage">Usage</h3>
+<p>
+The following demonstrates the usage of the different helpers.
+</p>
+<div class="code"><pre><span class="cp">&lt;!DOCTYPE HTML&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"Content-Type"</span> <span class="na">content=</span><span class="s">"text/html; charset=UTF-8"</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;title&gt;</span>Template - sap.ui.core.tmpl<span class="nt">&lt;/title&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"sap-ui-bootstrap"</span>
+            <span class="na">type=</span><span class="s">"text/javascript"</span>
+            <span class="na">src=</span><span class="s">"resources/sap-ui-core.js"</span>
+            <span class="na">data-sap-ui-libs=</span><span class="s">"sap.ui.commons"</span>
+            <span class="na">data-sap-ui-theme=</span><span class="s">"sap_goldreflection"</span>
+            <span class="na">data-sap-ui-xx-bindingSyntax=</span><span class="s">"complex"</span>
+            <span class="nt">&gt;</span>
+    <span class="nt">&lt;/script&gt;</span>
+    
+    <span class="nt">&lt;script&gt;</span>
+    
+        <span class="c1">// sample code
+</span>        <span class="nx">jQuery</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            
+            <span class="c1">// define the model
+</span>            <span class="kd">var</span> <span class="nx">oModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">json</span><span class="p">.</span><span class="nx">JSONModel</span><span class="p">({</span>
+                <span class="nx">title</span><span class="o">:</span> <span class="s2">"Persons"</span><span class="p">,</span>
+                <span class="nx">persons</span><span class="o">:</span> <span class="p">[{</span>
+                    <span class="nx">firstName</span><span class="o">:</span> <span class="s2">"Peter"</span><span class="p">,</span>
+                    <span class="nx">lastName</span><span class="o">:</span> <span class="s2">"Muessig"</span>
+                <span class="p">},</span> <span class="p">{</span>
+                    <span class="nx">firstName</span><span class="o">:</span> <span class="s2">"Tim"</span><span class="p">,</span>
+                    <span class="nx">lastName</span><span class="o">:</span> <span class="s2">"Back"</span>
+                <span class="p">},</span> <span class="p">{</span>
+                    <span class="nx">firstName</span><span class="o">:</span> <span class="s2">"Christoph"</span><span class="p">,</span>
+                    <span class="nx">lastName</span><span class="o">:</span> <span class="s2">"Kraemer"</span>
+                <span class="p">}]</span>
+            <span class="p">});</span>
+            <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">getCore</span><span class="p">().</span><span class="nx">setModel</span><span class="p">(</span><span class="nx">oModel</span><span class="p">);</span>
+            
+            <span class="c1">// register all available templates in the document
+</span>            <span class="nx">sap</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">template</span><span class="p">();</span>
+            
+        <span class="p">});</span>
+    
+    <span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body</span> <span class="na">class=</span><span class="s">"sapUiBody"</span> <span class="na">role=</span><span class="s">"application"</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"mySimpleTemplate"</span> <span class="na">data-type=</span><span class="s">"text/x-handlebars-template"</span><span class="nt">&gt;</span>
+    
+        <span class="nt">&lt;h3&gt;</span>Text Template (using "text" expression)<span class="nt">&lt;/h3&gt;</span>
+        <span class="nt">&lt;b&gt;</span>{{text path="/title"}}:<span class="nt">&lt;/b&gt;</span>
+        <span class="nt">&lt;ul&gt;</span>
+        {{#each path="/persons"}}
+            <span class="nt">&lt;li&gt;</span>{{text path="firstName"}} {{text path="lastName"}}<span class="nt">&lt;/li&gt;</span>
+        {{/each}}
+        <span class="nt">&lt;/ul&gt;</span>
+    
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"myAdvancedTemplate"</span> <span class="na">data-type=</span><span class="s">"text/x-handlebars-template"</span><span class="nt">&gt;</span>
+    
+        <span class="nt">&lt;h3&gt;</span>Advanced Text Template (using "element" expression)<span class="nt">&lt;/h3&gt;</span>
+        {{element tag="b" text="{/title}"}}:
+        <span class="nt">&lt;ul&gt;</span>
+        {{#each path="/persons"}}
+            {{element tag="li" text="{firstName} {lastName}"}}
+        {{/each}}
+        <span class="nt">&lt;/ul&gt;</span>
+    
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"myAdvancedEditTemplate"</span> <span class="na">data-type=</span><span class="s">"text/x-handlebars-template"</span><span class="nt">&gt;</span>
+    
+        <span class="nt">&lt;h3&gt;</span>Advanced Text Template (using editable "element" expression)<span class="nt">&lt;/h3&gt;</span>
+        {{element tag="textarea" text="{/title}" rows="2" cols="40"}}
+        <span class="nt">&lt;ul&gt;</span>
+        {{#each path="/persons"}}
+            <span class="nt">&lt;li&gt;</span>{{element tag="input" value="{firstName}"}} {{element tag="input" value="{lastName}"}}<span class="nt">&lt;/li&gt;</span>
+        {{/each}}
+        <span class="nt">&lt;/ul&gt;</span>
+    
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"myControlTemplate"</span> <span class="na">data-type=</span><span class="s">"text/x-handlebars-template"</span><span class="nt">&gt;</span>
+    
+        <span class="nt">&lt;h3&gt;</span>Control Template (using "control" expression)<span class="nt">&lt;/h3&gt;</span>
+        {{control sap-ui-type="sap.ui.commons.Label" design="Bold" text="{/title}"}}
+        <span class="nt">&lt;ul&gt;</span>
+        {{#each path="/persons"}}
+            <span class="nt">&lt;li&gt;</span>{{control sap-ui-type="sap.ui.commons.TextView" text="{lastName}, {firstName}"}}<span class="nt">&lt;/li&gt;</span>
+        {{/each}}
+        <span class="nt">&lt;/ul&gt;</span>
+    
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"myControlEditTemplate"</span> <span class="na">data-type=</span><span class="s">"text/x-handlebars-template"</span><span class="nt">&gt;</span>
+    
+        <span class="nt">&lt;h3&gt;</span>Advanced Control Template (using editable "control" expression)<span class="nt">&lt;/h3&gt;</span>
+        {{control sap-ui-type="sap.ui.commons.TextArea" value="{/title}" rows="2" cols="40"}}
+        <span class="nt">&lt;ul&gt;</span>
+        {{#each path="/persons"}}
+            <span class="nt">&lt;li&gt;</span>{{control sap-ui-type="sap.ui.commons.TextField" value="{lastName}"}}, {{control sap-ui-type="sap.ui.commons.TextField" value="{firstName}"}}<span class="nt">&lt;/li&gt;</span>
+        {{/each}}
+        <span class="nt">&lt;/ul&gt;</span>
+    
+    <span class="nt">&lt;/div&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

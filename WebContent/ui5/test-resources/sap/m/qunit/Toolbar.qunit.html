@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+		<title>Test Page for sap.m.Toolbar</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="/jsunit-testrunner/qunit/qunit-jsunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+
+		<script language="javascript">
+
+		module("rendering");
+		function createSUT(sId) {
+			//System under Test
+			var sut = new sap.m.Toolbar(sId, {
+				content : [
+					new sap.m.Label({
+						text : "Items (6)"
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						icon: "sap-icon://drop-down-list",
+						press : function() {
+							sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
+						}
+					}),
+					new sap.m.Button({
+						icon: "sap-icon://person-placeholder",
+						press : function() {
+							sap.m.MessageToast.show("Table personalization popup will be shown on press.");
+						}
+					})
+				]
+			});
+
+			return sut;
+		}
+		
+		test("test visible property", function() {
+			var sut = createSUT('visibleBar');
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			ok(sut.$().length > 0, "Bar is in DOM");
+			sut.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			ok(sut.$().length == 0, "Bar is removed from DOM");
+			sut.destroy();
+		});
+
+		test("test design property", function() {
+			var sut = createSUT('designBar');
+			sut.placeAt("qunit-fixture");
+			ok(sap.m.ToolbarDesign.Auto == sut.getDesign(), "Toolbar initially has design property 'Auto'");
+			sap.ui.getCore().applyChanges();
+			ok(!sut.$().hasClass("sapMTB-Transparent-CTX") && !sut.$().hasClass("sapMTB-Info-CTX"), "Initially, toolbar has no context class");
+			sut.setDesign(sap.m.ToolbarDesign.Transparent);
+			sap.ui.getCore().applyChanges();
+			ok(sut.$().hasClass("sapMTB-Transparent-CTX"), "Toolbar has transparent context");
+			sut.setDesign(sap.m.ToolbarDesign.Info);
+			sap.ui.getCore().applyChanges();
+			ok(sut.$().hasClass("sapMTB-Info-CTX"), "Toolbar has info context");
+			sut.setDesign(sap.m.ToolbarDesign.Auto);
+			sap.ui.getCore().applyChanges();
+			ok(!sut.$().hasClass("sapMTB-Transparent-CTX") && !sut.$().hasClass("sapMTB-Info-CTX"), "Context has been removed again");
+			sut.setDesign(sap.m.ToolbarDesign.Info, true);
+			sap.ui.getCore().applyChanges();
+			ok(sut.$().hasClass("sapMTB-Info-CTX") && (sap.m.ToolbarDesign.Auto == sut.getDesign()), "Toolbar has Info design but design property is still 'Auto'");
+			sut.destroy();
+		});
+		
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests: sap.m.switch</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

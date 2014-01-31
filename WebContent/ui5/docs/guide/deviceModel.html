@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/deviceModel – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="DeviceModel">Device Model</h1>
+<p>
+</p><p>
+</p>
+<h2 id="Motivation">Motivation</h2>
+<p>
+Some device adaptions are done automatically by the sap.m controls. But some can only be done on application level as they depend on the context of the control. 
+</p>
+<h2 id="ExamplesforDeviceAdaptiononApplicationLevel">Examples for Device Adaption on Application Level</h2>
+<h3 id="ListMode">List Mode</h3>
+<p>
+A prominent example is a list in a master detail pattern. On the phone the list has active list items which trigger the navigation to the next page. On the tablet the list is in selection mode instead.
+</p>
+<p>
+<strong>List with active items on the phone</strong>
+</p>
+<p>
+<img src="list_phone.png" /> 
+</p>
+<p>
+<strong>List in selection mode on the tablet</strong>
+</p>
+<p>
+<img src="list_tablet.PNG" /> 
+</p>
+<h3 id="Refresh">Refresh</h3>
+<p>
+On touch devices (Tablet / Phone) the Pull To Refresh pattern is used to trigger a refresh. On non-touch devices (Desktop) the Search Field gets an additional refresh button:
+</p>
+<p>
+<img src="refresh.png" /> 
+</p>
+<h3 id="NavButtons">Nav Buttons</h3>
+<p>
+Nav Buttons of Detail pages in a <a class="missing wiki">SplitApp?</a> are only shown on the phone
+</p>
+<h3 id="Footers">Footers</h3>
+<p>
+Empty Footers in pages in a <a class="missing wiki">SplitApp?</a> are only shown on the tablet to have 1 consistent footer area across master/detail page
+</p>
+<h2 id="DeviceModel1">Device Model</h2>
+<p>
+Basically you should put all device related information that is required by the views in a central model named "device". 
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">app</span><span class="o">.</span><span class="na">Application</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"Application"</span><span class="o">,</span> <span class="o">{</span>
+    
+    init <span class="o">:</span> function <span class="o">()</span> <span class="o">{</span>
+
+        <span class="o">...</span>
+
+        <span class="c1">// set device model
+</span>        var deviceModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">({</span>
+            isTouch <span class="o">:</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">Device</span><span class="o">.</span><span class="na">support</span><span class="o">.</span><span class="na">touch</span><span class="o">,</span>
+            isNoTouch <span class="o">:</span> <span class="o">!</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">Device</span><span class="o">.</span><span class="na">support</span><span class="o">.</span><span class="na">touch</span><span class="o">,</span>
+            isPhone <span class="o">:</span> jQuery<span class="o">.</span><span class="na">device</span><span class="o">.</span><span class="na">is</span><span class="o">.</span><span class="na">phone</span><span class="o">,</span>
+            isNoPhone <span class="o">:</span> <span class="o">!</span>jQuery<span class="o">.</span><span class="na">device</span><span class="o">.</span><span class="na">is</span><span class="o">.</span><span class="na">phone</span><span class="o">,</span>
+            listMode <span class="o">:</span> <span class="o">(</span>jQuery<span class="o">.</span><span class="na">device</span><span class="o">.</span><span class="na">is</span><span class="o">.</span><span class="na">phone</span><span class="o">)</span> <span class="o">?</span> <span class="s">"None"</span> <span class="o">:</span> <span class="s">"SingleSelectMaster"</span><span class="o">,</span>
+            listItemType <span class="o">:</span> <span class="o">(</span>jQuery<span class="o">.</span><span class="na">device</span><span class="o">.</span><span class="na">is</span><span class="o">.</span><span class="na">phone</span><span class="o">)</span> <span class="o">?</span> <span class="s">"Active"</span> <span class="o">:</span> <span class="s">"Inactive"</span>
+        <span class="o">});</span>
+        deviceModel<span class="o">.</span><span class="na">setDefaultBindingMode</span><span class="o">(</span><span class="s">"OneWay"</span><span class="o">);</span>
+        sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">setModel</span><span class="o">(</span>deviceModel<span class="o">,</span> <span class="s">"device"</span><span class="o">);</span>
+
+        <span class="o">...</span>
+</pre></div><p>
+You can than easily refer to it in all the application's views.
+</p>
+<div class="code"><pre><span class="nt">&lt;List</span>
+    <span class="na">mode=</span><span class="s">"{device&gt;/listMode}"</span>
+    <span class="na">select=</span><span class="s">"handleProductListSelect"</span>
+    <span class="na">noDataText=</span><span class="s">"{i18n&gt;HOME_NO_DATA}"</span>
+    <span class="na">items=</span><span class="s">"{items}"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;items&gt;</span>
+        <span class="nt">&lt;ObjectListItem</span>
+            <span class="na">type=</span><span class="s">"{device&gt;/listItemType}"</span>
+            <span class="na">title=</span><span class="s">"{Name}"</span> <span class="nt">/&gt;</span>
+
+</pre></div><p>
+<img src="alert.png" style="vertical-align: bottom" alt="/!\" /> It is important to run the model in "OneWay" binding mode to not accidantly change the device model from the control. E.g. by the initial collapsed state of a tab against "isPhone" and then change the isPhone when tab state changes.
+</p>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

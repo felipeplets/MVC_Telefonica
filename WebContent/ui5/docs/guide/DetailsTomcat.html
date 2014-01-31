@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/GettingStarted/download/DetailsTomcat – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="GettingStarted-DownloadandSetup-TomcatSetup">Getting Started - Download and Setup - Tomcat Setup</h1>
+<p>
+Setting up Tomcat with SAPUI5 involves 3 steps:
+</p>
+<h2 id="DownloadTomcat">Download Tomcat</h2>
+<ul><li>Download Tomcat from the appropriate website
+</li><li>Either install the Windows Service Installer or download and unzip the <tt>zip</tt> file (you can find the startup script in the <tt>bin</tt> folder)
+</li><li>If you run Tomcat without Eclipse, make sure, you have set the environment variable <strong>JAVA_HOME</strong>, pointing to a JDK7.
+</li></ul><h2 id="DeploySAPUI5onTomcatwithoutEclipse">Deploy SAPUI5 on Tomcat without Eclipse</h2>
+<p>
+ 
+</p>
+<ul><li>You could setup a Tomcat user with "manager" privileges (see the Tomcat documentation) and use the tomcat-manager application for deployment or
+</li><li>you could (this is recommended) just move your war file into the <i>webapps</i> folder inside the tomcat directory. Tomcat will take care of the deployment, but a restart might be necessary.
+</li></ul><h2 id="ConfigureTomcatwithinEclipse">Configure Tomcat within Eclipse</h2>
+<p>
+You need to register an Tomcat Web Server in order to run Web applications within Eclipse:
+</p>
+<ul><li>Open the <tt>Java EE</tt> perspective in Eclipse
+</li><li>Open the <tt>Servers</tt> view (Hint: CTRL+3 - then enter Servers)
+</li><li>Use <tt>context menu -&gt; New -&gt; Server</tt> to open the new server wizard
+</li><li>Choose <tt>Apache -&gt; Tomcat 7.0 </tt> and add a new server runtime by pointing to the folder where you unzipped the Tomcat into
+</li><li>When you finish the wizard you should see your Tomcat v7.0 server in the <tt>Servers</tt> view
+</li><li>Finally open the configuration overview by <tt>double click</tt> on the Tomcat v7.0 server in the <tt>Servers</tt> view. There you need to select the server option: <tt>Serve modules without publishing</tt>
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

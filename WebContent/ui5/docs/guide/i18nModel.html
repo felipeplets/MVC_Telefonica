@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/i18nModel – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="i18nModel">i18n Model</h1>
+<p>
+For localization it is recommended to use data binding and the <tt>sap.ui.model.resource.ResourceModel</tt> as a named model. This allows easily using translation keys instead of the actual texts.<br />
+An alternative would be using ResourceBundles, but those require code execution for every translated text set to a control.
+</p>
+<p>
+See <a class="wiki" href="I18NinAppDev.html#DataBinding">the documentation</a> for more about this topic.
+</p>
+<p>
+Guidelines:
+</p>
+<ul><li>Use "i18n" as name for the model
+</li><li>Use only one global property file that contains all texts used in the views. 
+</li><li>Group view specific texts with a prefix. 
+<ul><li>Do not apply a prefix to those texts which are reused across view boundaries to avoid redundancies.
+</li></ul></li></ul><p>
+Example:
+</p>
+<div class="code"><pre>var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">resource</span><span class="o">.</span><span class="na">ResourceModel</span><span class="o">({</span><span class="nl">bundleName:</span><span class="s">"i18n"</span><span class="o">,</span> <span class="nl">bundleLocale:</span><span class="s">"en"</span><span class="o">});</span>
+
+<span class="c1">// set the resource model as global model with the name "i18n"
+</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">setModel</span><span class="o">(</span>oModel<span class="o">,</span> <span class="s">"i18n"</span><span class="o">);</span>
+
+var oControl <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+    text <span class="o">:</span> <span class="s">"{i18n&gt;MY_BUTTON_TEXT}"</span>
+<span class="o">});</span>
+</pre></div>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/LazyLoading – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="LazyLoadingforPages">Lazy Loading for Pages</h1>
+<p>
+Use lazy loading to defer initialization of a page until the point at which it is needed. Please have a look at ab example from our <a class="ext-link" href="../../content/apps/mobile/mvc/App_with_rootView.html?sap-ui-xx-fakeOS=ios"><span class="icon"> </span>MVC Demo App</a>:
+</p>
+<div class="code"><pre><span class="mi">1</span>    sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"sap.m.mvc.App"</span><span class="o">,</span> <span class="o">{</span>
+<span class="mi">2</span>
+<span class="mi">3</span>    onInit <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+      <span class="o">.</span>  
+      <span class="o">.</span>
+      <span class="o">.</span>  
+    <span class="o">},</span>
+
+<span class="mi">4</span>    navToHandler <span class="o">:</span> function<span class="o">(</span>channelId<span class="o">,</span> eventId<span class="o">,</span> data<span class="o">)</span> <span class="o">{</span>
+<span class="mi">5</span>        <span class="k">if</span> <span class="o">(</span>data <span class="o">&amp;&amp;</span> data<span class="o">.</span><span class="na">id</span><span class="o">)</span> <span class="o">{</span>
+<span class="mi">6</span>            <span class="c1">// lazy load view
+</span><span class="mi">7</span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">app</span><span class="o">.</span><span class="na">getPage</span><span class="o">(</span>data<span class="o">.</span><span class="na">id</span><span class="o">)</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+<span class="mi">8</span>                jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"now loading page '"</span> <span class="o">+</span> data<span class="o">.</span><span class="na">id</span> <span class="o">+</span> <span class="s">"'"</span><span class="o">);</span>
+<span class="mi">9</span>                <span class="k">this</span><span class="o">.</span><span class="na">app</span><span class="o">.</span><span class="na">addPage</span><span class="o">(</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsview</span><span class="o">(</span>data<span class="o">.</span><span class="na">id</span><span class="o">,</span> <span class="s">"sap.m.mvc."</span> <span class="o">+</span> data<span class="o">.</span><span class="na">id</span><span class="o">));</span>
+<span class="mi">10</span>            <span class="o">}</span>            
+<span class="mi">11</span>            <span class="c1">// Navigate to given page (include bindingContext)
+</span><span class="mi">12</span>            <span class="k">this</span><span class="o">.</span><span class="na">app</span><span class="o">.</span><span class="na">to</span><span class="o">(</span>data<span class="o">.</span><span class="na">id</span><span class="o">,</span> data<span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">context</span><span class="o">);</span>
+<span class="mi">13</span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+<span class="mi">14</span>            jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"nav-to event cannot be processed. Invalid data: "</span> <span class="o">+</span> data<span class="o">);</span>
+<span class="mi">15</span>        <span class="o">}</span>
+<span class="mi">16</span>    <span class="o">},</span>
+<span class="mi">17</span>
+<span class="mi">18</span>    navBackHandler <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+<span class="mi">19</span>        <span class="k">this</span><span class="o">.</span><span class="na">app</span><span class="o">.</span><span class="na">back</span><span class="o">();</span>
+<span class="mi">20</span>    <span class="o">}</span>
+<span class="mi">21</span>    <span class="o">});</span>
+</pre></div><p>
+As you can see, pages are instantiated when they are first navigated to: if the app does not contain an entry for the corresponding <i>data.id</i>, it is instantiated by loading the corresponding view (see line 9). 
+</p>
+<h3 id="Whenshouldmakeuseofit">When should make use of it?</h3>
+<p>
+Lazy Loading may be an option for you if your App 
+</p>
+<ul><li>has very many views and/or
+</li></ul><p>
+* has views which are not used very often
+In these cases, lazy loading may speed up your App's start-up time.
+</p>
+<p>
+If your App has only a couple of views, on the other hand, each of which is frequently used, you may consider to load all of them at once (this is called <strong>eager loading</strong>).
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

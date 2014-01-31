@@ -1,0 +1,471 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/TableFeatures – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="TableFeatures">Table Features</h1>
+<p>
+One of the most important feature that Table control supports is ability to show data in a tabular way. The Table control extends and supports all the features of the <a class="missing wiki">ListBase?</a>. Let's remember some of them:
+</p>
+<ul><li>Different selection modes(Single, Multi, &hellip;)
+</li><li>Different navigation types (Navigation, Active, Detail, &hellip;)
+</li><li>Swipe for Action
+</li><li>Growing Feature
+</li><li>Grouping
+</li></ul><h2 id="ColumnControl">Column Control</h2>
+<p>
+To build a table, first, we need to define Columns. For this purpose Column control can be defined with the following properties
+</p>
+<ul><li><strong>header</strong> : Defines column header. Any control can be used but most likely Label or Text control. <i>If any column has header definition than header line gets visible for all columns.</i>
+</li><li><strong>footer</strong> : Any Control can be assigned to be displayed in the column footer. <i>If any column has footer definition than footer line gets visible for all columns.</i>
+</li><li><strong>width</strong> : Defines the width of the column. <i>If you leave it empty then this column covers the remaining space.</i>
+</li><li><strong>hAlign</strong> : Defines the horizontal alignment( Begin, Center, End, Left, Right ) of the column content. <i>Controls with a text align do not inherit the horizontal alignment. You have to set the text align directly on the control.</i>
+</li><li><strong>vAlign</strong> : Defines vertical alignment of the cells in column. Possible values are "Top", "Middle", "Bottom". <i>This property does not affect the vertical alignment of header and footer.</i>
+</li><li><strong>visible</strong> : Specifies whether or not the column is visible. <i>Invisible columns are not rendered.</i>
+</li></ul><p>
+Sure, we have more properties to make it responsive and change design of column but I will explain them afterwards. Now, let's see how we can define right aligned column header.
+</p>
+<div class="code"><pre>var col <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>
+        width <span class="o">:</span> <span class="s">"25%"</span><span class="o">,</span>
+        hAlign <span class="o">:</span> <span class="s">"Right"</span><span class="o">,</span>
+        vAlign <span class="o">:</span> <span class="s">"Middle"</span><span class="o">,</span> <span class="c1">// default
+</span>        header <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>
+                text <span class="o">:</span> <span class="s">"Price"</span>
+        <span class="o">})</span>
+<span class="o">});</span>
+</pre></div><h2 id="ColumnListItemControl"><a class="missing wiki">ColumnListItem?</a> Control</h2>
+<p>
+Besides the <i>Column</i> definitions, we need to define table rows to build a table. For this purpose we created <strong><a class="missing wiki">ColumnListItem?</a></strong> control which is inherited from <i><a class="missing wiki">ListItemBase?</a></i>. This means <i><a class="missing wiki">ColumnListItem?</a></i> supports all features of <i><a class="missing wiki">ListItemBase?</a></i>. In addition to that it has <strong>cells</strong> aggregation(<i>one-to-many</i>) which defines cells in one row according to column definition. 
+<br />Let's build a real table example to understand it better.<br /><br />
+First let's see what we are going to build.<br />
+<img src="SimpleTable.PNG" /><br />And here is the implementation
+</p>
+<div class="code"><pre><span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">List</span><span class="o">({</span>    <span class="c1">// define List Control
+</span>    <span class="nl">mode:</span> <span class="s">"MultiSelect"</span><span class="o">,</span>    <span class="c1">// multi selection mode
+</span>    columns <span class="o">:</span> <span class="o">[</span>
+        <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>  <span class="c1">// first column
+</span>            header <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>  <span class="c1">// header of the first column
+</span>                text <span class="o">:</span> <span class="s">"Name"</span>
+            <span class="o">})</span>
+        <span class="o">}),</span> 
+        <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>  <span class="c1">// second column
+</span>            hAlign <span class="o">:</span> <span class="s">"Right"</span><span class="o">,</span>   <span class="c1">// column will be right aligned
+</span>            header <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>  <span class="c1">// header of the second column
+</span>                text <span class="o">:</span> <span class="s">"Price"</span>
+            <span class="o">}),</span>
+            footer <span class="o">:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>  <span class="c1">// footer of the second column
+</span>                text <span class="o">:</span> <span class="s">"15.00 EUR"</span>
+            <span class="o">})</span>
+        <span class="o">})</span>
+    <span class="o">],</span> 
+    items <span class="o">:</span> <span class="o">[</span>
+        <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ColumnListItem</span><span class="o">({</span>  <span class="c1">// first row
+</span>            selected <span class="o">:</span> <span class="kc">true</span><span class="o">,</span>    <span class="c1">// first item is selected (from ListItemBase)
+</span>            cells <span class="o">:</span> <span class="o">[</span>
+                <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>
+                    text <span class="o">:</span> <span class="s">"Headphone"</span>  <span class="c1">// first cell related to first column definition
+</span>                <span class="o">}),</span>
+                <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>       <span class="c1">// second cell related to second column definition
+</span>                    text <span class="o">:</span> <span class="s">"12.00 EUR"</span>  
+                <span class="o">})</span>
+            <span class="o">]</span>
+        <span class="o">}),</span>
+        <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ColumnListItem</span><span class="o">({</span>  <span class="c1">// second row
+</span>            cells <span class="o">:</span> <span class="o">[</span>
+                <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>       <span class="c1">// first cell related to first column definition
+</span>                    text <span class="o">:</span> <span class="s">"Mouse Pad"</span>
+                <span class="o">}),</span>
+                <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>       <span class="c1">// second cell related to second column definition
+</span>                    text <span class="o">:</span> <span class="s">"3.00 EUR"</span>
+                <span class="o">})</span>
+            <span class="o">]</span>
+        <span class="o">})</span>  
+    <span class="o">]</span>
+<span class="o">});</span>
+</pre></div><p>
+The mergeFunctionName property holds the function that the column merge functionality uses to pull the property value to compare for duplicates. The default of "getText" is appropriate for the most common use cases, where an sap.m.Label or sap.m.Text control is used, but if you have another control with a different function to pull the comparison property value from, you can specify it as the mergeFunctionName. For example, the sap.m.Icon control has a getSrc getter function that returns the src property value - the icon's URI, which is a good candidate for comparison.
+</p>
+<h2 id="ResponsiveTable">Responsive Table</h2>
+<p>
+One of the biggest challenges in responsive web design (RWD) is presenting tabular data. Large tables with lots of columns don't fit on smaller screens and there isn't a simple way to re-format the table content with CSS and media queries for an acceptable presentation. To address this, our framework offers column based solution(column hiding) and row based solution(pop-ins) for presenting tables responsively and both options are applicable at the same time.
+I know this sounds a little bit complicated. Let's go trough on an example.<br /><br />
+</p>
+<p>
+Suppose that we build such a nice table for desktop.<br />
+<img width="762px" src="Responsive1.png" />
+</p>
+<p>
+On mobile, we know that we do not have enough space to show all these columns. Now, we should decide which columns are important. Let's say
+</p>
+<ul><li><i>Name and Status</i> are most important. So they should never be hidden.
+</li><li><i>Model Number</i> is not important at all. So we can hide this column completely. (column hiding)
+</li><li><i>Quantity, Unit Price and Final Price</i> these columns can give some hint to user so they can go to on an extra pane(pop-in)
+</li></ul><p>
+According to our assumption we should have the following on mobile<br />
+<img width="452px" src="Responsive3.png" /><br />
+</p>
+<h2 id="ResponsiveColumnControl">Responsive Column Control</h2>
+<p>
+You can control the responsive table design from sap.m.Column. This control provides two properties to handle column hiding and pop-in.
+</p>
+<ol><li><strong>minScreenWidth</strong> : This value defines the break point for the column visibility. e.g. iPhone5 has 568px X 320px resolution(dip/device-width). So if we assign 400px(or 25em based on 16px) then this column will not be visible for portrait mode(width 320px) but will be visible for landscape mode(width 568px). Instead of px or em you can assign one of the predefined <a class="ext-link" href="../../docs/api/symbols/sap.m.ScreenSize.html"><span class="icon"> </span>sap.m.ScreenSize</a> types like <i>"Tablet"</i>(for 600px) or <i>"Desktop"</i>(for 1024px). Default value of this property is empty string this means this column will be visible always. <a class="ext-link" href="../../docs/api/symbols/sap.m.Column.html#getMinScreenWidth"><span class="icon"> </span>See full API</a>
+</li><li><strong>demandPopin</strong> : Depending on your minScreenWidth the column can be hidden in different screen sizes. Setting this property to true, shows this column as pop-in instead of hiding it. Default value is false. <a class="ext-link" href="../../docs/api/symbols/sap.m.Column.html#getDemandPopin"><span class="icon"> </span>See full API</a>
+</li></ol><p>
+That's it! All you need to know is these two variables for responsive table. If we turn back to our example.
+</p>
+<ul><li><i>Name and Status</i> column should never be hidden. This is the default behavior of column so just let the default values(<i>minScreenWidth : "" and demandPopin: false</i>) make their job.
+</li><li><i>Model Number</i> column should be hidden for small devices so, our break point is <i>minScreenWidth : "Small"</i> and <i>demandPopin : false</i>(default value).
+</li><li><i>Quantity, Unit Price and Final Price</i> these columns should go to pop-in, our break point is same <i>minScreenWidth : "Small"</i> but now <i>demandPopin : true</i> to show column in pop-in.
+</li><li>For example in tablet we will have more space then we can show <i>Final Price</i> for tablet(or wider devices) but goes to pop-in for small device. So our break point should be <i>minScreenWidth : "Tablet"</i> and <i>demandPopin : true</i>.
+</li></ul><h2 id="DefiningColumnWidth">Defining Column Width</h2>
+<p>
+As API of the <strong>sap.m.Column</strong> implies <strong>width</strong> can be any valid CSS size(e.g 100px, 6em, 25%). Default value of the width is empty and this makes the column flexible which means it covers the remaining space. There are two important things that you should to define the width of the column properly.
+</p>
+<ol><li>While defining the column width you can use percent values but you should be careful with percent values. Because, maybe this value fits to desktop screen well, but maybe not to mobile devices. In this case using absolute width(e.g. 200px, 4rem) can be better. 
+</li><li>Leave the most important column's width empty if your table demand pop-in. Let's say you have 100% width table with four columns each has 200px width and viewport is 800px wide. Everything is fine. We resized the viewport to 500px. We can still show two columns nicely with setting the rest two columns to go pop-in. But after two columns go to pop-in total width of two main columns is 400px but the viewport is 500px and table is 100%! In that case browser decides how to handle this. Current Chrome version increases the last column width and IE increases the first column width. But if we have Selection or Navigation these are also columns and browser can change the width of these column and that can look strange. So the best solution is leaving the most important column's width empty that it can take the much space as it can. In our example it will be 300px and all will be fine.
+</li></ol><p>
+ 
+</p>
+<h2 id="Tabledesign">Table design</h2>
+<p>
+There are various Table and Column features that allow customization of the table design.
+</p>
+<h3 id="Pop-inDesign">Pop-in Design</h3>
+<p>
+When displaying information in a Pop-in, the information, typically a column header and the column (cell) content, can be displayed in an "Inline" or in a "Block" display style. The difference can be seen in the following example.
+</p>
+<div class="code"><pre>    var oTable <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Table</span><span class="o">({</span>
+        <span class="nl">inset:</span> <span class="kc">true</span><span class="o">,</span>
+        <span class="nl">headerText:</span> <span class="s">"Order Items"</span><span class="o">,</span>
+        <span class="nl">mode:</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ListMode</span><span class="o">.</span><span class="na">SingleSelect</span><span class="o">,</span>
+        <span class="nl">columns:</span> <span class="o">[</span>
+
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>
+                <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Model"</span> <span class="o">}),</span>
+                <span class="nl">minScreenWidth:</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ScreenSize</span><span class="o">.</span><span class="na">Small</span>
+            <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span> <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Name"</span> <span class="o">})</span> <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span> <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Quantity"</span> <span class="o">}),</span>
+                <span class="nl">hAlign:</span> <span class="s">"Right"</span><span class="o">,</span>
+                <span class="nl">minScreenWidth:</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ScreenSize</span><span class="o">.</span><span class="na">Desktop</span><span class="o">,</span>
+                <span class="nl">demandPopin:</span> <span class="kc">true</span><span class="o">,</span>
+                <span class="nl">popinDisplay:</span> <span class="s">"Block"</span>
+            <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>
+                <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Unit Price"</span> <span class="o">}),</span>
+                <span class="nl">hAlign:</span> <span class="s">"Right"</span><span class="o">,</span>
+                <span class="nl">minScreenWidth:</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ScreenSize</span><span class="o">.</span><span class="na">Desktop</span><span class="o">,</span>
+                <span class="nl">demandPopin:</span> <span class="kc">true</span><span class="o">,</span>
+                <span class="nl">popinDisplay:</span> <span class="s">"Inline"</span>
+            <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>
+                <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Final Price"</span> <span class="o">}),</span>
+                <span class="nl">hAlign:</span> <span class="s">"Right"</span><span class="o">,</span>
+                <span class="nl">minScreenWidth:</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ScreenSize</span><span class="o">.</span><span class="na">Desktop</span><span class="o">,</span>
+                <span class="nl">demandPopin:</span> <span class="kc">true</span><span class="o">,</span>
+                <span class="nl">popinDisplay:</span> <span class="s">"Inline"</span>
+            <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span> <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Status"</span> <span class="o">})</span> <span class="o">}),</span>
+        <span class="o">],</span>
+    <span class="o">});</span>
+</pre></div><p>
+The Quantity, Unit Price and Final Price columns are displayed in a pop-in when the screen size is smaller than a Desktop. The quantity in particular is to be displayed in "Block" mode, with the header and content arranged vertically, whereas the two prices are to be displayed in "Inline" mode, with the header and content arranged next to each other.
+</p>
+<p>
+<img src="orderitems.PNG" />
+</p>
+<h3 id="MergingDuplicateValues">Merging Duplicate Values</h3>
+<p>
+When you have repeated values in your table, you can use the <strong>mergeDuplicate</strong> feature of the <strong>sap.m.Column</strong> control. There are two properties that are related to merging duplicate values:
+</p>
+<ul><li><strong>mergeDuplicates</strong>: set this to true if you want duplicate values for the given column to be merged
+</li><li><strong>mergeFunctionName</strong>: use this to specify the name of the getter function of the Control in the column 
+</li></ul><p>
+Duplicate values will only be merged if they are contiguous. That means that you probably want to sort your data first before binding it. 
+</p>
+<p>
+Here's a simple example of using the <strong>mergeDuplicates</strong> feature. We'll set up a table of sales data, and display the data in a table, merging any duplicate regions. When the "Mix Up" button is pressed to lightly shuffle the salesFigures array of objects, you will see that only adjacent duplicates are merged. Press the "Sort" button again to see the ideal merging.
+</p>
+<div class="code"><pre>    <span class="c1">// Sales Areas
+</span>    var oAreas <span class="o">=</span> <span class="o">{</span>
+        <span class="s">"North West"</span><span class="o">:</span> <span class="o">[</span><span class="s">"Manchester"</span><span class="o">,</span> <span class="s">"Liverpool"</span><span class="o">,</span> <span class="s">"Lancaster"</span><span class="o">],</span>
+        <span class="s">"South East"</span><span class="o">:</span> <span class="o">[</span><span class="s">"London"</span><span class="o">,</span> <span class="s">"Brighton"</span><span class="o">],</span>
+        <span class="s">"North East"</span><span class="o">:</span> <span class="o">[</span><span class="s">"Middlesbrough"</span><span class="o">,</span> <span class="s">"Newcastle"</span><span class="o">,</span> <span class="s">"Hull"</span><span class="o">]</span>
+    <span class="o">};</span>
+    
+    <span class="c1">// Generate some sales figures into a flat array of region/town/amount objects
+</span>    var oSalesFigures <span class="o">=</span> <span class="o">[];</span>
+    oSalesFigures <span class="o">=</span> oSalesFigures<span class="o">.</span><span class="na">concat</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span>oSalesFigures<span class="o">,</span> Object<span class="o">.</span><span class="na">keys</span><span class="o">(</span>oAreas<span class="o">).</span><span class="na">map</span><span class="o">(</span>function<span class="o">(</span>region<span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> oAreas<span class="o">[</span>region<span class="o">].</span><span class="na">map</span><span class="o">(</span>function<span class="o">(</span>town<span class="o">)</span> <span class="o">{</span> 
+            <span class="k">return</span> <span class="o">{</span> <span class="s">"region"</span><span class="o">:</span> region<span class="o">,</span> <span class="s">"town"</span><span class="o">:</span> town<span class="o">,</span> <span class="s">"amount"</span><span class="o">:</span> <span class="o">(</span>Math<span class="o">.</span><span class="na">random</span><span class="o">()*</span><span class="mi">1000000</span><span class="o">+</span><span class="mi">1</span><span class="o">).</span><span class="na">toFixed</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span> <span class="o">};</span>
+        <span class="o">});</span>
+    <span class="o">}));</span>
+
+    var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">({</span> <span class="s">"sales"</span><span class="o">:</span> oSalesFigures <span class="o">});</span>
+    sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">setModel</span><span class="o">(</span>oModel<span class="o">);</span>
+    
+    var oTable <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Table</span><span class="o">(</span><span class="s">"salesdata"</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nl">inset:</span> <span class="kc">true</span><span class="o">,</span>
+        <span class="nl">headerText:</span> <span class="s">"Sales by Area"</span><span class="o">,</span>
+        <span class="nl">headerContent:</span> <span class="o">[</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+                <span class="nl">text:</span> <span class="s">"Sort"</span><span class="o">,</span>
+                <span class="nl">press:</span> function<span class="o">()</span> <span class="o">{</span>
+                    var oData <span class="o">=</span> oModel<span class="o">.</span><span class="na">getData</span><span class="o">();</span>
+                    oData<span class="o">.</span><span class="na">sales</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span>function<span class="o">(</span>a<span class="o">,</span> b<span class="o">)</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span>a<span class="o">.</span><span class="na">region</span> <span class="o">===</span> b<span class="o">.</span><span class="na">region</span><span class="o">)</span> <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+                        <span class="k">return</span> a<span class="o">.</span><span class="na">region</span> <span class="o">&gt;</span> b<span class="o">.</span><span class="na">region</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+                    <span class="o">});</span>
+                    oModel<span class="o">.</span><span class="na">setData</span><span class="o">(</span>oData<span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+                <span class="nl">text:</span> <span class="s">"Mix Up"</span><span class="o">,</span>
+                <span class="nl">press:</span> function<span class="o">()</span> <span class="o">{</span>
+                    var oData <span class="o">=</span> oModel<span class="o">.</span><span class="na">getData</span><span class="o">();</span>
+                    oData<span class="o">.</span><span class="na">sales</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span>function<span class="o">()</span> <span class="o">{</span> <span class="k">return</span> Math<span class="o">.</span><span class="na">random</span><span class="o">()-</span><span class="mf">0.5</span><span class="o">;</span> <span class="o">});</span>
+                    oModel<span class="o">.</span><span class="na">setData</span><span class="o">(</span>oData<span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">})</span>
+        <span class="o">],</span>
+        <span class="nl">columns:</span> <span class="o">[</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>
+                <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Region"</span> <span class="o">}),</span>
+                <span class="nl">mergeDuplicates:</span> <span class="kc">true</span>
+            <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span> <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Town/City"</span> <span class="o">})</span> <span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>
+                <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Sales (GBP)"</span> <span class="o">}),</span>
+                <span class="nl">hAlign:</span> <span class="s">"Right"</span><span class="o">,</span>
+                <span class="nl">minScreenWidth:</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ScreenSize</span><span class="o">.</span><span class="na">Tablet</span><span class="o">,</span>
+                <span class="nl">demandPopin:</span> <span class="kc">true</span><span class="o">,</span>
+                <span class="nl">popinDisplay:</span> <span class="s">"Block"</span>
+            <span class="o">}),</span>
+        <span class="o">],</span>
+    <span class="o">});</span>
+
+    oTable<span class="o">.</span><span class="na">bindAggregation</span><span class="o">(</span><span class="s">"items"</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nl">path:</span> <span class="s">"/sales"</span><span class="o">,</span>
+        <span class="nl">template:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ColumnListItem</span><span class="o">({</span>
+            <span class="nl">cells:</span> <span class="o">[</span>
+                    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"{region}"</span> <span class="o">}),</span>
+                    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"{town}"</span> <span class="o">}),</span>
+                    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span>
+                        <span class="nl">text:</span> <span class="o">{</span>
+                            <span class="nl">path:</span> <span class="s">"amount"</span><span class="o">,</span>
+                            <span class="nl">type:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">type</span><span class="o">.</span><span class="na">Float</span><span class="o">({</span> <span class="nl">minFractionDigits:</span> <span class="mi">2</span><span class="o">,</span> <span class="nl">maxFractionDigits:</span> <span class="mi">2</span> <span class="o">})</span>
+                        <span class="o">}</span>
+                    <span class="o">})</span>
+            <span class="o">]</span>
+        <span class="o">})</span>
+    <span class="o">});</span>
+    
+    oTable<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="s">"content"</span><span class="o">);</span>
+
+</pre></div><p>
+<img src="salesbyarea.PNG" />
+</p>
+<h4 id="RowandColumnHighlighting">Row and Column Highlighting</h4>
+<p>
+You can use CSS to achieve striping of table rows as you might do in other web-based applications. For example, to highlight alternative rows in the table above, like this:
+</p>
+<p>
+<img src="salesbyarea-striped.PNG" />
+</p>
+<p>
+you just need to note the id of the <strong>sap.m.List</strong> or <strong>sap.m.Table</strong> control (in this case it is "salesdata") and then apply some appropriate CSS such as:
+</p>
+<pre class="wiki">#salesarea tbody tr:nth-child(even) {
+	background: rgb(245, 245, 245);
+}
+</pre><p>
+Note: use 'even', rather than 'odd', for the sibling specification. This way, the pop-in highlighting will be correct.  
+</p>
+<p>
+Highlighting of table columns is also possible by means of the <strong>styleClass</strong> property of the <strong>sap.m.Column</strong> control. The value of this property is applied as a class to the whole column (header, cells and footer) and can be used like this: Specify a class name for the <strong>styleClass</strong> property of your Column, and set the style as you wish:
+</p>
+<style>
+#salesarea .salesamount {
+	font-weight: bold;
+	background: rgb(205, 231, 255);
+}
+</style>
+<p>
+&hellip;
+</p>
+<div class="code"><pre><span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Column</span><span class="o">({</span>
+    <span class="nl">header:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Label</span><span class="o">({</span> <span class="nl">text:</span> <span class="s">"Sales (GBP)"</span> <span class="o">}),</span>
+    <span class="nl">hAlign:</span> <span class="s">"Right"</span><span class="o">,</span>
+    <span class="nl">minScreenWidth:</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ScreenSize</span><span class="o">.</span><span class="na">Tablet</span><span class="o">,</span>
+    <span class="nl">demandPopin:</span> <span class="kc">true</span><span class="o">,</span>
+    <span class="nl">popinDisplay:</span> <span class="s">"Block"</span><span class="o">,</span>
+    <span class="nl">styleClass:</span> <span class="s">"salesamount"</span> <span class="c1">// &lt;-- for highlighting 
+</span><span class="o">}),</span>
+</pre></div><p>
+This results in the following:
+</p>
+<p>
+<img src="salesbyarea-important.PNG" />
+</p>
+<h3 id="ListandTableEvents">List and Table Events</h3>
+<p>
+Both <strong>sap.m.List</strong> and <strong>sap.m.Table</strong> controls offer the same events, inheriting them from <strong>sap.m.ListBase</strong>. These are:
+</p>
+<ul><li><strong>delete</strong>
+</li><li><strong>selectionChange</strong>
+</li><li><strong>swipe</strong>
+</li></ul><p>
+All are handled in the same way, in that an event is fired, and the event object that is passed contains listItem data that tells you which items were affected.
+</p>
+<p>
+There is a demo page showing a table and the events that it emits.
+</p>
+<p>
+<img src="salesbyarea-events.PNG" />
+</p>
+<p>
+The table is constructed in the normal way, with a toggle button to cycle through the different modes (<strong>SingleSelect</strong>, <strong>MultiSelect</strong>, <strong>Delete</strong>, and so on). 
+</p>
+<div class="code"><pre>        <span class="nl">headerToolbar:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Toolbar</span><span class="o">({</span> <span class="nl">content:</span> <span class="o">[</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Text</span><span class="o">({</span><span class="nl">text:</span> <span class="s">"Sales By Area"</span><span class="o">}),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ToolbarSpacer</span><span class="o">(),</span>
+            <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span>
+                <span class="nl">text:</span> <span class="s">"Toggle Mode"</span><span class="o">,</span>
+                <span class="nl">icon:</span> <span class="s">"sap-icon://share"</span><span class="o">,</span>
+                <span class="nl">press:</span> function<span class="o">()</span> <span class="o">{</span>
+                    var aModes <span class="o">=</span> Object<span class="o">.</span><span class="na">keys</span><span class="o">(</span>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">ListMode</span><span class="o">);</span>
+                    var oData <span class="o">=</span> oTable<span class="o">.</span><span class="na">data</span><span class="o">();</span>
+                    var iMode <span class="o">=</span> <span class="s">"listmode"</span> in oData <span class="o">?</span> oData<span class="o">.</span><span class="na">listmode</span> <span class="o">:</span> <span class="mi">0</span><span class="o">;</span>
+                    iMode<span class="o">++;</span>
+                    var sMode <span class="o">=</span> aModes<span class="o">[</span>iMode <span class="o">%</span> aModes<span class="o">.</span><span class="na">length</span><span class="o">];</span>
+                    oTable<span class="o">.</span><span class="na">setMode</span><span class="o">(</span>sMode<span class="o">);</span>
+                    oTable<span class="o">.</span><span class="na">data</span><span class="o">({</span><span class="s">"listmode"</span><span class="o">:</span> iMode<span class="o">});</span>
+                    sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">byId</span><span class="o">(</span><span class="s">"idListMode"</span><span class="o">).</span><span class="na">setText</span><span class="o">(</span>sMode<span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}),</span>
+        <span class="o">]}),</span>
+</pre></div><p>
+After binding the JSON model to the table's items aggregation, we also set a control as the <strong>SwipeContent</strong> aggregation, and set the swipe direction to be from right to left:
+</p>
+<div class="code"><pre>    oTable<span class="o">.</span><span class="na">setSwipeContent</span><span class="o">(</span><span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Button</span><span class="o">(</span><span class="s">"idSwipeButton"</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nl">text:</span> <span class="s">"Press me for action"</span><span class="o">,</span>
+        <span class="nl">press:</span> function<span class="o">()</span> <span class="o">{</span>
+            jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Swiped item:"</span><span class="o">,</span> oTable<span class="o">.</span><span class="na">getSwipedItem</span><span class="o">());</span>
+            oTable<span class="o">.</span><span class="na">swipeOut</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}));</span>
+
+    oTable<span class="o">.</span><span class="na">setSwipeDirection</span><span class="o">(</span>sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">SwipeDirection</span><span class="o">.</span><span class="na">RightToLeft</span><span class="o">);</span>
+</pre></div><p>
+The <strong>SwipeContent</strong> is a control that appears on the right hand side of a list item when a swipe gesture is made on the item. 
+</p>
+<p>
+We then set up some logging for the different events that will be triggered:
+</p>
+<div class="code"><pre>    function <span class="nf">logItemInfo</span><span class="o">(</span>sAction<span class="o">,</span> oEvent<span class="o">)</span> <span class="o">{</span>
+        var sId <span class="o">=</span> oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="err">'</span>listItem<span class="err">'</span><span class="o">).</span><span class="na">getId</span><span class="o">();</span>
+        jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span>sAction <span class="o">+</span> <span class="s">" "</span> <span class="o">+</span> sId<span class="o">);</span>
+    <span class="o">}</span>
+    
+    oTable<span class="o">.</span><span class="na">attachDelete</span><span class="o">(</span>function<span class="o">(</span>oEvent<span class="o">)</span> <span class="o">{</span> logItemInfo<span class="o">(</span><span class="s">"deleted"</span><span class="o">,</span> oEvent<span class="o">);</span> <span class="o">});</span>
+    oTable<span class="o">.</span><span class="na">attachSwipe</span><span class="o">(</span>function<span class="o">(</span>oEvent<span class="o">)</span> <span class="o">{</span> logItemInfo<span class="o">(</span><span class="s">"swiped"</span><span class="o">,</span> oEvent<span class="o">);</span> <span class="o">});</span>
+    oTable<span class="o">.</span><span class="na">attachSelectionChange</span><span class="o">(</span>function<span class="o">(</span>oEvent<span class="o">)</span> <span class="o">{</span>
+        jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span>
+            <span class="s">"selection changed ("</span> <span class="o">+</span> <span class="o">(</span>oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="err">'</span>selected<span class="err">'</span><span class="o">)</span> <span class="o">?</span> <span class="s">"selected"</span> <span class="o">:</span> <span class="s">"unselected"</span><span class="o">)</span> <span class="o">+</span> <span class="s">") for the following items: "</span> <span class="o">+</span>
+            oEvent<span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="err">'</span>listItems<span class="err">'</span><span class="o">).</span><span class="na">map</span><span class="o">(</span>function <span class="o">(</span>oItem<span class="o">)</span> <span class="o">{</span> <span class="k">return</span> oItem<span class="o">.</span><span class="na">getId</span><span class="o">();</span> <span class="o">}).</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">)</span>
+        <span class="o">);</span>
+    <span class="o">});</span>
+</pre></div><p>
+Note: The oEvent object that is passed when the events are fired contains information on the item(s) that were involved in the action. In the case of the <strong>selectionChange</strong> event, one or more items can be involved, depending on the list mode - if the mode is <strong>MultiSelect</strong> then more than one item can be set as selected (or unselected) at once.
+</p>
+<p>
+When a swipe is made on an item, the button, defined as the <strong>SwipeContent</strong>, appears on the item like this:
+</p>
+<p>
+<img src="salesbyarea-swiped.PNG" />
+</p>
+<p>
+and the item can be identified with the <strong>getSwipedItem</strong> method.
+</p>
+<p>
+Note: To test swipe gestures on the desktop, open the Chrome developer tools, and within Settings &rarr; Overrides, check the "Emulate touch events" checkbox and reload the page.
+</p>
+<h3 id="GrowingTable">Growing Table</h3>
+<p>
+Before release 1.16, the <strong>sap.m.GrowingList</strong> control existed, as an extension of the <strong>sap.m.List</strong> control. A growing list has a loading mechanism that requests data from the model in a 'lazy' way. This enables the app to only data from the server as and when necessary. 
+</p>
+<p>
+With 1.16 the <strong>sap.m.GrowingList</strong> has been deprecated, in favour of growing-related properties on the <strong>sap.m.ListBase</strong> control, from which both <strong>sap.m.List</strong> and <strong>sap.m.Table</strong> inherit.
+</p>
+<p>
+These growing-related properties are:
+</p>
+<ul><li><strong>growing</strong>: a boolean to set the growing feature on or off
+</li><li><strong>growingScrollToLoad</strong>: if you want to allow more data to be fetched based on the user scrolling down to the end of the current items, set this boolean property to true; otherwise a trigger button must be used
+</li><li><strong>growingThreshold</strong>: this is the number of items that are requested each time from the model
+</li><li><strong>growingTriggerText</strong>: the text on a trigger button used to cause a request for more data
+</li></ul><p>
+To enable data for a table to be fetched on demand like this, you just need to set the values for these properties appropriately on your table control. For example, adding the highlighted lines as shown:
+</p>
+<div class="code"><pre>    var oTable <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Table</span><span class="o">(</span><span class="s">"salesarea"</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nl">inset:</span> <span class="kc">false</span><span class="o">,</span>
+        <span class="nl">growing:</span> <span class="kc">true</span><span class="o">,</span>              <span class="c1">// set growing mode on
+</span>        <span class="nl">growingThreshold:</span> <span class="mi">5</span><span class="o">,</span>        <span class="c1">// 5 items at a time
+</span>        <span class="nl">footerText:</span> <span class="s">"Use the 'Toggle Mode' button to change the selection mode"</span><span class="o">,</span>
+</pre></div><p>
+will cause five items to be displayed in the table initially, with a "More" button (this is the default text if you don't set it with the <strong>growingTriggerText</strong> property):
+</p>
+<p>
+<img src="salesbyarea-clickformore.PNG" />
+</p>
+<p>
+Note: If you wish to have the user scroll for more (by setting the <strong>growingScrollToLoad</strong> property to true), you must ensure that the control is within a container that has a scroll feature, such as an <strong>sap.m.Page</strong> in an <strong>sap.m.App</strong> control, like this:
+</p>
+<div class="code"><pre>    <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">App</span><span class="o">({</span>
+        <span class="nl">pages:</span> <span class="o">[</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Page</span><span class="o">({</span>
+            <span class="nl">title:</span> <span class="s">"Table Events"</span><span class="o">,</span>
+            <span class="nl">content:</span> <span class="o">[</span>oTable<span class="o">]</span>
+        <span class="o">})]</span>
+    <span class="o">}).</span><span class="na">placeAt</span><span class="o">(</span><span class="s">"content"</span><span class="o">);</span>
+</pre></div>
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,55 @@
+{
+	"demo": {
+		"text": "Mobile",
+		"links": [
+			{
+				"text": "sap.m Explored",
+				"ref": "test-resources/sap/m/demokit/explored/index.html",
+				"icon": "custom/explored",
+				"desc": "A quick run through all those controls in the sap.m library"
+			},
+			{
+				"text": "Icon Explorer",
+				"ref": "test-resources/sap/m/demokit/icon-explorer/index.html",
+				"icon": "custom/icon-explorer",
+				"desc": "Helps you find icons out of a built-in set of almost 500"
+			},
+			{
+				"text": "Approve Purchase Orders",
+				"ref": "test-resources/sap/m/demokit/poa/index.html",
+				"icon": "custom/poa",
+				"desc": "A real world example of an approval process app"
+			},
+			{
+				"text": "Shopping Cart",
+				"ref": "test-resources/sap/m/demokit/cart/index.html?responderOn=true",
+				"icon": "custom/cart",
+				"desc": "The classic business process of finding & ordering products"
+			},
+			{
+				"text": "Hello World",
+				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
+				"icon": "custom/helloworld",
+				"desc": "This is where it all starts when developing with sap.m"
+			},
+			{
+				"text": "Split App",
+				"ref": "test-resources/sap/m/demokit/splitapp/index.html",
+				"icon": "custom/splitapp",
+				"desc": "The SplitApp control adapts between phone and tablet devices"
+			},
+			{
+				"text": "Model View Controller",
+				"ref": "test-resources/sap/m/demokit/mvc/App_with_rootView.html",
+				"icon": "custom/mvc",
+				"desc": "Explores possible usages of SAPUI5 MVC with sap.m controls"
+			},
+			{
+				"text": "CRUD Patterns",
+				"ref": "test-resources/sap/m/demokit/crud/index.html",
+				"icon": "custom/crud",
+				"desc": "A design best practice for realizing CRUD patterns on the phone"
+			}
+		]
+	}
+}

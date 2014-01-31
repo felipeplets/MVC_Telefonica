@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/GracefulDegradation – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="SupportforolderBrowsers">Support for "older" Browsers</h1>
+<p>
+SAPUI5 has been tailored for best-of-breed HTML5/CSS3 browsers. What about older, but still commonly used browsers like FireFox 3.6 or IE8?
+</p>
+<h2 id="DegradationsbyFeature">Degradations by Feature</h2>
+<h3 id="RoundedCorners">Rounded Corners</h3>
+<p>
+IE8 and below don't support the CSS property <tt>border-radius</tt>. As a result, all controls for which a theme uses that property, won't have rounded but square corners. In the UX theme this affects Button, ComboBox, DatePicker(+ its Popup), DropdownBox, ListBox, MessageBar, Panel, ProgressIndicator, TextArea, TextField
+</p>
+<p>
+Example: The Button 
+</p>
+<table class="wiki">
+<tr><td>FireFox 3.6</td><td>Internet Explorer 8
+</td></tr><tr><td><img src="Button-0.11.0-FF3.png" /></td><td><img src="Button-0.11.0-IE8.png" />
+</td></tr></table>
+<p>
+<br />
+<br />
+</p>
+<h3 id="Box-Shadow">Box-Shadow</h3>
+<p>
+IE8 and below don't support the CSS property <tt>box-shadow</tt>. As a result, all controls for which a theme uses that property, won't have a shadow. Most often this property is used to either enhance a 3D effect (eg. along verticall edges) or to drop a shadow for a box "floating" above other content (all kinds of Popup). 
+</p>
+<p>
+In the UX theme, this affects Button(3D), ComboBox(Popup), DatePicker(Popup), DropdownBox(Popup), Menu(Popup), MenuButton(Popup), MessageBar(+Popup), ProgressIndicator(3D), RichTooltip, TextArea(3D), TextField(3D), Toolbar(OverflowMenu)
+</p>
+<p>
+Example: Popup of ComboBox
+</p>
+<table class="wiki">
+<tr><td>FireFox 3.6</td><td>Internet Explorer 8
+</td></tr><tr><td><img src="ComboBox-0.11.0-FF3.png" /></td><td><img src="ComboBox-0.11.0-IE8.png" />
+</td></tr></table>
+<p>
+<br />
+<br />
+</p>
+<h3 id="Background-Size">Background-Size</h3>
+<p>
+IE8 and below don't support the property <tt>background-size</tt> which allows to stretch a background image or gradient. 
+</p>
+<p>
+Affects: Button
+</p>
+<p>
+Example: A Button with an expliticly set height
+</p>
+<table class="wiki">
+<tr><td>FireFox 3.6</td><td>Internet Explorer 8
+</td></tr><tr><td><img src="HugeButton-0.11.0-FF3.png" /></td><td><img src="HugeButton-0.11.0-IE8.png" />
+</td></tr></table>
+<p>
+<br />
+<br />
+</p>
+<h3 id="GradientBackgrounds">Gradient Backgrounds</h3>
+<p>
+IE8 only supports gradients in a limited way, so some gradients may be missing.
+</p>
+<p>
+Affects: Table
+</p>
+<p>
+Example: Pay attention to the table header and row selectors at the left-hand side
+</p>
+<table class="wiki">
+<tr><td>FireFox 3.6</td><td>Internet Explorer 8
+</td></tr><tr><td><img src="Table-0.11.0-FF3.png" /></td><td><img src="Table-0.11.0-IE8.png" />
+</td></tr></table>
+<p>
+<br />
+<br />
+</p>
+<h3 id="NativeScrollbars">Native Scrollbars</h3>
+<p>
+Example: See ComboBox example above..
+</p>
+<p>
+<br />
+<br />
+</p>
+<h2 id="DegradationsbyControl">Degradations by Control</h2>
+<table class="wiki">
+<tr><td><strong>Control</strong></td><td><strong>Corners</strong></td><td><strong>Shadow</strong></td><td><strong>BG Size</strong></td><td><strong>Gradients</strong></td><td><strong>Scollbars</strong></td><td><strong>Degradations (IE8)</strong>
+</td></tr><tr><td>Accordion           </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Button              </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>No rounded corners, vertical edges don't show a 3D effect, background doesn't scale when button size differs from default height
+</td></tr><tr><td>CheckBox           </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>ComboBox           </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>No rounded corners, No 3D effect for vertical edges, Popup doesn't have a shadow
+</td></tr><tr><td>DatePicker         </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>No rounded corners, No 3D effect for vertical edges, Popup doesn't have a shadow
+</td></tr><tr><td>Dialog              </td><td>   </td><td>   </td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>Native Scrollbars
+</td></tr><tr><td>DropdownBox        </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>No rounded corners, No 3D effect for vertical edges, Popup doesn't have a shadow
+</td></tr><tr><td>FileUploader       </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>Inherited from the used components InputField and Button
+</td></tr><tr><td>HorizontalDivider  </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Image               </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Label               </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Link                </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>ListBox            </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>No rounded corners, No 3D effect for vertical edges
+</td></tr><tr><td>Menu                </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>Popup doesn't have a shadow
+</td></tr><tr><td>MenuButton         </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>No rounded corners, vertical edges don't show a 3D effect, background doesn't scale when button size differs from default height;Popup doesn't have a shadow
+</td></tr><tr><td>MenuBar            </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>   </td><td>MenuItems don't show rounded corners
+</td></tr><tr><td>MessageBar         </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>No rounded corners, No shadow, MessageList Popup does't have a shadow
+</td></tr><tr><td>MessageBox         </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Panel               </td><td>   </td><td>   </td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>Native Scrollbars
+</td></tr><tr><td>ProgressIndicator  </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>No rounded corners, no 3D effect for vertical edges
+</td></tr><tr><td>RadioButton        </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>RichTooltip        </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>Doesn't drop a shadow; if it would drop a shadow, the shadow wouldn't have rounded corners
+</td></tr><tr><td><a class="missing wiki">RoadMap?</a>             </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Slider              </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Splitter            </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Table               </td><td>   </td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>Native Scrollbars, Headers/Line markers only show 2-colors instead of gradient
+</td></tr><tr><td><a class="missing wiki">TabStrip?</a>            </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>TextArea           </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>No rounded corners, No 3D effect for vertical edges, 
+</td></tr><tr><td>TextField          </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>No rounded corners, No 3D effect for vertical edges, 
+</td></tr><tr><td>TextView           </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td> 
+</td></tr><tr><td>Toolbar             </td><td>   </td><td><img src="icon-error.png" style="vertical-align: bottom" alt="{X}" /></td><td>   </td><td>   </td><td>   </td><td>Overflow Menu doesn't drop a shadow
+</td></tr></table>
+
+        
+        
+      </div>
+          
+    </div>
+    
+  </body>
+</html>

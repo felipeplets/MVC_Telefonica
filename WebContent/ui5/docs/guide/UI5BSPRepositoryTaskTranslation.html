@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/Tools/UI5BSPRepositoryTaskTranslation – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="GuideforSAPUI5ApplicationDevelopers">Guide for SAPUI5 Application Developers</h1>
+<p>
+<i> In the following section a text enclosed by angle brackets is meant as a placeholder.</i>
+</p>
+<p>
+<strong>Prerequisites</strong>
+</p>
+<ul><li>You are using the SAPUI5 Repository to store your UI5 application artifacts, see <a class="wiki" href="UI5BSPRepository.html">Synchronizing with the SAPUI5 Repository</a>.
+</li></ul><h2 id="InaNutshell">In a Nutshell</h2>
+<p>
+Texts in SAPUI5 Application can be translated in an ABAP system. It is a requirement that the name of the file containing the text elements ends with '.properties' and a special key in the format <tt># SAPUI5 TRANSLATION-KEY &lt;GUID with 32 characters&gt;</tt> must be provided in the first line (Exchange the complete palceholder &lt;GUID with 32 characters&gt;, including the angle brackets, with a vaild 32char GUID).<br />
+In addition, every text element needs a classification such as the text type.
+</p>
+<h2 id="FunctionalOverview">Functional Overview</h2>
+<ul><li>The purpose of the text API in the SAPUI5 Repository is to enable an ABAP translation process for text elements of SAPUI5 applications developed in Eclipse that are stored in the SAPUI5 Repository.
+</li><li>The text elements are located in a property file (here denoted as a '&lt;name&gt;.properties' file, where '&lt;name&gt;' stands for an arbitrary identifier). 
+</li><li>The text elements stored in '&lt;name&gt;.properties' files are transferred to a database table when a SAPUI5 application is deployed to a SAPUI5 Repository on an ABAP server. 
+</li><li>In addition, these table entries are written to a transport request. 
+</li><li>These texts can then be translated in the usual way. 
+</li><li>The master language of the SAPUI5 Repository is taken as the master language for the submitted text elements. 
+</li><li>The translated texts can then be accessed during runtime. 
+</li><li>The SAPUI5 Text Repository is updated each time the property file is submitted to the SAPUI5 Repository (creation, update and deletion of texts is supported) 
+</li></ul><h2 id="PrerequisitesforTranslatingTextElementsofname.propertiesFilesinABAP">Prerequisites for Translating Text Elements of '&lt;name&gt;.properties' Files in ABAP</h2>
+<p>
+The '&lt;name&gt;.properties' file must fulfill certain prerequisites for processing: 
+</p>
+<p>
+The table entries for the text elements are written if the following prerequisites are met:<br />
+</p>
+<ul><li>The file name must end with '.properties'. 
+</li><li>The first line in the '&lt;name&gt;.properties' file must contain a certain identifier: <tt># SAPUI5 TRANSLATION-KEY &lt;GUID with 32 characters&gt;</tt>. <br /> 
+<img src="alert.png" style="vertical-align: bottom" alt="/!\" /> <strong>Important Notice: </strong> This GUID serves as a unique identifier for the 'properties' file, therefore it must <strong>never</strong> be copied to other '&lt;name&gt;.properties' files and it must <strong>never</strong> be changed in this file. <br /> 
+The GUID can be created with the ABAP function module 'GUID_CREATE', or the complete line can be generated with the ABAP report /UI5/TEXT_FILE_GEN_TRANS_KEY. <br /> 
+</li><li>The file must not contain any duplicate text elements.
+</li></ul><p>
+Additionally, transport entries are created if:<br />
+</p>
+<ul><li>The corresponding SAPUI5 BSP application is not located in a local package ($TMP). 
+</li><li>A valid transport request is available.<br />
+</li></ul><p>
+<img src="alert.png" style="vertical-align: bottom" alt="/!\" /> <span style="font-size:16px;color:red"><strong>Important update with SP05:</strong></span> <br />
+<strong>Until SP04</strong> it was possible to rename or relocate a properties file and the text elements of it contained in the UI5 Text Repository were preserved after submitting again.<br />
+This was possible as the GUID serves as the only identifier of the properties file, as a consequence text entries will be overwritten if another properties file with the same guid is submitted (which is forbidden!).<br />
+<strong>From SAP05 on:</strong> Accidental overwriting of text elements in the UI5 Text Repository with text from another properties file is prevented.<br />
+If a duplicated guid is detected, it is not possible any more to synchronize the properties file.<br />
+As a consequence it is not possible any more to rename or relocate a properties file and to submit it once it is contained in the SAPUI5 Text Repository.<br />
+If a renaming or relocation of a properties file is required, the text elements have to be removed from the UI5 Text Repository with abap program /UI5/TEXT_ENTRIES_DELETE.<br />
+<span style="color:red"><strong>Caution:</strong></span> Translated texts get lost in that case, only used this deletion report if the texts are not yet translated.<br />
+Afterwards the renamed or relocated properties file must be submitted again.<br />
+</p>
+<p>
+Whenever the property file with the translation-relevant texts is relocated, whether to another folder, application, or package, the file must be submitted again to the SAPUI5 repository, from SAP05 on the notes from above (Important update with SP05) apply(<br />
+If the BSP application on the ABAP server is reassigned from a local ($TMP) to a non-local package, the file also needs to be resubmitted. In this case, all corresponding existing texts with local assignment are deleted from the table and the property file will be treated as a new file, which means that all texts are created again with a new creation timestamp.<br />
+</p>
+<p>
+<strong>Important Notice: </strong> As the master language of the SAPUI5 Repository serves as the master language of the texts, it is important that the correct language is used for the creation of the repository.<br /> 
+When using the SAPUI5 Team Repository Provider and creating the BSP application manually the correct language has to be chosen on the logon screen.
+</p>
+<h2 id="Structureofthepropertyfile">Structure of the property file</h2>
+<h3 id="ClassificationofTextElementsinaname.propertiesFile">Classification of Text Elements in a '&lt;name&gt;.properties' File</h3>
+<p>
+Text elements in the '&lt;name&gt;.properties' file are simple value key pairs separated by an equals sign. However, in order to enable proper translation for these text elements, it is necessary to classify the texts elements with additional information. This additional information must be placed in the line directly above the text element and must begin with the number sign ('#').<br />
+The complete line must have one of the following structures:
+</p>
+<ul><li><tt>#&lt;TextType&gt;</tt>
+</li><li><tt>#&lt;TextType&gt;,&lt;MaximumLength&gt;</tt>
+</li><li><tt>#&lt;TextType&gt;,&lt;MaximumLength&gt;:&lt;AdditionalContextInformation&gt;</tt>
+</li><li><tt>#&lt;TextType&gt;:&lt;AdditionalContextInformation&gt;</tt>
+</li></ul><h3 id="TextType">Text Type</h3>
+<p>
+Each text element must have a text type assignment. Text types can be, for example, XBUT for button texts, XFLD for field labels, or XTXT for general texts. A list of the various possible text types is provided below.
+</p>
+<h3 id="MaximumTextLength">Maximum Text Length</h3>
+<p>
+The optional maximum text length information (simple number) can be provided directly after the text type, separated by a comma.<br />
+The maximum text length must be above the original text length and must never exceed 255.<br />
+</p>
+<p>
+<strong>Notice: </strong> <br />
+In order to support a proper translatability of the text, the developer should set an appropriate maximum text length following these rules:<br />
+</p>
+<ul><li>Source text length <strong>&lt; 8 characters</strong> : max. text length: <strong>multiply by 5</strong>, min. 12 characters
+</li><li>Source text length <strong>between 8 and 30 characters</strong> : max. text length: <strong>multiply by 3</strong>
+</li><li>Source text length <strong>&gt; 31 characters</strong> : max. text length: <strong>multiply by 1.5</strong>
+</li></ul><p>
+So the max. text length should always be significantly higher than the original text length, whenever possible.
+</p>
+<h3 id="AdditionalContextInformation">Additional Context Information</h3>
+<p>
+An optional additional comment (a note for the translator) can be provided for text elements after the text type (or after the length information), separated by a colon. Although this additional context information is not mandatory, it can help translators to find the most suitable translation for the text element.
+</p>
+<h3 id="ListofPossibleTextTypes">List of Possible Text Types</h3>
+<ul><li>SAPUI5 short texts with length of less than 120 characters:
+</li></ul><table class="wiki">
+<tr><td>Text Type</td><td>Corresponding S2X Type</td><td>Description
+</td></tr><tr><td>XACT</td><td>accessibility</td><td>Accessibility
+</td></tr><tr><td>XALT</td><td>alternativetext</td><td>Alternative text
+</td></tr><tr><td>XBCB</td><td>breadcrumbstep</td><td>Breadcrumb step
+</td></tr><tr><td>XBLI</td><td>listitem</td><td>Bullet list item text
+</td></tr><tr><td>XBUT</td><td>button</td><td>Button text
+</td></tr><tr><td>XCAP</td><td>caption</td><td>Caption
+</td></tr><tr><td>XCEL</td><td>cell</td><td>Cell
+</td></tr><tr><td>XCKL</td><td>checkbox</td><td>Checkbox
+</td></tr><tr><td>XCOL</td><td>tableColumnHeading</td><td>Column header
+</td></tr><tr><td>XCRD</td><td>tabStrip</td><td>Tabstrip
+</td></tr><tr><td>XDAT</td><td>datanavigationtext</td><td>Data navigation text
+</td></tr><tr><td>XFLD</td><td>label</td><td>Label
+</td></tr><tr><td>XFRM</td><td>frame</td><td>Frame
+</td></tr><tr><td>XGLS</td><td>term</td><td>Term
+</td></tr><tr><td>XGRP</td><td>grouptitle</td><td>Group title
+</td></tr><tr><td>XHED</td><td>heading</td><td>Heading
+</td></tr><tr><td>XLGD</td><td>legendtext</td><td>Legend text
+</td></tr><tr><td>XLNK</td><td>hyperlink</td><td>Hyperlink text
+</td></tr><tr><td>XLOG</td><td>logentry</td><td>Log entry
+</td></tr><tr><td>XLST</td><td>listbox</td><td>List box item
+</td></tr><tr><td>XMEN</td><td>menu</td><td>Menu header
+</td></tr><tr><td>XMIT</td><td>menuitem</td><td>Menu item
+</td></tr><tr><td>XMSG</td><td>messagetext</td><td>Message text
+</td></tr><tr><td>XRBL</td><td>radio</td><td>Radio button
+</td></tr><tr><td>XRMP</td><td>roadMapStep</td><td>Roadmap step
+</td></tr><tr><td>XROW</td><td>tableRowHeading</td><td>Table row heading
+</td></tr><tr><td>XSEL</td><td>selectiontext</td><td>Selection text
+</td></tr><tr><td>XTBS</td><td>tab</td><td>Tabstrip text
+</td></tr><tr><td>XTIT</td><td>tableTitle</td><td>Table title
+</td></tr><tr><td>XTND</td><td>treeNode</td><td>Tree node text
+</td></tr><tr><td>XTOL</td><td>quickInfo</td><td>Quick info text
+</td></tr><tr><td>XTXT</td><td>generaltext</td><td>General text
+</td></tr></table>
+<ul><li>SAPUI5 long texts with length of more than 120 characters.<br /> Attention: The total line length of the text element must not exceed 255 characters.
+</li></ul><table class="wiki">
+<tr><td>Text Type</td><td>Corresponding S2X Type</td><td>Description
+</td></tr><tr><td>YACT</td><td>accessibilitylong</td><td>Accessibility (long)
+</td></tr><tr><td>YBLI</td><td>list</td><td>Bullet list item text
+</td></tr><tr><td>YDEF</td><td>definition</td><td>Definition
+</td></tr><tr><td>YDES</td><td>description</td><td>Description
+</td></tr><tr><td>YEXP</td><td>explanation</td><td>Explanation
+</td></tr><tr><td>YFAA</td><td>faqa</td><td>FAQ answer
+</td></tr><tr><td>YFAQ</td><td>faq</td><td>FAQ
+</td></tr><tr><td>YGLS</td><td>glossarydefinition</td><td>Glossary definition
+</td></tr><tr><td>YINF</td><td>informationtextlong</td><td>Information
+</td></tr><tr><td>YINS</td><td>instruction</td><td>Instruction
+</td></tr><tr><td>YLOG</td><td>logEntrylong</td><td>Log entry
+</td></tr><tr><td>YMSE</td><td>errorMessage</td><td>Error message
+</td></tr><tr><td>YMSG</td><td>messagetextlong</td><td>Message text (long)
+</td></tr><tr><td>YMSI</td><td>informationMessage</td><td>Information message (long)
+</td></tr><tr><td>YMSW</td><td>warningMessage</td><td>Warning message
+</td></tr><tr><td>YTEC</td><td>technicaltextlong</td><td>Technical text
+</td></tr><tr><td>YTIC</td><td>ticker</td><td>Ticker/marquee
+</td></tr><tr><td>YTXT</td><td>generaltextlong</td><td>General text (long)
+</td></tr></table>
+<p>
+<br />
+</p>
+<table class="wiki">
+<tr><td>NOTR</td><td>No translation
+</td></tr></table>
+<p>
+<br />
+</p>
+<h3 id="ValidExampleofaname.propertiesFile">Valid Example of a '&lt;name&gt;.properties' File<strong></strong></h3><p>
+<br />
+</p>
+<p>
+<strong>Note:</strong> Exchange the &lt;GUID&gt; in the first line with a real generated 32-character GUID.
+</p>
+<p>
+# SAPUI5 TRANSLATION-KEY &lt;GUID&gt;<br />
+<tt>#XBUT,20</tt> <br />
+<tt>BUTTON_SAVE = Save</tt> <br />
+<tt>#XMSG</tt> <br />
+<tt>MESSAGE_ERROR1 = Error during creation of {0}</tt> <br />
+<tt>#XCAP,20: furniture element</tt> <br />
+<tt>CAPTION_TABLE1 = Table 1</tt> <br />
+<tt>#XFLD: first name in address input dialog</tt> <br />
+<tt>FORMULA_FIRSTNAME = First Name</tt> <br />
+</p>
+<h2 id="Accessoftranslatedtextsduringruntime">Access of translated texts during runtime</h2>
+<p>
+The translated texts are directly read from the table and send to the browser during runtime. <br />
+The browser sends a request for a certain property file with a language extension to the backend, e.g. i18n_en_US.properties.<br />
+The handler class in the backend analyzes the file name and extracts the language key. <br />
+All text elements that are contained in the default property file are read with this language key from the corresponding SAPUI5 Text Repository tables.<br />
+These text elements are collected and send back to the browser, like if a property file with this language extension would physically exist, but it is not present in the repository.
+</p>
+<h2 id="ProcedureforDevelopmentinthecorrectionphase">Procedure for Development in the correction phase</h2>
+<p>
+If an application is in the correction phase, development has to conduct an additional step when performing text changes.<br />
+<strong>Note:</strong> In the correction system an additional task in the used transport request is required for the table entries of the SAPUI5 text repository (because it needs another classification than "Repair")<br />
+If there is double maintenace the changes should only be submitted to the SAPUI5 repository in one system and then applied to the other (correction) system via the SCWB (software correction workbench, transaction code scwb ).<br />
+Since the SCWB does not support table entries, the abap report <strong>/UI5/TEXT_FILE_SAP_UPDATE</strong> has to be executed after applying the request with scwb.<br />
+This report requires the following import parameter:<br />
+</p>
+<ul><li>Name of the application
+</li><li>The path of the property file which contains added or changed texts
+</li></ul><p>
+The path of the property file is not required if the application contains only a single property file. The path of the property file can be copied directly from the abap workbench: if the property file is selected, the path within the application is contained in the "Page" filed at the top of the screen.<br />
+Texts that are only changed are then updated automatically in the text repository.<br />
+For new texts a popup will appear asking for a GUID for that text, here the original guid of the text element has to be entered from the system where the text has been originally created. This can be found in table /UI5/TREP_TEXT, attribute PROP_TEXT_GUID.<br />.
+This is needed to ensure key consistency and to avoid duplicate elements later on.<br />
+</p>
+<p>
+If a note for customers is created, the same steps have to be performed at customer site:<br />
+The note should contain a step by step description for the customer:
+</p>
+<ul><li>Manual steps to perform after the note is applied: <br />
+Execution of report <strong>/UI5/TEXT_FILE_SAP_UPDATE</strong> 
+</li><li>Name of the application and property file which contains changed text elements
+</li><li>For each new text element: 
+The name (key) of the text element from the property file and the corresponding GUID of that text element from table /UI5/TREP_TEXT in the original SAP system.
+</li></ul><p>
+ 
+Since the translated text elements will come to the customer system only with the next support package, the customer needs to translate the new SAPUI5 text elements in transaction se63 beforehand, if required.[[BR]
+</p>
+<h2 id="Translation">Translation</h2>
+<p>
+The following information is relevant for translators.<br />
+</p>
+<ul><li>SAP Note <strong>1686090</strong> must be implemented in the translation system to enable the translation of SAPUI5 text elements. SAPUI5 text elements are treated as ABAP short texts with translation object type: <strong>UI5T</strong>.
+</li><li>The translation object name is a GUID, which is the key taken from the original property file containing the text elements (the GUID from the first line) (see under Prerequisites:<tt># SAPUI5 TRANSLATION-KEY &lt;GUID with 32 characters&gt;</tt>). Therefore, all text elements from a property file have the same (translation) object name.
+</li><li>The text key of each text element consists of the text type and an individual GUID, separated by a blank. 
+</li><li>The UI5T texts are stored in the following database tables (all three tables also contain an indicator for the SAP/customer namespace):
+<ul><li><strong>/UI5/TREP_TEXT</strong> Master table with the text name, unique text GUID (contained in the text key displayed in SE63), text type, additional context information, and another GUID that is the (translation) object name (the GUID from the property file).
+</li><li><strong>/UI5/TREP_TEXT_T</strong> Language-dependent table containing the original and translated text; the key is the text GUID as in table /UI5/TREP_TEXT and the language key. 
+</li><li><strong>/UI5/TREP_FILES</strong> Another table, which contains the (translation) object name (the GUID from the property file) and path information for the property file.
+</li></ul></li><li>The <strong>UI5T</strong> translation object type needs to be assigned to the respective languages for translation in table LXE_MASTER (table LXE_LA_OB), otherwise it will not show up in the translation worklist.
+</li></ul><h2 id="HowtheFindtheWhere-UsedLocationofaTextElement">How the Find the "Where-Used" Location of a Text Element</h2>
+<p>
+Finding the origin of a text in the source code has to be done manually, until more tool support is delivered for this functionality:
+</p>
+<ul><li>The translator sees a GUID as the object name of the translation object. This GUID can be used to find the corresponding property file (path information) in table /UI5/TREP_FILES; the GUID corresponds to the field PROP_FILE_GUID. 
+</li><li>The translator sees a key for each text element, which is a concatenation of the text type and another GUID. This GUID corresponds to the field PROP_TEXT_GUID in table /UI5/TREP_TEXT; here you can find the text name for a particular GUID.
+</li><li>Finally, the developer can use this text name to search in the corresponding project in Eclipse to find the location where this particular text is used.
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,673 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/MVC – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="TheModelViewControllerMVCApproachinSAPUI5">The Model View Controller (MVC) Approach in SAPUI5</h1>
+<p>
+This page describes the concepts and the usage of MVC in SAPUI5 and especially the role of the artifacts View and Controller.
+For detailed information on the Model approach and the available model flavors, go to <a class="wiki" href="UsageInApp.html">Data Binding in Applications</a>
+</p>
+<h2 id="Introduction">Introduction</h2>
+<p>
+SAPUI5 supports development according to the MVC paradigm. Views and Controllers are usually maintained in different files.
+</p>
+<p>
+The UI definition (View) can be done in different ways:
+</p>
+<ul><li>programmatically, using JavaScript code (JSView)
+</li><li>declaratively, using either HTML, XML, or JSON to define the UI structure (HTMLView/XMLView/JSONView)
+</li></ul><p>
+The classes related to Views and Controllers in SAPUI5 are 
+</p>
+<ul><li><tt>sap.ui.core.mvc.Controller</tt>
+</li><li><tt>sap.ui.core.mvc.XMLView</tt>
+</li><li><tt>sap.ui.core.mvc.JSView</tt>
+</li><li><tt>sap.ui.core.mvc.JSONView</tt> and
+</li><li><tt>sap.ui.core.mvc.HTMLView</tt>
+</li></ul><p>
+The base class for defining other view types is 
+</p>
+<ul><li><tt>sap.ui.core.mvc.View</tt>
+</li></ul><h2 id="Objectives">Objectives</h2>
+<ul><li>Provide support for MVC paradigm
+</li><li>Support development in distributed teams with different source locations
+</li><li>Support the separation of concerns between user interface structure/layout and functionality
+</li><li>Suggest file structure, naming, and usage patterns
+</li><li>Add capability of UI declaration (in comparison to a programmatic construction)
+</li></ul><h2 id="WhentousewhichViewtype">When to use which View type?</h2>
+<p>
+SAPUI5 offers a choice of different View types which all have their own benefits:
+</p>
+<ul><li><strong>JSViews</strong> are familiar to those not having used MVC in SAPUI5 so far. JSViews allow direct access to any feature of SAPUI5, for the other View types it might not be possible to express and configure the usage of every SAPUI5 feature declaratively, hence their controllers may need to enrich the View. JSViews are very hard to parse in general, so they are not suitable if the View definition needs to be processed in tools.
+</li><li><strong>XMLViews</strong> are a very formal method of defining the user interface. They are very compact, structured, and it is easy to get an overview of the UI very quickly. Making use of the benefits of XML, they can be validated and easily parsed by tools. On the other hand, using XML may not feel very web-like to those having experience with HTML development and preferring web technologies to create the UI. Plain (non-SAPUI5) HTML parts can be mixed in very easily.
+</li><li><strong>HTMLViews</strong> are similar to XMLViews, as they contain the same information and have the same structure, but the carrier format in this case is HTML, not XML. This makes HTMLViews more appealing to typical web developers. Content can still be parsed easily enough, but the View definitions get more lengthy to write and may not be as easy to read because e.g. control types are defined in attributes instead of the node names. Plain HTML can also be mixed in easily, but one should be aware that the View definition HTML will not be directly used in the resulting HTML document, so one e.g. cannot bind event handlers to HTML elements in the View definition.
+</li><li><strong>JSONViews</strong> are the most compact and very JavaScript-like way of defining Views. For hardcore JavaScript developers they may be the favorite View type and the most easy one to understand, but to others they may look a bit too overwhelmingly compact at first glance. Real-world usage of this View type is less than of the other types, but this does not need to be a reason not to use JSONViews.
+</li></ul><p>
+
+</p>
+<p>
+Performance is only slightly different: the declarative View types first need to be parsed before executing the code which creates the controls, but browsers can parse HTML, XML and especially JSON very efficiently, so the difference should not be a deciding factor and will not play a significant role in real applications.
+</p>
+<p>
+Note that even within one application different View types can of course be mixed arbitrarily if requirements or developer preferences are very different.
+</p>
+<p>
+So choice is also a matter of preference, but a general rule of thumb could be that a clean structure, mixed with plain HTML between the SAPUI5 controls is best supported by XMLViews (or HTMLViews for fans of pure document-centric web development who don't mind typing more), while developers coming from languages like JAVA or from other JavaScript libraries which use the programmatic approach will prefer to use JSViews.
+</p>
+<h2 id="Usage">Usage</h2>
+<p>
+According to the MVC paradigm, the View is responsible for defining and rendering the UI, the Model manages the application data, and the Controller reacts to View events and user interaction by modifying View and Model. This pattern defines a useful separation of concerns which helps developing or changing parts independently.
+</p>
+<p>
+Views and Controllers often form a 1:1 relationship; alternatively it is also possible to have UI-less Controllers which are also named application controllers; creating Views without Controllers is also possible. Since a View is a SAPUI5 Control from the technical point of view, it can have or inherit one or more SAPUI5 Models.<br />
+Note that View and Controller represent reusable units, and distributed development is highly supported.
+</p>
+<h2 id="FileNamesandLocationsViewandController">File Names and Locations (View and Controller)</h2>
+<p>
+Controllers and Views are defined and instantiated via a name which equals a SAPUI5 module name within the <a class="wiki" href="ModularizationConcept.html">require/declare</a> concept. This means that by default all files have to be located in a subfolder of the <tt>resources</tt> folder in the Web application. If this location is not appropriate, deviations can be configured as follows:<br />
+</p>
+<p>
+Example:
+We assume that your Views and Controllers are located on your local machine where the SAPUI5 runtime is loaded from another machine. When you now try to instantiate a View or Controller, the SAPUI5 runtime tries to load them relatively to the <tt>resources</tt> folder of the machine where the SAPUI5 runtime was loaded. Therefore you have to inform the runtime that your Views and Controllers are located on your local machine:
+</p>
+<div class="code"><pre>jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">registerModulePath</span><span class="o">(</span>sModuleNamePrefix<span class="o">,</span> sURL<span class="o">);</span>
+</pre></div><p>
+or 
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">localResources</span><span class="o">(</span>sModuleNamePrefix<span class="o">);</span>
+</pre></div><p>
+In most cases it will be sufficient to use <tt>sap.ui.localResources</tt> which internally registers <tt>sModuleNamePrefix</tt> to the URL <tt>"./" + sTransformedModuleNamePrefix </tt> where the transformed name has all dots replaced by slashes. All files starting with <tt>sModuleNamePrefix</tt> will then be loaded relatively to the location of the HTML page that was calling <tt>sap.ui.localResources</tt>.
+</p>
+<p>
+If your files are located at "<a class="ext-link" href="http://"><span class="icon"> </span>http://</a>&lt;localhost:8080&gt;/&lt;myapp&gt;/", for example, you can use <tt>registerModulePath</tt> as follows:
+</p>
+<div class="code"><pre>jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">registerModulePath</span><span class="o">(</span><span class="s">"myapp"</span><span class="o">,</span> <span class="s">"http://&lt;localhost:8080&gt;/&lt;myapp&gt;/"</span><span class="o">);</span>
+</pre></div><p>
+or 
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">localResources</span><span class="o">(</span><span class="s">"myapp"</span><span class="o">);</span>
+</pre></div><p>
+All Views and Controllers having a name starting with <tt>myapp</tt>, for example <tt>myapp.MyView</tt>, will now be loaded from your local machine.
+</p>
+<h2 id="ControllerDefinition">Controller Definition</h2>
+<p>
+You define a simple Controller, having no function yet, as following:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"sap.hcm.Address"</span><span class="o">,</span> <span class="o">{</span>
+   <span class="c1">// controller logic goes here
+</span><span class="o">});</span>
+</pre></div><p>
+The string in quotes is the Controller name, which is described in the chapter above. The Controller file is then named <tt>Address.controller.js</tt>. <br />
+Note that each Controller must have the suffix <tt>.controller.js</tt>.
+</p>
+<h2 id="ControllerFunctions">Controller Functions</h2>
+<p>
+There are predefined lifecycle hooks you can implement. Typically you also add event handlers or other functions. Controllers can fire events that other Controllers or entities can register for.
+</p>
+<h3 id="LifecycleHooks">Lifecycle Hooks</h3>
+<p>
+The lifecycle hooks are as following:
+</p>
+<ul><li><tt>onInit()</tt> - Called when a View is instantiated and its controls (if available) are already created. Can be used to modify the View before it is displayed to bind event handlers and do other one-time initialization.
+</li><li><tt>onExit()</tt> - Called when the View is destroyed. Use this one to free resources and finalize activities.
+</li><li><tt>onAfterRendering()</tt> - Called when the View has been rendered (therefore its HTML is part of the document). Post-rendering manipulations of the HTML can be done here. This hook is the same one that SAPUI5 controls get after being rendered.
+</li><li><tt>onBeforeRendering()</tt> - Is invoked before the Controller's View is re-rendered. You would use <tt>onInit()</tt> in the case that the hook shall be invoked only before the first rendering.
+</li></ul><p>
+For Controllers without a View, no lifecycle hooks will be called.
+</p>
+<p>
+Example: 
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"sap.hcm.Address"</span><span class="o">,</span> <span class="o">{</span>
+   
+   <span class="nl">onInit:</span> function<span class="o">()</span> <span class="o">{</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+   <span class="o">}</span>
+
+<span class="o">});</span>
+</pre></div><h3 id="EventHandlersandOtherFunctionality">Event Handlers and Other Functionality</h3>
+<p>
+In addition to the lifecycle methods, a Controller can define any additional methods that can serve as event handlers, or as some functionality offered by the Controller.
+</p>
+<p>
+Example: 
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"sap.hcm.Address"</span><span class="o">,</span> <span class="o">{</span>
+   
+   <span class="nl">increaseCounter:</span> function<span class="o">()</span> <span class="o">{</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">counter</span><span class="o">++;</span>
+   <span class="o">}</span>
+
+<span class="o">});</span>
+</pre></div><h2 id="ViewTypes">View Types</h2>
+<p>
+While the XML and JSON notation for SAPUI5 UI controls has been introduced, the MVC pattern shall also be supported in the case that a traditional programmatic UI construction is preferred.
+</p>
+<ul><li>XMLView
+<ul><li>UI is defined in an XML file/string
+</li></ul></li><li>JSONView
+<ul><li>UI is defined via JSON in a file/string 
+</li></ul></li><li>JSView
+<ul><li>UI is constructed in a traditional manner
+</li></ul></li><li>HTMLView
+<ul><li>UI is defined in an HTML file/string
+</li></ul></li></ul><p>
+Note that the XMLView type is constructed in a way that a mix with plain HTML is possible.
+</p>
+<p>
+While the View types mentioned above are predefined and offered to be chosen as View option in the application creation wizard - in the case that the tools are used for Web application development - others can also be plugged in. 
+</p>
+<h2 id="JSViewDefinition">JSView Definition</h2>
+<p>
+A JavaScript View is created like a Controller. The suffix for such a file is <tt>.view.js</tt>. There are two default methods that can be implemented and that would usually always be used:
+</p>
+<ul><li><tt>getControllerName()</tt> - Specifies the Controller belonging to this View. In the case that it is not implemented, or that "null" is returned, this View does not have a Controller.
+</li><li><tt>createContent()</tt> - Is initially called once after the Controller has been instantiated. It is the place where the UI is constructed. Since the Controller is given to this method, its event handlers can be attached right away.
+</li></ul><p>
+Example:
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">jsview</span><span class="o">(</span><span class="s">"sap.hcm.Address"</span><span class="o">,</span> <span class="o">{</span>  <span class="c1">// this View file is called Address.view.js
+</span>   
+   <span class="nl">getControllerName:</span> function<span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="s">"sap.hcm.Address"</span><span class="o">;</span>     <span class="c1">// the Controller lives in Address.controller.js
+</span>   <span class="o">},</span>
+
+   <span class="nl">createContent:</span> function<span class="o">(</span>oController<span class="o">)</span> <span class="o">{</span>
+      var oButton <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">({</span><span class="nl">text:</span><span class="s">"Hello JS View"</span><span class="o">});</span>
+      oButton<span class="o">.</span><span class="na">attachPress</span><span class="o">(</span>oController<span class="o">.</span><span class="na">handleButtonClicked</span><span class="o">);</span>
+      <span class="k">return</span> oButton<span class="o">;</span>
+   <span class="o">}</span>
+
+<span class="o">});</span>
+</pre></div><p>
+The string in quotes is the View name, which again equals the SAPUI5 module name within the require/declare concept.<br />
+</p>
+<p>
+<strong>IMPORTANT</strong>: if you want to define IDs for controls inside a JSView, in order to guarantee their uniqueness in case of View re-use, you cannot give hardcoded IDs, but give the View the chance to add its own instance ID as prefix. This is done by using the <tt>View.createId(...)</tt> method. In the above example this would look as follows:
+</p>
+<div class="code"><pre>var oButton <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">createId</span><span class="o">(</span><span class="s">"myButton"</span><span class="o">),</span> <span class="o">{</span><span class="nl">text:</span><span class="s">"Hello JS View"</span><span class="o">});</span>
+</pre></div><p>
+In the declarative View types this is not required - the View parser can manage this automatically. Also refer to the section about unique IDs below.
+</p>
+<h2 id="XMLViewDefinition">XMLView Definition</h2>
+<p>
+This type of View is defined in an XML file, and the file name has to end with <tt>.view.xml</tt>, or as an XML string. The View name along with the folder structure above is the name of the View. This name again equals the SAPUI5 module name within the require/declare concept.<br />
+Example: In the case of <tt>resources/sap/hcm/Address.view.xml</tt>, the View name would be <tt>sap.hcm.Address</tt>. This View name is used when the application displays an instance of this View. If you define the XMLView via an XML string, no file or require/declare is needed.
+</p>
+<p>
+The file looks like this:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;Panel&gt;</span>
+      <span class="nt">&lt;Image</span> <span class="na">src=</span><span class="s">"http://www.sap.com/global/ui/images/global/sap-logo.png"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"Press Me!"</span><span class="nt">/&gt;</span>
+   <span class="nt">&lt;/Panel&gt;</span>
+<span class="nt">&lt;/core:View&gt;</span>
+</pre></div><p>
+Therefore you simply nest the XML tags (analogous to a nesting sequence of the SAPUI5 controls), and add the property values as attributes. (Some details on more complex Views are described below.)
+</p>
+<h3 id="NamespacesinXMLViews">Namespaces in XMLViews</h3>
+<p>
+Analoguous to generic XML mapping features, the names of the SAPUI5 control libraries are mapped to XML namespaces. You can choose any of the required namespaces to be the default namespace, therefore the respective control tags do not need a prefix.<br />
+The surrounding &lt;View&gt; tag is always required and in this case has the <tt>core</tt> namespace defined in the first line. Of course you can give any name; to keep the tag names shorter it might be useful for example to use "c" instead of "core".
+</p>
+<p>
+Note: If controls are located in a subpackage of a control library, as it is the case for the <tt>sap.ui.commons.layout.MatrixLayout</tt>, they need to have their own XML namespace:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span> <span class="na">xmlns:layout=</span><span class="s">"sap.ui.commons.layout"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;layout:MatrixLayout&gt;</span>
+      ...
+</pre></div><h3 id="AggregationHandlinginXMLViews">Aggregation Handling in XMLViews</h3>
+<p>
+Child controls are simply added as child tags, as described in the example above where a &lt;Button&gt; tag was added into a &lt;Panel&gt; tag.<br />
+</p>
+<p>
+Some controls have more than one content area, for example the Shell control which has main content, a pane bar, a headerItems aggregation, worksetItems and so on.
+This is the reason why in general an aggregation tag serves as direct child of a container, and inside are the children. 
+Directly adding children as seen above is only possible if the container control has marked one child aggregation as "default". 
+Some containers may not have "default" content like the Splitter, which has two equally important content areas. 
+Note that the framework leads you as a user by providing an error message if you made a mistake here.<br />
+</p>
+<p>
+In general, aggregations are filled as follows. Note: The namespace of the parent control tag and the aggregation tag must be the same.
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;Panel&gt;</span>
+      <span class="nt">&lt;content&gt;</span>  <span class="c">&lt;!-- this is the general way of adding children: use the aggregation name --&gt;</span>
+         <span class="nt">&lt;Image</span> <span class="na">src=</span><span class="s">"http://www.sap.com/global/ui/images/global/sap-logo.png"</span><span class="nt">/&gt;</span>
+         <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"Press Me"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/content&gt;</span>
+   <span class="nt">&lt;/Panel&gt;</span>
+<span class="nt">&lt;/core:View&gt;</span>
+</pre></div><h3 id="AssociationsinXMLViews">Associations in XMLViews</h3>
+<p>
+Associations can reference Controls being aggregated elsewhere. In XMLViews this reference is expressed by the ID of the associated Control. In the following example the "labelFor" association of the Label Control is pointing to the TextField:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;Label</span> <span class="na">labelFor=</span><span class="s">"myField"</span> <span class="nt">/&gt;</span>
+   <span class="nt">&lt;TextField</span> <span class="na">id=</span><span class="s">"myField"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/core:View&gt;</span>
+</pre></div><p>
+Note that (in contrast to HTMLViews) the attributes in XML are case-sensitive, so camel-case attributes like "labelFor" are written exactly like defined by the control.
+</p>
+<p>
+In case of 0..n associations the attribute takes a comma-separated list of IDs.
+</p>
+<h3 id="UsageofEventHandlersinXMLViews">Usage of Event Handlers in XMLViews</h3>
+<p>
+Event handlers are bound as attributes, where the attribute name is the event name, like "press" in case of a Button, and the attribute value is the event handler name. This event handler is expected to be defined as a function in the view's controller. The function will be executed with the controller as the context object (<tt>this</tt>).
+<br />
+Therefore, the following declaration is equivalent to a call of <tt>controller.doSomething()</tt> when the Button is pressed:
+</p>
+<div class="code"><pre>...
+         <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"Press Me"</span> <span class="na">press=</span><span class="s">"doSomething"</span><span class="nt">/&gt;</span>
+...
+</pre></div><h3 id="DataBindinginXMLViews">Data Binding in XMLViews</h3>
+<p>
+You can bind data in XMLViews: If you want to bind texts of a control to a language-dependent resource bundle, simply define the resource bundle via a name (<tt>resourceBundleName</tt> attribute) or a URL (<tt>resourceBundleUrl</tt> attribute) and assign an alias (<tt>resourceBundleAlias</tt> attribute) for the bundle within the View definition. The binding path is the same as for every other SAPUI5 <a class="wiki" href="DataBinding.html">databinding</a>:
+</p>
+<p>
+Resource bundle content:
+</p>
+<div class="code"><pre>MY_TEXT=Hello World
+</pre></div><p>
+Example:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">resourceBundleName=</span><span class="s">"myBundle"</span>
+           <span class="na">resourceBundleAlias=</span><span class="s">"i18n"</span> 
+           <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span>
+           <span class="na">xmlns:html=</span><span class="s">"http://www.w3.org/1999/xhtml"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;Panel&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"{i18n&gt;MY_TEXT}"</span><span class="nt">/&gt;</span>
+   <span class="nt">&lt;/Panel&gt;</span>
+<span class="nt">&lt;core:View&gt;</span>
+</pre></div><p>
+The necessary <a class="wiki" href="ResourceModel.html">ResourceModel</a> for binding these texts is created during View instantiation. The Model will be set as secondary Model with the given alias to the View instance. If you want to bind other properties to another Model you have to create the Model on your own within the corresponding Controller, or HTML page, and attach it to the View with another alias. The binding itself behaves like every SAPUI5 <a class="wiki" href="DataBinding.html">databinding</a> and like described above. 
+</p>
+<h3 id="UsageofNativeHTMLinXMLViews">Usage of Native HTML in XMLViews</h3>
+<p>
+The usage of Native HTML depends on the XHTML feature set. When mixing XHTML and SAPUI5 controls, some additional rules have to be obeyed:
+</p>
+<ol><li>XHTML elements can be used whenever the SAPUI5 type "Control" could be used, for example in the root of an XMLView, or in the content aggregation of a layout container
+</li><li>When embedding XHTML in an aggregation of a SAPUI5 control, the XHTML must not consist of a single text node. The topmost node of an embedded XHTML tree must be an XHTML element. Embedding pure text into an aggregation is not supported.
+</li><li>The XHTML nodes are converted 1:1 to HTML, the XMLView does not deal with any differences between XHTML and HTML (for example re-writing auto-closing tags)
+</li><li>The created HTML DOM nodes are preserved during re-rendering of an XMLView: Modifications to the DOM are not lost.
+</li></ol><p>
+Further restrictions are currently not known.
+</p>
+<p>
+Note: As an alternative to embedding XHTML, you can use the <tt>sap.ui.core.HTML</tt> control. Note that it is less convenient since encoding of the content is required.
+</p>
+<p>
+To mix SAPUI5 controls freely with native XHTML, you simply need another namespace - the XHTML one - and then you can use (X)HTML:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span>
+           <span class="na">xmlns:html=</span><span class="s">"http://www.w3.org/1999/xhtml"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;Panel&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">text=</span><span class="s">"Press Me. I am a SAPUI5 Button"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;html:button&gt;</span>No, press me. I am native HTML Button.<span class="nt">&lt;/html:button&gt;</span>
+   <span class="nt">&lt;/Panel&gt;</span>
+<span class="nt">&lt;core:View&gt;</span>
+</pre></div><h3 id="UsageofCSSStyleSheetsinXMLViews">Usage of CSS Style Sheets in XMLViews</h3>
+<p>
+You include the style sheets like plain HTML. You can also add further CSS classes to SAPUI5 controls by using the <tt>class</tt> attribute. The effect is the same as it is when calling <tt>myButton.addStyleClass(...)</tt>.
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span>
+           <span class="na">xmlns:html=</span><span class="s">"http://www.w3.org/1999/xhtml"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;html:style&gt;</span>
+      .mySuperRedButton {
+         color: red;
+      }
+   <span class="nt">&lt;/html:style&gt;</span>
+   <span class="nt">&lt;Panel&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">class=</span><span class="s">"mySuperRedButton"</span> <span class="na">text=</span><span class="s">"Press Me"</span><span class="nt">/&gt;</span>
+   <span class="nt">&lt;/Panel&gt;</span>
+<span class="nt">&lt;core:View&gt;</span>
+</pre></div><p>
+It is recommended to carefully choose the elements that you style since the CSS always affects the whole page and is NOT restricted to the View.
+</p>
+<h2 id="JSONViewDefinition">JSONView Definition</h2>
+<p>
+This type of View is defined in a file and that file's name must end with <tt>.view.json</tt>, or as a JSON string. The View name along with the folder structure above is the name of the View. This name again equals the SAPUI5 module name within the require/declare concept.<br />
+For example, the file could be <tt>resources/sap/hcm/Address.view.json</tt>, then the View name would be <tt>sap.hcm.Address</tt>.<br />
+This View name is used when the application wants to display an instance of this View.
+</p>
+<p>
+The file looks like this:
+</p>
+<div class="code"><pre><span class="o">{</span> 
+   <span class="s">"Type"</span><span class="o">:</span><span class="s">"sap.ui.core.mvc.JSONView"</span><span class="o">,</span>
+   <span class="s">"controllerName"</span><span class="o">:</span><span class="s">"sap.hcm.Address"</span><span class="o">,</span>
+   <span class="s">"content"</span><span class="o">:</span> <span class="o">[{</span>
+      <span class="s">"Type"</span><span class="o">:</span><span class="s">"sap.ui.commons.Image"</span><span class="o">,</span>
+      <span class="s">"id"</span><span class="o">:</span><span class="s">"MyImage"</span><span class="o">,</span>
+      <span class="s">"src"</span><span class="o">:</span><span class="s">"http://www.sap.com/global/ui/images/global/sap-logo.png"</span>
+   <span class="o">},</span>
+   <span class="o">{</span>
+      <span class="s">"Type"</span><span class="o">:</span><span class="s">"sap.ui.commons.Button"</span><span class="o">,</span>
+      <span class="s">"id"</span><span class="o">:</span><span class="s">"MyButton"</span><span class="o">,</span>
+      <span class="s">"text"</span><span class="o">:</span><span class="s">"Press Me"</span>
+   <span class="o">}]</span>
+<span class="o">}</span>
+</pre></div><p>
+So you simply nest the JSON Objects like you want to nest the SAPUI5 controls and add the property values as attributes. The syntax is exactly the same as you can use a JSON constructor for any control.
+</p>
+<p>
+Note: You can only use strings in your JSONView.
+</p>
+<h3 id="AggregationHandlinginJSONViews">Aggregation Handling in JSONViews</h3>
+<p>
+As seen above, child controls are simply added as arrays, like the above example added an Image and a Button into the View content aggregation.
+</p>
+<h3 id="UsageofEventHandlersinJSONViews">Usage of Event Handlers in JSONViews</h3>
+<p>
+Event handlers are bound as attributes, where the attribute name is the event name, like "press" in case of a Button, and the attribute value is the event handler name. This event handler is expected to be defined as function in the View's Controller.<br />
+So this declaration will cause <tt>controller.doSomething()</tt> to be executed when the Button is pressed:
+</p>
+<div class="code"><pre><span class="o">...</span>
+   <span class="o">{</span>
+      <span class="s">"Type"</span><span class="o">:</span><span class="s">"sap.ui.commons.Button"</span><span class="o">,</span>
+      <span class="s">"id"</span><span class="o">:</span><span class="s">"MyButton"</span><span class="o">,</span>
+      <span class="s">"text"</span><span class="o">:</span><span class="s">"Press Me"</span><span class="o">,</span>
+      <span class="s">"press"</span><span class="o">:</span><span class="s">"doSomething"</span>
+   <span class="o">}</span>
+<span class="o">...</span>
+</pre></div><h3 id="DataBindinginJSONViews">Data Binding in JSONViews</h3>
+<p>
+You can bind data in JSONViews. You bind the texts of a control to a language-dependent resource bundle by defining the resource bundle via name (<tt>resourceBundleName</tt> property) or a URL (<tt>resourceBundleUrl</tt> property) and assigning an alias (<tt>resourceBundleAlias</tt> property) for the bundle within the View definition. The binding path is the same as for every other SAPUI5 <a class="wiki" href="DataBinding.html">databinding</a>:
+</p>
+<p>
+Resource bundle content:
+</p>
+<div class="code"><pre>MY_TEXT=Hello World
+</pre></div><p>
+Example:
+</p>
+<div class="code"><pre><span class="o">{</span>   <span class="s">"Type"</span><span class="o">:</span> <span class="s">"sap.ui.core.JSONView"</span><span class="o">,</span>
+    <span class="s">"controllerName"</span><span class="o">:</span><span class="s">"my.own.views.test"</span><span class="o">,</span>
+    <span class="s">"resourceBundleName"</span><span class="o">:</span><span class="s">"myBundle"</span><span class="o">,</span>
+    <span class="s">"resourceBundleAlias"</span><span class="o">:</span><span class="s">"i18n"</span><span class="o">,</span>
+    <span class="s">"content"</span><span class="o">:</span> <span class="o">[{</span>
+        <span class="s">"Type"</span><span class="o">:</span><span class="s">"sap.ui.commons.Panel"</span><span class="o">,</span>
+        <span class="s">"id"</span><span class="o">:</span><span class="s">"myPanel"</span><span class="o">,</span>
+        <span class="s">"content"</span><span class="o">:[{</span>
+            <span class="s">"Type"</span><span class="o">:</span><span class="s">"sap.ui.commons.Button"</span><span class="o">,</span>
+            <span class="s">"id"</span><span class="o">:</span><span class="s">"Button1"</span><span class="o">,</span>
+            <span class="s">"text"</span><span class="o">:</span><span class="s">"{i18n&gt;MY_TEXT}"</span><span class="o">,</span>
+            <span class="s">"press"</span><span class="o">:</span> <span class="s">"doIt"</span>
+        <span class="o">}]</span>
+    <span class="o">}]</span>
+<span class="o">}</span>
+</pre></div><p>
+The necessary <a class="wiki" href="UsageInApp.html">ResourceModel</a> for binding this texts is created during View instantiation. The Model will be set as secondary Model with the given alias to the View instance. If you want to bind other properties to another Model you have to create the Model on your own within the corresponding Controller, or HTML page, and attach it to the View with another alias. The binding itself behaves like every SAPUI5 <a class="wiki" href="DataBinding.html">databinding</a> and like described above. 
+</p>
+<h2 id="HTMLViewDefinition">HTMLView Definition</h2>
+<p>
+A HTML View is defined by declarative HTML. Please see <a class="wiki" href="DeclarativeSupport.html">DeclarativeSupport</a> for more information. Like the declarative support the HTML view supports embedded HTML. 
+</p>
+<p>
+The filename of an HTML View by convention ends with <tt>.view.html</tt>, e.g. <tt>myview.view.html</tt>.
+</p>
+<p>
+Example:
+</p>
+<div class="code"><pre><span class="nt">&lt;template</span> <span class="na">data-controller-name=</span><span class="s">"example.mvc.test"</span><span class="nt">&gt;</span>
+   Hello
+  <span class="nt">&lt;h1&gt;</span>Title<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;div&gt;</span>Embedded HTML<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"test test2 test3"</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.commons.Panel"</span> <span class="na">id=</span><span class="s">"myPanel"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"test test2 test3"</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.commons.Button"</span> <span class="na">id=</span><span class="s">"Button1"</span> <span class="na">data-text=</span><span class="s">"Hello World"</span> <span class="na">data-press=</span><span class="s">"doIt"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.commons.Button"</span> <span class="na">id=</span><span class="s">"Button2"</span> <span class="na">data-text=</span><span class="s">"Hello"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.HTMLView"</span> <span class="na">id=</span><span class="s">"MyHTMLView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.JSView"</span> <span class="na">id=</span><span class="s">"MyJSView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.JSONView"</span> <span class="na">id=</span><span class="s">"MyJSONView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.XMLView"</span> <span class="na">id=</span><span class="s">"MyXMLView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+<span class="nt">&lt;/template&gt;</span>
+</pre></div><p>
+All view specific properties can be added to the <tt>&lt;template&gt;</tt> tag as <i>data-*</i> attributes.
+</p>
+<h2 id="ViewInstantiation">View Instantiation</h2>
+<p>
+Views can be instantiated with the factory method <tt>sap.ui.view</tt>. Necessary information for the instantiation can be passed via an object. This object can have the following properties:
+</p>
+<ul><li><tt>type</tt>: Type can be <tt>JSON</tt>, <tt>JS</tt>, <tt>XML</tt>. All possible types are declared in the enumeration <tt>sap.ui.core.mvc.ViewType</tt>
+</li><li><tt>viewName</tt>: The View name, corresponding to the module concept
+</li><li><tt>viewContent</tt>: XMLViews/JSONViews only - XML/JSON string representation of the View definition. If <tt>viewName</tt> and <tt>viewContent</tt> are given, the View definition will be loaded with the <tt>viewName</tt>
+</li><li><tt>Controller</tt>: Any Controller instance. The given Controller instance overrides the Controller defined in the View definition
+</li><li><tt>viewData</tt>: <tt>JSViews</tt> only - can hold user specific data. This data is available during the whole lifecycle of the View and the Controller
+</li></ul><p>
+Example:
+</p>
+<div class="code"><pre><span class="o">...</span>
+   var myController <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">controller</span><span class="o">(</span><span class="s">"my.own.controller"</span><span class="o">);</span>
+
+   var myView <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">view</span><span class="o">({</span> <span class="nl">type:</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">mvc</span><span class="o">.</span><span class="na">ViewType</span><span class="o">.</span><span class="na">XML</span><span class="o">,</span>
+                              <span class="nl">viewName:</span> <span class="s">"my.own.view"</span><span class="o">,</span>
+                              <span class="nl">controller:</span> myController 
+                            <span class="o">});</span>
+<span class="o">...</span>
+</pre></div><p>
+All regular properties of a View (control) can be passed to the object as usual.
+<br />
+</p>
+<h2 id="TypedViewsandControllers">Typed Views and Controllers</h2>
+<p>
+The above ways of defining Views and Controllers are light-weight and easy to write. However, for more complex use-cases a more formal way to define Views and Controllers might be preferred, even if this means a bit more complexity.
+</p>
+<p>
+This section shows how you can create new classes, using prototype inheritance, and declare their API.
+</p>
+<h3 id="TypedViews">Typed Views</h3>
+<h3 id="TypedControllers">Typed Controllers</h3>
+<p>
+If you want to create a controller that is a new type on its own, you can do it like this. There is some boilerplate code on top that needs to be written and the functions need to be declared on the new prototype. But apart from that it's a normal controller:
+</p>
+<div class="code"><pre><span class="cm">/* boilerplate code for typed Controller */</span>
+jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">declare</span><span class="o">({</span><span class="nl">modName:</span><span class="s">"sap.hcm.AddressController"</span><span class="o">,</span> <span class="nl">type:</span><span class="s">"controller"</span><span class="o">});</span> <span class="c1">// declaring a special type of module   
+</span>sap<span class="o">.</span><span class="na">hcm</span><span class="o">.</span><span class="na">AddressController</span> <span class="o">=</span> function <span class="o">()</span> <span class="o">{</span> <span class="c1">// the constructor
+</span>   sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">mvc</span><span class="o">.</span><span class="na">Controller</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> arguments<span class="o">);</span>
+<span class="o">};</span>
+jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">require</span><span class="o">(</span><span class="s">"sap.ui.core.mvc.Controller"</span><span class="o">);</span> <span class="c1">// this is currently required, as the Controller is not loaded by default
+</span>sap<span class="o">.</span><span class="na">hcm</span><span class="o">.</span><span class="na">AddressController</span><span class="o">.</span><span class="na">prototype</span> <span class="o">=</span> jQuery<span class="o">.</span><span class="na">sap</span><span class="o">.</span><span class="na">newObject</span><span class="o">(</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">mvc</span><span class="o">.</span><span class="na">Controller</span><span class="o">.</span><span class="na">prototype</span><span class="o">);</span> <span class="c1">// chain the prototypes
+</span><span class="cm">/* end of boilerplate code for typed Controller */</span>
+        
+<span class="c1">// to avoid the above we could in the future offer it behind a simple call to:
+// sap.ui.defineController("sap.hcm.Address");
+</span>        
+sap<span class="o">.</span><span class="na">hcm</span><span class="o">.</span><span class="na">AddressController</span><span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">onInit</span> <span class="o">=</span> function<span class="o">()</span> <span class="o">{</span>
+   <span class="c1">// modify control tree - this is the regular lifecycle hook
+</span><span class="o">};</span>
+        
+<span class="c1">// implement an event handler in the Controller
+</span>sap<span class="o">.</span><span class="na">hcm</span><span class="o">.</span><span class="na">AddressController</span><span class="o">.</span><span class="na">prototype</span><span class="o">.</span><span class="na">doSomething</span> <span class="o">=</span> function<span class="o">()</span> <span class="o">{</span>
+   alert<span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
+<span class="o">};</span>
+</pre></div><p>
+A live example can be found <a class="ext-link" href="../../content/Examples/mvc.html" title="demokit/content/Examples/mvc.html in Sandbox for Applications"><span class="icon"> </span>here</a>.
+</p>
+<h2 id="NestingViews">Nesting Views</h2>
+<p>
+All Views can be nested independent of the View type. Each View type behaves like any other SAPUI5 control. The <tt>viewName</tt> property defines which View to embed.
+</p>
+<p>
+For XMLViews it can look like this:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span>
+           <span class="na">xmlns:html=</span><span class="s">"http://www.w3.org/1999/xhtml"</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;Panel&gt;</span>
+      <span class="nt">&lt;core:JSView</span> <span class="na">id=</span><span class="s">"myJSView"</span> <span class="na">viewName=</span><span class="s">"sap.hcm.Bankaccount"</span> <span class="nt">/&gt;</span>
+   <span class="nt">&lt;/Panel&gt;</span>
+<span class="nt">&lt;core:View&gt;</span>
+</pre></div><p>
+For HTMLViews it can look like this:
+</p>
+<div class="code"><pre><span class="nt">&lt;template</span> <span class="na">data-controller-name=</span><span class="s">"example.mvc.test"</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.HTMLView"</span> <span class="na">id=</span><span class="s">"MyHTMLView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span> 
+  <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.JSView"</span> <span class="na">id=</span><span class="s">"MyJSView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.JSONView"</span> <span class="na">id=</span><span class="s">"MyJSONView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-sap-ui-type=</span><span class="s">"sap.ui.core.mvc.XMLView"</span> <span class="na">id=</span><span class="s">"MyXMLView"</span> <span class="na">data-view-name=</span><span class="s">"example.mvc.test2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+<span class="nt">&lt;/template&gt;</span>
+</pre></div><h2 id="SupportforUniqueIDs">Support for Unique IDs</h2>
+<p>
+Normally, each View and its content defines static IDs. Via these IDs you can identify and modify the controls within your Controller during runtime. If you are reusing or nesting these Views, the IDs would be not unique any more. Therefore each View will add its own ID as prefix to all its child controls. This happens only if a static ID is given. If the ID is created during instantiation of the control it is unique per default.
+If you create further controls during runtime, the Controller can create a unique ID for you calling <tt>oController.createId("ID")</tt>. These methods add the necessary prefix to the ID.
+If you want to modify the control with the ID &lt;ID&gt; you can call the method <tt>byId(&lt;ID&gt;)</tt> on your view to get the right control directly. You don't have to handle all the prefix stuff by your own.
+</p>
+<p>
+<strong>Important:</strong> only in the declarative View types (XMLView, JSONView, HTMLView) the IDs are prefixed automatically. In JSViews the controls are created directly (in the createContent() method) and it is the task of the JSView developer to create unique IDs by calling <tt>this.createId("ID")</tt>. Only when this is done, <tt>View.byId(&lt;ID&gt;)</tt> will return the control because this method will always add the prefix.
+</p>
+<p>
+ButtonView:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">viewName=</span><span class="s">"sap.hcm.ButtonView"</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.myController"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span>
+           <span class="na">xmlns:html=</span><span class="s">"http://www.w3.org/1999/xhtml"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Button</span> <span class="na">id=</span><span class="s">"aButton"</span> <span class="na">text=</span><span class="s">"Click me"</span><span class="nt">/&gt;</span>   
+<span class="nt">&lt;core:View&gt;</span>
+</pre></div><p>
+This View defines a Button with static ID <tt>aButton</tt>.
+</p>
+<p>
+ContainerView:
+</p>
+<div class="code"><pre><span class="nt">&lt;core:View</span> <span class="na">viewName=</span><span class="s">"sap.hcm.ContainerView"</span> <span class="na">controllerName=</span><span class="s">"sap.hcm.Address"</span> <span class="na">xmlns=</span><span class="s">"sap.ui.commons"</span> <span class="na">xmlns:core=</span><span class="s">"sap.ui.core"</span>
+           <span class="na">xmlns:html=</span><span class="s">"http://www.w3.org/1999/xhtml"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;core:View</span> <span class="na">id=</span><span class="s">"ButtonView1"</span> <span class="na">viewName=</span><span class="s">"sap.hcm.ButtonView"</span><span class="nt">/&gt;</span>   
+      <span class="nt">&lt;core:View</span> <span class="na">id=</span><span class="s">"ButtonView2"</span> <span class="na">viewName=</span><span class="s">"sap.hcm.ButtonView"</span><span class="nt">/&gt;</span>   
+<span class="nt">&lt;core:View&gt;</span>
+</pre></div><p>
+This View defines a View embedding the same View several times.
+</p>
+<p>
+View creation:
+</p>
+<div class="code"><pre><span class="o">...</span>
+   var oView <span class="o">=</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">view</span><span class="o">({</span><span class="nl">type:</span>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">mvc</span><span class="o">.</span><span class="na">ViewType</span><span class="o">.</span><span class="na">XML</span><span class="o">,</span> <span class="nl">id:</span><span class="s">"myContainerView"</span><span class="o">,</span><span class="nl">viewName:</span><span class="s">"sap.hcm.ContainerView"</span><span class="o">});</span>
+<span class="o">...</span>
+</pre></div><p>
+The IDs will look like this:
+</p>
+<p>
+For the Container View both child Views get <tt>myContainerView--</tt> as prefix:
+<tt>myContainerView--ButtonView1</tt>
+<tt>myContainerView--ButtonView2</tt>
+</p>
+<p>
+Getting one of these child Views:
+</p>
+<div class="code"><pre><span class="o">...</span>
+   var oButtonView1 <span class="o">=</span> oView<span class="o">.</span><span class="na">byId</span><span class="o">(</span><span class="s">"ButtonView1"</span><span class="o">);</span>
+<span class="o">...</span>
+</pre></div><p>
+For the ButtonViews the IDs look like this:
+<tt>ButtonView1--aButton</tt>
+<tt>ButtonView2--aButton</tt>
+</p>
+<p>
+Getting the Button control:
+</p>
+<div class="code"><pre><span class="o">...</span>
+   var oButtonView1 <span class="o">=</span> oView<span class="o">.</span><span class="na">byId</span><span class="o">(</span><span class="s">"ButtonView1"</span><span class="o">);</span>
+   oButtonView1<span class="o">.</span><span class="na">byId</span><span class="o">(</span><span class="s">"aButton"</span><span class="o">);</span>
+<span class="o">...</span>
+</pre></div><p>
+Written as a JSView, the Button should be created like this:
+</p>
+<div class="code"><pre><span class="o">...</span>
+  <span class="nl">createContent:</span> function<span class="o">()</span> <span class="o">{</span>
+    var oContent <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">Button</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">createId</span><span class="o">(</span><span class="s">"aButton"</span><span class="o">),</span> <span class="o">{</span>
+      <span class="nl">text:</span> <span class="s">"Click me!"</span>
+    <span class="o">});</span>
+    <span class="k">return</span> oContent<span class="o">;</span>
+  <span class="o">},</span>
+<span class="o">...</span> 
+</pre></div><h2 id="ViewCloning">View Cloning</h2>
+<p>
+Another important aspect of UI5 views is their cloning behavior. As you might know, UI5 aggregation bindings can use a <a class="wiki" href="BindingAggregations.html#UsingTemplateControls">template control</a> to create a series of similar controls based on a collection of data (e.g. items in a <a class="missing wiki">RowRepeater?</a> for each entry in a model array). The data binding uses a <tt>ManagedObject.clone</tt> operation to create multiple controls out of a single template. For normal controls, the clone operation is based on the control settings that are decribed by UI5 metadata: properties, aggregations, associations, event handlers and so on. The clone operation collects all these settings and creates a new instance out of it. 
+</p>
+<p>
+For Views there is a conflict between this basic, generic approach and the way how Views usually define their content: via hooks (JSView) or via persisted XML or JSON files. Furthermore, it is allowed and documented best practice to modify the view in the <tt>onInit</tt> hook of its controller. To avoid conflicts between the generic cloning and the MVC concepts, Views implement a slightly modified clone operation: only a subset of the View settings are cloned, the remainder is re-created by calling the hook (JSView) or applying the external View description (XML or JSON file), depending on the view type.
+</p>
+<p>
+Cloned in a generic way are the following settings:
+</p>
+<ul><li>any models that have been set (<tt>setModel()</tt>)
+</li><li>registered control event listeners (<tt>attachSomeEvent</tt>)
+</li><li>registered browser event listeners (<tt>attachBrowserEvent</tt>)
+</li><li>bindings (<tt>bindProperty</tt>, <tt>bindAggregation</tt>)
+</li></ul><p>
+Not cloned, but recreated are all aggregations, namely the content.
+</p>
+<p>
+In scenarios where the above clone approach still leads to undesirable behavior, the <a class="wiki" href="BindingAggregations.html#UsingFactoryFunctions">factory approach</a> can be used for the aggregation binding instead.
+</p>
+<h2 id="MVCandSAPUI5forGWT">MVC and SAPUI5 for GWT</h2>
+<p>
+Currently, there is no support for working on basis of the MVC approach for the Google Web Toolkit.
+</p>
+<h2 id="WhatAbouttheMVPApproachWhynot">What About the MVP Approach? Why not?</h2>
+<p>
+(Model-View-Presenter is a Pattern closely related to MVC)
+</p>
+<p>
+Actually, MVP is not a pattern that is exactly described. You can read Martin Fowler's take on it (<a class="ext-link" href="http://www.martinfowler.com/eaaDev/uiArchs.html"><span class="icon"> </span>http://www.martinfowler.com/eaaDev/uiArchs.html</a>) or simply trust <a class="ext-link" href="http://en.wikipedia.org/wiki/Model_View_Presenter"><span class="icon"> </span>Wikipedia</a> to find out that understandings of MVP differ a lot, maybe more than MVC and "median" MVP understandings differ. To some extent, the SAPUI5 MVC implementation can be considered as close to MVP than to MVC.
+</p>
+<p>
+So instead of asking "MVC vs MVP" one should understand what SAPUI5 offers and ask about specific parts of MVP that seem to be missing. These can be discussed and - if useful - implemented.
+</p>
+<p>
+It's content, not the label, that counts.
+</p>
+<h2 id="UnderDevelopment">Under Development</h2>
+<ul><li>Performance measurements for XML parsing
+</li><li>Useful connecting methods between Controller and other entities may need to be added in the future
+</li><li>Controls - like Dialogs - that are not part of the UI tree
+</li><li>Preserve/rendering issue when using HTML container in XMLViews
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

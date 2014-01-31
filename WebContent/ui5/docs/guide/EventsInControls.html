@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/EventsInControls – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <p>
+</p><p>
+</p>
+<h1 id="HandlingEventsinControls">Handling Events in Controls</h1>
+<p>
+There are two types of events in UI5 applications: 
+</p>
+<ol><li>events <strong>fired by the browser</strong> (these are the well-known ones like "click", "blur" etc.) and 
+</li><li>events <strong>fired by UI5 Controls</strong> (these are usually semantically richer and related to the Control functionality; e.g. a browser-level "click" on the respective icon in a Panel header could trigger a "maximize" or "minimize" event)
+</li></ol><p>
+Applications can listen to both types of events. 
+</p>
+<p>
+This page describes how Control implementations can use browser events (type 1) to implement their behavior and to eventually fire Control events (type 2).
+</p>
+<h2 id="RegisteringforBrowserEvents">Registering for Browser Events</h2>
+<p>
+When a Control needs to react on browser events, there are two ways to register for the events, the "standard" way and an "optimized UI5" way:
+</p>
+<ol><li><strong>Explicitly register for browser events</strong> on certain DOM elements, typically using <tt>jQuery.bind()</tt> (using the respective browser methods like <tt>addEventListener</tt> would also be possible).<br />
+The event registration must be done in the onAfterRendering method of the Control, so the event binding is always repeated after the control is re-rendered (new DOM elements are created and old ones are discarded). Furthermore, to prevent memory leaks, the event binding must be removed (with jQuery.unbind()) in the "onBeforeRendering" method and in the "exit" method (which is called before the Control is destroyed).
+</li></ol><ul><li>Pro: 
+<ul><li>ANY type of browser event can be handled
+</li><li>Works exactly like in any web page or jQuery-based web application
+</li></ul></li><li>Con:
+<ul><li>Quite some code required to do the binding and unbinding of the event handler
+</li><li>Registering many event handlers can affect performance
+</li></ul></li></ul><blockquote>
+<blockquote>
+<p>
+Example:
+</p>
+<pre class="wiki">     MyControl.prototype.onAfterRendering = function() {
+        this.$().bind("click", jQuery.proxy(this.handleClick, this));  // could also be:  jQuery.sap.byId(this.getId).bind("click", jQuery.proxy(this.handleClick, this));
+     }
+
+     MyControl.prototype.onBeforeRendering = function() {
+        this.$().unbind("click", this.handleClick);
+     }
+
+     MyControl.prototype.exit = function() {
+        this.$().unbind("click", this.handleClick);
+     }
+
+     MyControl.prototype.handleClick = function(oEvent) {
+        // do something...
+     }
+</pre></blockquote>
+</blockquote>
+<ol start="2"><li><strong>Just implement the event handler</strong> for certain "common" event types, using a <strong>name convention</strong> for the handler method.<br />
+UI5 automatically registers event handlers for a list of commonly used event types on the root element of a complete tree of UI5 controls. If the respective event occurs anywhere in the tree and the respective Control implements the "on&lt;eventName&gt;" method, this method is invoked as if it had been registered with jQuery.bind().
+</li></ol><ul><li>Pro: 
+<ul><li>Saves Control code
+</li><li>Saves number of event handler registrations in the DOM
+</li><li>Saves evet handler registrations and deregistrations executed on every re-rendering
+</li></ul></li><li>Con:
+<ul><li>Only works for a certain (comprehensive) list of events
+</li></ul></li></ul><blockquote>
+<blockquote>
+<p>
+Example:
+</p>
+<pre class="wiki">     MyControl.prototype.onclick = function(oEvent) {
+        // do something...
+     }
+</pre></blockquote>
+</blockquote>
+<p>
+You see it saves quite some coding to use this UI5 event handling functionality.
+</p>
+<h2 id="ListofsupportedBrowserEvents">List of supported Browser Events</h2>
+<p>
+The following events are available to be handled by just implementing an "on&lt;eventName&gt;" method (list is also available via API, see JSDoc of <a class="ext-link" href="../api/symbols/jQuery.sap.html#ControlEvents" title="symbols/jQuery.sap.html#ControlEvents in Merged JSDoc"><span class="icon"> </span>jQuery.sap.ControlEvents</a>):
+</p>
+<ul><li>click
+</li><li>dblclick
+</li><li>dragend
+</li><li>dragenter
+</li><li>dragleave
+</li><li>dragover
+</li><li>dragstart
+</li><li>drop
+</li><li>focusin
+</li><li>focusout
+</li><li>keydown
+</li><li>keypress
+</li><li>keyup
+</li><li>mousedown
+</li><li>mouseout
+</li><li>mouseover
+</li><li>mouseup
+</li><li>paste
+</li><li>select
+</li><li>selectstart
+</li></ul><h2 id="PseudoEvents">Pseudo Events</h2>
+<p>
+In addition to the native browser events listed above, UI5 also creates so-called "pseudo events" which are semantically enriched, but can also be handled implementing an "on&lt;eventName&gt;" method. So they "feel like" browser events (but they cannot be used with jQuery.bind()).
+</p>
+<p>
+These events help avoiding additional checks for modifier keys in the event handler or checking for certain keycodes.
+</p>
+<p>
+The complete documentation of these events can be found in the JSDoc of <a class="ext-link" href="../api/symbols/jQuery.sap.PseudoEvents.html" title="symbols/jQuery.sap.PseudoEvents.html in Merged JSDoc"><span class="icon"> </span>jQuery.sap.PseudoEvents</a>. The list is as follows:
+</p>
+<ul><li>sapbackspace
+</li><li>sapbackspacemodifiers
+</li><li>sapbottom
+</li><li>sapcollapse
+</li><li>sapcollapseall
+</li><li>sapcollapsemodifiers
+</li><li>sapdecrease
+</li><li>sapdecreasemodifiers
+</li><li>sapdelayeddoubleclick
+</li><li>sapdelete
+</li><li>sapdeletemodifiers
+</li><li>sapdown
+</li><li>sapdownmodifiers
+</li><li>sapend
+</li><li>sapendmodifiers
+</li><li>sapenter
+</li><li>sapentermodifiers
+</li><li>sapescape
+</li><li>sapexpand
+</li><li>sapexpandmodifiers
+</li><li>saphide
+</li><li>saphome
+</li><li>saphomemodifiers
+</li><li>sapincrease
+</li><li>sapincreasemodifiers
+</li><li>sapleft
+</li><li>sapleftmodifiers
+</li><li>sapnext
+</li><li>sapnextmodifiers
+</li><li>sappagedown
+</li><li>sappagedownmodifiers
+</li><li>sappageup
+</li><li>sappageupmodifiers
+</li><li>sapprevious
+</li><li>sappreviousmodifiers
+</li><li>sapright
+</li><li>saprightmodifiers
+</li><li>sapselect
+</li><li>sapselectmodifiers
+</li><li>sapshow
+</li><li>sapskipback
+</li><li>sapskipforward
+</li><li>sapspace
+</li><li>sapspacemodifiers
+</li><li>saptabnext
+</li><li>saptabprevious
+</li><li>saptop
+</li><li>sapup
+</li><li>sapupmodifiers
+</li></ul>
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

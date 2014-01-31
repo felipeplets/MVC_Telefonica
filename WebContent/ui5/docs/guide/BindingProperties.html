@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/DataBinding/BindingProperties – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h2 id="BindingProperties">Binding Properties</h2>
+<p>
+There are two ways to define a property binding on a control: either within the settings object in the constructor of a control, or later on using the <tt>bindProperty</tt> method of a control. Once a property binding is defined, the property will be updated automatically whenever the bound model property value is changed.
+</p>
+<p>
+The most convenient way to define a property binding, which is sufficient in most cases, is to include the binding path within curly brackets as a string literal in the <tt>settings</tt> object:
+</p>
+<div class="code"><pre>var oTextField <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">({</span>
+    <span class="nl">value:</span> <span class="s">"{/company/name}"</span>
+<span class="o">});</span>
+</pre></div><p>
+Alternatively, there is an extended syntax for property bindings. This allows you to define additional binding information, such as a formatter function to be contained in the <tt>settings</tt> object. In this case, a JS object is used instead of a string literal. This must contain a path property containing the binding path and can contain additional properties:
+</p>
+<div class="code"><pre>var oTextField <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">({</span>
+    <span class="nl">value:</span> <span class="o">{</span>
+        <span class="nl">path:</span> <span class="s">"/company/name"</span><span class="o">,</span> 
+        <span class="nl">mode:</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">BindingMode</span><span class="o">.</span><span class="na">OneWay</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+Depending on the use case, it can be useful to define the binding at a later time, using the <tt>bindProperty</tt> method:
+</p>
+<div class="code"><pre>oTextField<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> <span class="s">"/company/name"</span><span class="o">);</span>
+</pre></div><p>
+It does also allow the usage of the same object-literal as in the constructor to define the binding
+</p>
+<div class="code"><pre>oTextField<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nl">path:</span> <span class="s">"value"</span><span class="o">,</span>
+    <span class="nl">type:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">type</span><span class="o">.</span><span class="na">Integer</span><span class="o">()</span>
+<span class="o">});</span>
+</pre></div><p>
+Some controls offer convenience methods for the main properties of a control that are most likely to be bound by an application. This can be done as described in <a class="wiki" href="UsageInControl.html">Data Binding in Custom Controls</a>.
+</p>
+<div class="code"><pre>oTextField<span class="o">.</span><span class="na">bindValue</span><span class="o">(</span><span class="s">"/company/name"</span><span class="o">);</span>
+</pre></div><p>
+To remove a property binding, you can use the <tt>unbindProperty</tt> method. This is done automatically whenever a control is destroyed.
+</p>
+<div class="code"><pre>oTextField<span class="o">.</span><span class="na">unbindProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">);</span>
+</pre></div><p>
+For a complete list of supported parameters, see 
+<a class="ext-link" href="../api/symbols/sap.ui.core.Element.html#bindProperty" title="symbols/sap.ui.core.Element.html#bindProperty in Merged JSDoc"><span class="icon"> </span>API reference</a>.
+</p>
+<h3 id="FormattingPropertyValues">Formatting Property Values</h3>
+<p>
+Often the values in the data are represented in some internal format and need to be converted to an external format for visual representation. This is especially necessary for numbers, dates and times, which have locale dependent external formats. SAPUI5 does provide two different means for doing these type of conversion: Formatter functions allow one-way conversion only, while usage of data types can also be used for TwoWay-Binding as they cannot only format, but also parse user input. You can chose freely for each binding, depending on your scenario, the one or the other might be the better match.
+</p>
+<p>
+The formatter function can either be passed as a third parameter to the bindProperty method or contained in the binding info with the key "formatter". It has a single parameter <tt>value</tt>, which is the value which needs to be formatted to an external representation, and is executed as a member of the control, so can access additional control properties or model data.
+</p>
+<div class="code"><pre>oTextField<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> <span class="s">"/company/title"</span><span class="o">,</span> function<span class="o">(</span>sValue<span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> sValue <span class="o">&amp;&amp;</span> sValue<span class="o">.</span><span class="na">toUpperCase</span><span class="o">();</span>
+<span class="o">});</span>
+
+oControl <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">({</span>
+    <span class="nl">value:</span> <span class="o">{</span>
+        <span class="nl">path:</span><span class="s">"/company/revenue"</span><span class="o">,</span>
+        <span class="nl">formatter:</span> function<span class="o">(</span>fValue<span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span>fValue<span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="s">"&gt; "</span> <span class="o">+</span> Math<span class="o">.</span><span class="na">floor</span><span class="o">(</span>fValue<span class="o">/</span><span class="mi">1000000</span><span class="o">)</span> <span class="o">+</span> <span class="s">"M"</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="s">"0"</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">})</span>
+</pre></div><p>
+The formatter function, as it can contain any JavaScript, can not only be used for formatting a value, but can also do type conversion or calculate results from a given value, e.g. to show a special traffic light image depending on a boolean value:
+</p>
+<div class="code"><pre>oImage<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"src"</span><span class="o">,</span> <span class="s">"/company/trusted"</span><span class="o">,</span> function<span class="o">(</span>bValue<span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> bValue <span class="o">?</span> <span class="s">"green.png"</span> <span class="o">:</span> <span class="s">"red.png"</span><span class="o">;</span>
+<span class="o">});</span>
+</pre></div><h3 id="UsingData-Types">Using Data-Types</h3>
+<p>
+The <a class="wiki" href="TypeSystem.html">type system</a> provides the possibility to format and parse data, as well as validating if the entered data is within defined constraints. You can define a type to be used for a property binding, by passing it as a third parameter in <tt>bindProperty</tt> or by adding it to the binding information with the key "type".
+</p>
+<div class="code"><pre>oTextField<span class="o">.</span><span class="na">bindProperty</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span> <span class="s">"/company/title"</span><span class="o">,</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">type</span><span class="o">.</span><span class="na">String</span><span class="o">());</span>
+
+oControl <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">({</span>
+    <span class="nl">value:</span> <span class="o">{</span>
+        <span class="nl">path:</span><span class="s">"/company/revenue"</span><span class="o">,</span>
+        <span class="nl">type:</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">type</span><span class="o">.</span><span class="na">Float</span><span class="o">({</span>
+            <span class="nl">minFractionDigits:</span> <span class="mi">2</span><span class="o">,</span>
+            <span class="nl">maxFractionDigits:</span> <span class="mi">2</span>
+        <span class="o">})</span>
+    <span class="o">}</span>
+<span class="o">})</span>
+</pre></div><p>
+You can define custom types by inheriting from <tt>sap.ui.model.SimpleType</tt> and implementing the three methods <tt>formatValue</tt>, <tt>parseValue</tt> and <tt>validateValue</tt>. <tt>formatValue</tt> will be called whenever the value in the model is changed to convert it to the type of the control property it is bound to and may throw a <tt>FormatException</tt>. <tt>parseValue</tt> is called, whenever the user modified a value in the UI and the change is transported back into the model. It may throw a <tt>ParseException</tt> in case the value cannot be converted. In case of successful parsing <tt>validateValue</tt> is called to check additional constraints, like minimum or maximum value, and throws a <tt>ValidateException</tt> in case constraints are violated.
+</p>
+<div class="code"><pre>sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">SimpleType</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"sap.test.PLZ"</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nl">formatValue:</span> function<span class="o">(</span>oValue<span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> oValue<span class="o">;</span>
+    <span class="o">},</span>
+    <span class="nl">parseValue:</span> function<span class="o">(</span>oValue<span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> oValue<span class="o">;</span>
+    <span class="o">},</span>
+    <span class="nl">validateValue:</span> function<span class="o">(</span>oValue<span class="o">)</span> <span class="o">{</span>
+       <span class="k">if</span> <span class="o">(!/^(</span><span class="err">\</span>d<span class="o">{</span><span class="mi">5</span><span class="o">})?</span>$<span class="o">/.</span><span class="na">test</span><span class="o">(</span>oValue<span class="o">))</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">ValidateException</span><span class="o">(</span><span class="s">"PLZ must have 5 digits!"</span><span class="o">);</span>
+        <span class="o">}</span>
+     <span class="o">}</span>
+<span class="o">});</span>
+</pre></div><p>
+ 
+</p>
+<h3 id="BindingMode">Binding Mode</h3>
+<p>
+By default, all bindings of a model instance have the default binding mode of the model. You can change this behavior. 
+When creating a <tt>PropertyBinding</tt>, you can specify a different binding mode, which is then used exclusively for this specific binding. Of course, a binding can only have a supported binding mode of the model.
+</p>
+<div class="code"><pre>var oModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">();</span>
+<span class="c1">// default binding mode is Two Way
+</span>oModel<span class="o">.</span><span class="na">setData</span><span class="o">(</span>myData<span class="o">);</span>
+sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">setModel</span><span class="o">(</span>oModel<span class="o">);</span>
+var oText <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">();</span>
+<span class="c1">// bind value property one way only
+// propertyname, formatter function, binding mode
+</span>oText<span class="o">.</span><span class="na">bindValue</span><span class="o">(</span><span class="s">"/firstName"</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">BindingMode</span><span class="o">.</span><span class="na">OneWay</span><span class="o">);</span>
+oText<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="s">"target1"</span><span class="o">);</span>
+oText <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">commons</span><span class="o">.</span><span class="na">TextField</span><span class="o">();</span>
+<span class="c1">// bind value property two way which is the default
+</span>oText<span class="o">.</span><span class="na">bindValue</span><span class="o">(</span><span class="s">"/firstName"</span><span class="o">);</span>
+oText<span class="o">.</span><span class="na">placeAt</span><span class="o">(</span><span class="s">"target2"</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div><p>
+In the example above, two TextFields are created and their <tt>value</tt> property is bound to the same property in the model. The first TextField binding has a one-way binding mode, whereas the second TextField has the default binding mode of the model instance, which is two-way.
+So, when text is entered in the first TextField, the value will not be changed in the model. This happens only if text is entered in the second TextField. Then, of course, the value of the first TextField will be updated as it has a one-way binding, which means from model to view.
+</p>
+<p>
+See an example here:<br />
+</p>
+<p>
+<a class="ext-link" href="../../test-resources/sap/ui/commons/databinding/DataBindingTwoWay.html" title="demokit/test-resources/sap/ui/commons/databinding/DataBindingTwoWay.html in Sandbox for Applications"><span class="icon"> </span>Two Way data binding example with JSON Model</a>
+</p>
+<p>
+A more complex example with two tables can be found here:<br />
+</p>
+<p>
+<a class="ext-link" href="../../test-resources/sap/ui/commons/databinding/DataBindingTwoWayTable.html" title="demokit/test-resources/sap/ui/commons/databinding/DataBindingTwoWayTable.html in Sandbox for Applications"><span class="icon"> </span>Two Way data binding example with JSON Model and two tables</a>
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>

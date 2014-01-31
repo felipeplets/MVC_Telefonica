@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      Documentation/AdvancedTopics/Mobile/BestPractice/ImageModel – SAPUI5 Wiki (TIP CORE User Interface)
+    </title>
+        
+        
+        
+        
+        <link rel="stylesheet" href="redirect.css" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+      
+    
+    
+    
+    
+    <script src="../../resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+    <script src="../../js/utils.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../theme/dev-guide.css" />
+  </head>
+  <body>
+    
+    
+    
+    <div id="content" class="wiki">
+      
+      <div class="wikipage searchable">
+        
+          <h1 id="ImageModel">Image Model</h1>
+<p>
+When referencing images in an application it is most convenient to collect all the access paths in one central place instead of pasting them all over the code. This can be achieved by storing them in a JSON file, making this available with a global JSON model - named "img" - and binding the controls against this model.
+</p>
+<p>
+Storing image access paths in a JSON file:
+</p>
+<div class="code"><pre><span class="o">{</span>
+    <span class="s">"icon"</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s">"ui5"</span> <span class="o">:</span> <span class="s">"img/SAPUI5Icon.png"</span><span class="o">,</span>
+        <span class="s">"cart"</span> <span class="o">:</span> <span class="s">"img/cart_TabButtonItem.png"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div><p>
+Making images available with a global JSON model:
+</p>
+<div class="code"><pre>ApplicationBase<span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s">"Application"</span><span class="o">,</span> <span class="o">{</span>
+    init <span class="o">:</span> function<span class="o">()</span> <span class="o">{</span>
+        var imgModel <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">json</span><span class="o">.</span><span class="na">JSONModel</span><span class="o">(</span><span class="s">"model/img.json"</span><span class="o">);</span>
+        sap<span class="o">.</span><span class="na">ui</span><span class="o">.</span><span class="na">getCore</span><span class="o">().</span><span class="na">setModel</span><span class="o">(</span>imgModel<span class="o">,</span> <span class="s">"img"</span><span class="o">);</span>
+        <span class="o">...</span>
+</pre></div><p>
+Binding the controls against img model:
+</p>
+<div class="code"><pre><span class="k">this</span><span class="o">.</span><span class="na">page</span> <span class="o">=</span> <span class="k">new</span> sap<span class="o">.</span><span class="na">m</span><span class="o">.</span><span class="na">Page</span><span class="o">({</span>
+    title <span class="o">:</span> <span class="s">"Shopping Cart"</span><span class="o">,</span>
+    icon <span class="o">:</span> <span class="s">"{img&gt;/icon/ui5}"</span><span class="o">,</span>
+    <span class="o">...</span>
+</pre></div><p>
+This approach allows even switching all images to a different set at runtime with one line of code (e.g. to provide differently colored image sets for different SAPUI5 themes).
+</p>
+<p>
+<br />
+</p>
+<h2 id="AdditionalImageDocumentation">Additional Image Documentation</h2>
+<ul><li><a class="wiki" href="Images.html">Image Pixel Densities</a>
+</li></ul><p>
+<br />
+</p>
+
+        
+        
+      </div>
+    </div>
+    
+  </body>
+</html>
