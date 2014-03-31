@@ -13,12 +13,19 @@ sap.ui.jsview("views.Main", {
 	* @memberOf mvc_telefonica.Main
 	*/ 
 	createContent : function(oController) {
- 		return new sap.m.Page({
-			title: "Title",
+
+		var i18nModel = new sap.ui.model.resource.ResourceModel({
+			bundleUrl : "i18n/messageBundle.properties"
+		});
+
+		var oPage = new sap.m.Page({
+			title: "{i18n>Title}",
 			content: [
-			new sap.m.List("teste",{headerText: "Teste de List"})
+				new sap.m.List("oList",{headerText: "{i18n>Sensors}"})
 			]
 		});
+		oPage.setModel(i18nModel, "i18n");
+ 		return oPage; 
 	}
 
 });
